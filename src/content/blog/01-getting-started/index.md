@@ -81,16 +81,16 @@ export const ABOUT: Metadata = {
 
 export const SOCIALS: Socials = [
   {
-    NAME: "twitter-x",
-    HREF: "https://twitter.com/boogerbuttcheeks",
+    NAME: "bluesky",
+    HREF: "https://bsky.app/profile/jeff-mos-def.bsky.social",
   },
   {
     NAME: "github",
-    HREF: "https://github.com/trevortylerlee",
+    HREF: "https://github.com/jeff-mos-def",
   },
   {
     NAME: "linkedin",
-    HREF: "https://www.linkedin.com/in/trevortylerlee",
+    HREF: "https://www.linkedin.com/in/jeff-camacho",
   },
 ];
 ```

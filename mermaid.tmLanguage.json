@@ -1,0 +1,19 @@
+{
+    "name": "mermaid",
+    "scopeName": "source.mermaid",
+    "patterns": [
+      {
+        "include": "#expression"
+      }
+    ],
+    "repository": {
+      "expression": {
+        "patterns": [
+          {
+            "match": "^(sequenceDiagram|graph|flowchart|gantt|classDiagram|stateDiagram-v2|erDiagram|journey|pie)",
+            "name": "keyword.control.mermaid"
+          }
+        ]
+      }
+    }
+  }
