@@ -38,4 +38,9 @@ export const SOCIALS: Socials = [
     NAME: "BlueSky",
     HREF: "https://bsky.app/profile/jeff-mos-def.bsky.social",
   },
+  {
+    NAME: "Calendar",
+    HREF: "https://calendar.app.google/DqgxFfQ3eRry7Dxk6",
+  },
 ];
+
