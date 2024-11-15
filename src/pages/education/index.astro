@@ -1,0 +1,87 @@
+---
+import { getCollection } from "astro:content";
+import Layout from "@layouts/Layout.astro";
+import Container from "@components/Container.astro";
+import { EDUCATION } from "@consts";
+
+const educationEntries = await getCollection("education");
+const renderedEntries = await Promise.all(
+  educationEntries
+    .sort((a, b) => b.data.dateStart - a.data.dateStart)
+    .map(async (entry) => {
+      const { Content } = await entry.render();
+      return { ...entry, Content };
+    })
+);
+---
+
+<Layout title={EDUCATION.TITLE} description={EDUCATION.DESCRIPTION}>
+  <Container>
+    <aside data-pagefind-ignore>
+      <div class="space-y-10">
+        <div class="animate font-semibold text-black dark:text-white">
+          Education & Certifications
+        </div>
+
+        {/* Education Section */}
+        <div class="space-y-6">
+          <h2 class="text-lg font-semibold text-zinc-800 dark:text-zinc-200">Education</h2>
+          <ul class="animate not-prose flex flex-col gap-8">
+            {
+              renderedEntries
+                .filter(entry => entry.data.type === 'education')
+                .map((entry) => (
+                  <li class="space-y-2">
+                    <div class="text-sm text-zinc-500 dark:text-zinc-400">
+                      {entry.data.dateStart} - {entry.data.dateEnd}
+                    </div>
+                    <div class="text-lg text-zinc-800 dark:text-zinc-100">
+                      {entry.data.institution}
+                    </div>
+                    <div class="text-zinc-500 dark:text-zinc-400">
+                      {entry.data.degree} in {entry.data.field}
+                    </div>
+                    {entry.data.gpa && (
+                      <div class="text-zinc-500 dark:text-zinc-400">
+                        GPA: {entry.data.gpa.toFixed(2)}
+                      </div>
+                    )}
+                    <div class="prose dark:prose-invert">
+                      <entry.Content />
+                    </div>
+                  </li>
+                ))
+            }
+          </ul>
+        </div>
+
+        {/* Certifications Section */}
+        <div class="space-y-6">
+          <h2 class="text-lg font-semibold text-zinc-800 dark:text-zinc-200">Certifications</h2>
+          <ul class="animate not-prose flex flex-col gap-8">
+            {
+              renderedEntries
+                .filter(entry => entry.data.type === 'certification')
+                .map((entry) => (
+                  <li class="space-y-2">
+                    <div class="text-sm text-zinc-500 dark:text-zinc-400">
+                      {entry.data.dateStart} - {entry.data.dateEnd}
+                    </div>
+                    <div class="text-lg text-zinc-800 dark:text-zinc-100">
+                      {entry.data.institution}
+                    </div>
+                    <div class="text-zinc-500 dark:text-zinc-400">
+                      {entry.data.degree}
+                    </div>
+                    <div class="prose dark:prose-invert">
+                      <entry.Content />
+                    </div>
+                  </li>
+                ))
+            }
+          </ul>
+        </div>
+      </div>
+    </aside>
+  </Container>
+</Layout>

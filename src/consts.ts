@@ -13,6 +13,16 @@ export const HOME: Metadata = {
   DESCRIPTION: "Personal writing space of Jeff Camacho.",
 };
 
+export const WORK = {
+  TITLE: "Work Experience",
+  DESCRIPTION: "My professional journey and work experience",
+};
+
+export const EDUCATION = {
+  TITLE: "Education & Certifications",
+  DESCRIPTION: "My academic background and professional certifications",
+};
+
 export const BLOG: Metadata = {
   TITLE: "Blog",
   DESCRIPTION: "A collection of articles on topics I am passionate about.",
