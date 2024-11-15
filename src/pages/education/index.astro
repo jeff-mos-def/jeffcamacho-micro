@@ -7,7 +7,20 @@ import { EDUCATION } from "@consts";
 const educationEntries = await getCollection("education");
 const renderedEntries = await Promise.all(
   educationEntries
-    .sort((a, b) => b.data.dateStart - a.data.dateStart)
+    .sort((a, b) => {
+      // First sort education entries by date
+      if (a.data.type === 'education' && b.data.type === 'education') {
+        return b.data.dateStart - a.data.dateStart;
+      }
+      // Then sort certifications by priority
+      if (a.data.type === 'certification' && b.data.type === 'certification') {
+        const priorityA = a.data.priority ?? 999;  // Default to low priority if not set
+        const priorityB = b.data.priority ?? 999;
+        return priorityA - priorityB;
+      }
+      // Keep education and certification sections separate
+      return a.data.type === 'education' ? -1 : 1;
+    })
     .map(async (entry) => {
       const { Content } = await entry.render();
       return { ...entry, Content };
@@ -32,9 +45,11 @@ const renderedEntries = await Promise.all(
                 .filter(entry => entry.data.type === 'education')
                 .map((entry) => (
                   <li class="space-y-2">
-                    <div class="text-sm text-zinc-500 dark:text-zinc-400">
-                      {entry.data.dateStart} - {entry.data.dateEnd}
-                    </div>
+                    {entry.data.dateStart && (
+                      <div class="text-sm text-zinc-500 dark:text-zinc-400">
+                        {entry.data.dateStart} - {entry.data.dateEnd}
+                      </div>
+                    )}
                     <div class="text-lg text-zinc-800 dark:text-zinc-100">
                       {entry.data.institution}
                     </div>
@@ -55,6 +70,9 @@ const renderedEntries = await Promise.all(
           </ul>
         </div>
 
+        {/* Divider */}
+        <hr class="border-t border-zinc-200 dark:border-zinc-700" />
+
         {/* Certifications Section */}
         <div class="space-y-6">
           <h2 class="text-lg font-semibold text-zinc-800 dark:text-zinc-200">Certifications</h2>
@@ -64,9 +82,6 @@ const renderedEntries = await Promise.all(
                 .filter(entry => entry.data.type === 'certification')
                 .map((entry) => (
                   <li class="space-y-2">
-                    <div class="text-sm text-zinc-500 dark:text-zinc-400">
-                      {entry.data.dateStart} - {entry.data.dateEnd}
-                    </div>
                     <div class="text-lg text-zinc-800 dark:text-zinc-100">
                       {entry.data.institution}
                     </div>

@@ -16,12 +16,14 @@ const education = defineCollection({
     institution: z.string(),
     degree: z.string(),
     field: z.string(),
-    dateStart: z.number(),
-    dateEnd: z.union([z.number(), z.literal('Current'), z.literal('Expected 2024')]),
+    dateStart: z.number().optional(),
+    dateEnd: z.union([z.number(), z.literal('Current'), z.literal('Expected 2024')]).optional(),
     type: z.enum(['education', 'certification']),
-    gpa: z.number().optional(),  
+    gpa: z.number().optional(),
+    priority: z.number().optional(),  // Add this line
   }),
 });
+
 const blog = defineCollection({
   type: "content",
   schema: z.object({
