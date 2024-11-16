@@ -43,6 +43,7 @@ const projects = defineCollection({
     draft: z.boolean().optional(),
     demoURL: z.string().optional(),
     repoURL: z.string().optional(),
+    status: z.enum(['To Do', 'Doing', 'Done', 'OBE']).default('To Do'), // Added status field
   }),
 });
 
