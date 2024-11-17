@@ -39,11 +39,12 @@ const projects = defineCollection({
   schema: z.object({
     title: z.string(),
     description: z.string(),
-    date: z.coerce.date(),
+    startDate: z.coerce.date(),
+    endDate: z.union([z.coerce.date(), z.literal('TBD')]).optional(),
     draft: z.boolean().optional(),
     demoURL: z.string().optional(),
     repoURL: z.string().optional(),
-    status: z.enum(['To Do', 'Doing', 'Done', 'OBE']).default('To Do'), // Added status field
+    status: z.enum(['To Do', 'Doing', 'Done', 'OBE']).default('To Do'),
   }),
 });
 

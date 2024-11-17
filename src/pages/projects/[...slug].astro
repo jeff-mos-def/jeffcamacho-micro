@@ -7,12 +7,11 @@ import { readingTime } from "@lib/utils";
 import BackToPrevious from "@components/BackToPrevious.astro";
 import Link from "@components/Link.astro";
 import TableOfContents from "@components/TableOfContents.astro";
-import StatusBadge from "@components/StatusBadge.astro";
 
 export async function getStaticPaths() {
   const projects = (await getCollection("projects"))
     .filter((post) => !post.data.draft)
-    .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+    .sort((a, b) => b.data.startDate.valueOf() - a.data.startDate.valueOf());
   return projects.map((project) => ({
     params: { slug: project.slug },
     props: project,
@@ -32,18 +31,12 @@ const { Content, headings } = await project.render();
     <div class="animate my-10 space-y-1">
       <div class="flex items-center gap-1.5">
         <div class="font-base text-sm">
-          <FormattedDate date={project.data.date} />
+          <FormattedDate date={project.data.startDate} />
         </div>
         &bull;
         <div class="font-base text-sm">
           {readingTime(project.body)}
         </div>
-        {project.data.status && (
-          <>
-            &bull;
-            <StatusBadge status={project.data.status} />
-          </>
-        )}
       </div>
       <h1 class="text-3xl font-semibold text-black dark:text-white">
         {project.data.title}
@@ -65,6 +58,13 @@ const { Content, headings } = await project.render();
           </nav>
         )
       }
+      <div class="text-sm text-black/60 dark:text-white/60">
+        Projected End Date: {
+          project.data.endDate === 'TBD' 
+            ? 'TBD' 
+            : project.data.endDate && <FormattedDate date={project.data.endDate} />
+        }
+      </div>
     </div>
     <TableOfContents headings={headings} />
     <article class="animate">

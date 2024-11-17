@@ -16,7 +16,7 @@ const projects: CollectionEntry<"projects">[] = (
   await getCollection("projects")
 )
   .filter((project) => !project.data.draft)
-  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
+  .sort((a, b) => b.data.startDate.valueOf() - a.data.startDate.valueOf())
   .slice(0, SITE.NUM_PROJECTS_ON_HOMEPAGE);
 ---
 

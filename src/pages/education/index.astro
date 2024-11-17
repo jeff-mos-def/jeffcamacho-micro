@@ -10,6 +10,8 @@ const renderedEntries = await Promise.all(
     .sort((a, b) => {
       // First sort education entries by date
       if (a.data.type === 'education' && b.data.type === 'education') {
+        // Return 0 if either date is undefined
+        if (!a.data.dateStart || !b.data.dateStart) return 0;
         return b.data.dateStart - a.data.dateStart;
       }
       // Then sort certifications by priority
