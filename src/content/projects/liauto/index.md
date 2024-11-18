@@ -1,85 +1,50 @@
 ---
-title: "Project Title"
-description: "Project description"
-startDate: "03/01/2024"
-endDate: "11/18/2024"  # can be a date or "TBD"
-demoURL: "https://example.com"  # optional
-repoURL: "https://github.com/..."  # optional
+title: "LinkedIn Social Media Automation"
+description: "Automating my LinkedIn Social Media Presence"
+startDate: "11/17/2024"
+endDate: "12/31/2024"  # can be a date or "TBD"
+#demoURL: "https://example.com"  # optional
+#repoURL: "https://github.com/..."  # optional
 status: "Doing"  # "To Do", "Doing", "Done", or "OBE"
 draft: false  # optional, defaults to false
 ---
 
-![Astro Nano](/astro-nano.png)
+## Project Introduction
 
-Astro Nano is a static, minimalist, lightweight, lightning fast portfolio and blog theme.
+This project is a personal pet project to explore the power of automation and AI in streamlining social media content creation. By integrating advanced APIs, automation platforms, and scripting tools, I’m creating a robust system to share Agile news and insights consistently on LinkedIn.
 
-Built with Astro, Tailwind and Typescript, and no frameworks.
+The system combines multiple technologies to deliver a polished and professional social media presence while enabling me to learn and grow in several key areas:
 
-It was designed as an even more minimal theme than Mark Horn's popular theme [Astro Sphere](https://github.com/markhorn-dev/astro-sphere)
+- API Integration: Utilizing services like newsapi.org, Perplexity AI, and OpenAI to create an end-to-end automated pipeline.
+- Automation Expertise: Building workflows in make.com to manage complex scenarios efficiently.
+- Scripting and Scheduling: Leveraging Google Apps Script to fetch and filter news content regularly without duplication.
+- Content Optimization: Exploring AI-driven tools to summarize and adapt content specifically for LinkedIn audiences.
+- Social Media Engagement: Gaining insights into what drives engagement and how to craft posts that resonate with professional networks.
+- Data Management: Designing pipelines that ensure relevance, accuracy, and consistency in output.
+- Scalable Solutions: Learning how to build a system that can evolve with new tools and platforms.
 
-## 🚀 Deploy your own
+This project is about understanding how to leverage modern technology to create meaningful connections and insights in a professional space. Along the way, it provides an opportunity to deepen knowledge in automation, AI, and social media strategy.
 
-<div class="flex gap-2">
-  <a target="_blank" aria-label="Deploy with Vercel" href="https://vercel.com/new/clone?repository-url=https://github.com/markhorn-dev/astro-nano">
-    <img src="/deploy_vercel.svg" />
-  </a>
-  <a target="_blank" aria-label="Deploy with Netlify" href="https://app.netlify.com/start/deploy?repository=https://github.com/markhorn-dev/astro-nano">
-    <img src="/deploy_netlify.svg" />
-  </a>
-</div>
+As of 17Nov24, I'm still running tests... and worried about the automation leap. This will be up sooner rather than later.
 
 ## 📋 Features
 
-- ✅ 100/100 Lighthouse performance
-- ✅ Responsive
-- ✅ Accessible
-- ✅ SEO-friendly
-- ✅ Typesafe
-- ✅ Minimal style
-- ✅ Light/Dark Theme
-- ✅ Animated UI
-- ✅ Tailwind styling
-- ✅ Auto generated sitemap
-- ✅ Auto generated RSS Feed
-- ✅ Markdown support
-- ✅ MDX Support (components in your markdown)
+- ✅ Automated news scanning using [newsapi.org](https://newsapi.org/) for Agile-related stories from vetted domains
+- ✅ Duplicate detection to ensure unique content every 14 days
+- ✅ Google Apps Script integration for seamless story aggregation and scheduling
+- ✅ Dynamic querying of stories through make.com automation workflows
+- ✅ AI-powered summarization using [Perplexity AI API](https://docs.perplexity.ai/home) for concise article insights
+- ✅ Social media post generation tailored for LinkedIn using [OpenAI API](https://platform.openai.com/docs/overview)
+- ✅ Automated LinkedIn publishing for a consistent and efficient posting schedule
+- ✅ Intelligent content pipeline ensuring relevance, accuracy, and professionalism
+- ✅ Scalable design allowing for future integration with additional APIs or platforms
+- ✅ Hands-free operation, requiring minimal manual intervention once configured
+- ❌ ACTUAL IMPLEMENTATION....
 
-## 💯 Lighthouse score
+## 🌟 Future Use
 
-![Astro Nano Lighthouse Score](/astro-nano-lighthouse.jpg)
+I've recently migrated over to [BlueSky](https://bsky.app/profile/jeff-mos-def.bsky.social) as my social media platform of choice. I may try and automate postings to that platform as well.
 
-## 🕊️ Lightweight
+## Progress Logs
 
-No frameworks or added bulk
-
-## ⚡︎ Fast
-
-Rendered in ~40ms on localhost
-
-## 📄 Configuration
-
-The blog posts on the demo serve as the documentation and configuration.
-
-## 💻 Commands
-
-All commands are run from the root of the project, from a terminal:
-
-Replace npm with your package manager of choice. `npm`, `pnpm`, `yarn`, `bun`, etc
-
-| Command                   | Action                                            |
-| :------------------------ | :------------------------------------------------ |
-| `npm install`             | Installs dependencies                             |
-| `npm run dev`             | Starts local dev server at `localhost:4321`       |
-| `npm run dev:network`     | Starts local dev server on local network          |
-| `npm run sync`            | Generates TypeScript types for all Astro modules. |
-| `npm run build`           | Build your production site to `./dist/`           |
-| `npm run preview`         | Preview your build locally, before deploying      |
-| `npm run preview:network` | Preview build on local network                    |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check`  |
-| `npm run astro -- --help` | Get help using the Astro CLI                      |
-| `npm run lint`            | Run ESLint                                        |
-| `npm run lint:fix`        | Auto-fix ESLint issues                            |
-
-## 🏛️ License
-
-MIT
+TBD
