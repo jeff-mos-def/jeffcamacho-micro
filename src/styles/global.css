@@ -12,6 +12,10 @@ html.dark {
   color-scheme: dark;
 }
 
+html {
+  overflow-y: scroll;
+}
+
 html,
 body {
   @apply size-full;
