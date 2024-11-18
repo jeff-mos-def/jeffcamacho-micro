@@ -18,6 +18,17 @@ export async function getStaticPaths() {
     props: post,
   }));
 }
+
+async function getProjectData(projectSlug: string) {
+  const projects = (await getCollection("projects")).filter(
+    (project) => !project.data.draft
+  );
+  const project = projects.find((p) => `/projects/${p.slug}` === projectSlug);
+  return project
+    ? { title: project.data.title, slug: `/projects/${project.slug}` }
+    : null;
+}
+
 type Props = CollectionEntry<"blog">;
 
 const posts = (await getCollection("blog"))
@@ -49,6 +60,9 @@ const prevPost = getPrevPost();
 
 const post = Astro.props;
 const { Content, headings } = await post.render();
+const linkedProject = post.data.linkedProject
+  ? await getProjectData(post.data.linkedProject)
+  : null;
 ---
 
 <Layout title={post.data.title} description={post.data.description}>
@@ -69,6 +83,15 @@ const { Content, headings } = await post.render();
       <h1 class="animate text-3xl font-semibold text-black dark:text-white">
         {post.data.title}
       </h1>
+      <!-- Render Related Project if it exists -->
+      {linkedProject && (
+        <div class="animate mt-4">
+          <span class="font-semibold">Related Project:</span>{" "}
+          <a href={linkedProject.slug} class="text-blue-500 hover:underline">
+            {linkedProject.title}
+          </a>
+        </div>
+      )}      
     </div>
     {headings.length > 0 && <TableOfContents headings={headings} />}
     <article class="animate">

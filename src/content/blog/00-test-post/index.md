@@ -2,6 +2,7 @@
 title: "Starting things again, simple and compact."
 description: "Setting the tone for the new space."
 date: "2024-11-12"
+linkedProject: "/projects/liauto"
 draft: false
 ---
 
