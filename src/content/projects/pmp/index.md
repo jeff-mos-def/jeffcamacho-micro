@@ -1,5 +1,5 @@
 ---
-title: "Project Management Professional Certification"
+title: "PMP Certification"
 description: "Obtain the PMP, finally."
 startDate: "03/01/2024"
 endDate: "03/30/2025"  # can be a date or "TBD"
