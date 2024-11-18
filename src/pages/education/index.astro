@@ -8,20 +8,19 @@ const educationEntries = await getCollection("education");
 const renderedEntries = await Promise.all(
   educationEntries
     .sort((a, b) => {
-      // First sort education entries by date
       if (a.data.type === 'education' && b.data.type === 'education') {
-        // Return 0 if either date is undefined
         if (!a.data.dateStart || !b.data.dateStart) return 0;
         return b.data.dateStart - a.data.dateStart;
       }
-      // Then sort certifications by priority
-      if (a.data.type === 'certification' && b.data.type === 'certification') {
-        const priorityA = a.data.priority ?? 999;  // Default to low priority if not set
+      if ((a.data.type === 'certification' || a.data.type === 'certificate') && 
+          (b.data.type === 'certification' || b.data.type === 'certificate')) {
+        const priorityA = a.data.priority ?? 999;
         const priorityB = b.data.priority ?? 999;
         return priorityA - priorityB;
       }
-      // Keep education and certification sections separate
-      return a.data.type === 'education' ? -1 : 1;
+      if (a.data.type === 'education') return -1;
+      if (b.data.type === 'education') return 1;
+      return a.data.type === 'certification' ? -1 : 1;
     })
     .map(async (entry) => {
       const { Content } = await entry.render();
@@ -35,40 +34,34 @@ const renderedEntries = await Promise.all(
     <aside data-pagefind-ignore>
       <div class="space-y-10">
         <div class="animate font-semibold text-black dark:text-white">
-          Education & Certifications
+          Education, Certifications & Certificates
         </div>
 
         {/* Education Section */}
         <div class="space-y-6">
-          <h2 class="text-lg font-semibold text-zinc-800 dark:text-zinc-200">Education</h2>
+          <h2 class="animate text-lg font-semibold text-zinc-800 dark:text-zinc-200 underline underline-offset-4">Education</h2>
           <ul class="animate not-prose flex flex-col gap-8">
-            {
-              renderedEntries
-                .filter(entry => entry.data.type === 'education')
-                .map((entry) => (
-                  <li class="space-y-2">
-                    {entry.data.dateStart && (
-                      <div class="text-sm text-zinc-500 dark:text-zinc-400">
-                        {entry.data.dateStart} - {entry.data.dateEnd}
-                      </div>
-                    )}
-                    <div class="text-lg text-zinc-800 dark:text-zinc-100">
-                      {entry.data.institution}
+            {renderedEntries
+              .filter(entry => entry.data.type === 'education')
+              .map(entry => (
+                <li class="space-y-2">
+                  {entry.data.dateStart && (
+                    <div class="text-sm text-zinc-500 dark:text-zinc-400">
+                      {entry.data.dateStart} - {entry.data.dateEnd}
                     </div>
-                    <div class="text-zinc-500 dark:text-zinc-400">
-                      {entry.data.degree} in {entry.data.field}
-                    </div>
-                    {entry.data.gpa && (
-                      <div class="text-zinc-500 dark:text-zinc-400">
-                        GPA: {entry.data.gpa.toFixed(2)}
-                      </div>
-                    )}
-                    <div class="prose dark:prose-invert">
-                      <entry.Content />
-                    </div>
-                  </li>
-                ))
-            }
+                  )}
+                  <div class="text-lg text-zinc-800 dark:text-zinc-100">{entry.data.institution}</div>
+                  <div class="text-zinc-500 dark:text-zinc-400">
+                    {entry.data.degree} in {entry.data.field}
+                  </div>
+                  {entry.data.gpa && (
+                    <div class="text-zinc-500 dark:text-zinc-400">GPA: {entry.data.gpa.toFixed(2)}</div>
+                  )}
+                  <div class="prose dark:prose-invert">
+                    <entry.Content />
+                  </div>
+                </li>
+              ))}
           </ul>
         </div>
 
@@ -77,25 +70,40 @@ const renderedEntries = await Promise.all(
 
         {/* Certifications Section */}
         <div class="space-y-6">
-          <h2 class="text-lg font-semibold text-zinc-800 dark:text-zinc-200">Certifications</h2>
+          <h2 class="animate text-lg font-semibold text-zinc-800 dark:text-zinc-200 underline underline-offset-4">Certifications</h2>
           <ul class="animate not-prose flex flex-col gap-8">
-            {
-              renderedEntries
-                .filter(entry => entry.data.type === 'certification')
-                .map((entry) => (
-                  <li class="space-y-2">
-                    <div class="text-lg text-zinc-800 dark:text-zinc-100">
-                      {entry.data.institution}
-                    </div>
-                    <div class="text-zinc-500 dark:text-zinc-400">
-                      {entry.data.degree}
-                    </div>
-                    <div class="prose dark:prose-invert">
-                      <entry.Content />
-                    </div>
-                  </li>
-                ))
-            }
+            {renderedEntries
+              .filter(entry => entry.data.type === 'certification')
+              .map(entry => (
+                <li class="space-y-2">
+                  <div class="text-lg text-zinc-800 dark:text-zinc-100">{entry.data.institution}</div>
+                  <div class="text-zinc-500 dark:text-zinc-400">{entry.data.degree}</div>
+                  <div class="prose dark:prose-invert">
+                    <entry.Content />
+                  </div>
+                </li>
+              ))}
+          </ul>
+        </div>
+
+        {/* Divider */}
+        <hr class="border-t border-zinc-200 dark:border-zinc-700" />
+
+        {/* Certificates Section */}
+        <div class="space-y-6">
+          <h2 class="animate text-lg font-semibold text-zinc-800 dark:text-zinc-200 underline underline-offset-4">Certificates</h2>
+          <ul class="animate not-prose flex flex-col gap-8">
+            {renderedEntries
+              .filter(entry => entry.data.type === 'certificate')
+              .map(entry => (
+                <li class="space-y-2">
+                  <div class="text-lg text-zinc-800 dark:text-zinc-100">{entry.data.institution}</div>
+                  <div class="text-zinc-500 dark:text-zinc-400">{entry.data.degree}</div>
+                  <div class="prose dark:prose-invert">
+                    <entry.Content />
+                  </div>
+                </li>
+              ))}
           </ul>
         </div>
       </div>

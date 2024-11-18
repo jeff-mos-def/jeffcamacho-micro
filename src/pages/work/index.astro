@@ -3,17 +3,16 @@ import { getCollection } from "astro:content";
 import Layout from "@layouts/Layout.astro";
 import Container from "@components/Container.astro";
 import { WORK } from "@consts";
+import type { CollectionEntry } from "astro:content";
 
-const workEntries = await getCollection("work");
+const workEntries: CollectionEntry<"work">[] = await getCollection("work");
+
 const renderedEntries = await Promise.all(
   workEntries
     .sort((a, b) => {
-      // If either entry has 'Current' as dateEnd, handle that case
-      if (a.data.dateEnd === 'Current') return -1;  // a comes first
-      if (b.data.dateEnd === 'Current') return 1;   // b comes first
-      
-      // Otherwise compare the dateStart values
-      return b.data.dateStart.valueOf() - a.data.dateStart.valueOf();
+      if (a.data.dateEnd === "Current") return -1;
+      if (b.data.dateEnd === "Current") return 1;
+      return new Date(b.data.dateStart).valueOf() - new Date(a.data.dateStart).valueOf();
     })
     .map(async (entry) => {
       const { Content } = await entry.render();
@@ -21,10 +20,14 @@ const renderedEntries = await Promise.all(
     })
 );
 
-function formatDate(date: Date) {
-  return date.toLocaleDateString('en-US', { 
-    month: 'short',
-    year: 'numeric'
+function formatDate(date: Date | string | number): string {
+  if (typeof date === "number") {
+    return date.toString();
+  }
+  const parsedDate = new Date(date);
+  return parsedDate.toLocaleDateString("en-US", {
+    month: "short",
+    year: "numeric",
   });
 }
 ---
@@ -34,28 +37,59 @@ function formatDate(date: Date) {
     <aside data-pagefind-ignore>
       <div class="space-y-10">
         <div class="animate font-semibold text-black dark:text-white">
-          Work Experience
+          Work & Entrepreneurial Experience
         </div>
-        <ul class="animate not-prose flex flex-col gap-8">
-          {
-            renderedEntries.map((entry) => (
-              <li class="space-y-2">
-                <div class="text-sm text-zinc-500 dark:text-zinc-400">
-                  {formatDate(entry.data.dateStart)} - {typeof entry.data.dateEnd === 'string' ? entry.data.dateEnd : formatDate(entry.data.dateEnd)}
-                </div>
-                <div class="text-lg text-zinc-800 dark:text-zinc-100">
-                  {entry.data.company}
-                </div>
-                <div class="text-zinc-500 dark:text-zinc-400">
-                  {entry.data.role}
-                </div>
-                <div class="prose dark:prose-invert">
-                  <entry.Content />
-                </div>
-              </li>
-            ))
-          }
-        </ul>
+
+        {/* Work Experience Section */}
+        <div class="space-y-6">
+          <h2 class="animate text-lg font-semibold text-zinc-800 dark:text-zinc-200 underline underline-offset-4">
+            Work Experience
+          </h2>
+          <ul class="animate not-prose flex flex-col gap-8">
+            {renderedEntries
+              .filter((entry) => entry.data.type === "work")
+              .map((entry) => (
+                <li class="space-y-2">
+                  <div class="text-sm text-zinc-500 dark:text-zinc-400">
+                    {formatDate(entry.data.dateStart)} -{" "}
+                    {entry.data.dateEnd === "Current" ? "Current" : formatDate(entry.data.dateEnd)}
+                  </div>
+                  <div class="text-lg text-zinc-800 dark:text-zinc-100">{entry.data.company}</div>
+                  <div class="text-zinc-500 dark:text-zinc-400">{entry.data.role}</div>
+                  <div class="prose dark:prose-invert">
+                    <entry.Content />
+                  </div>
+                </li>
+              ))}
+          </ul>
+        </div>
+
+        {/* Divider */}
+        <hr class="border-t border-zinc-200 dark:border-zinc-700" />
+
+        {/* Entrepreneurial Experience Section */}
+        <div class="space-y-6">
+          <h2 class="animate text-lg font-semibold text-zinc-800 dark:text-zinc-200 underline underline-offset-4">
+            Entrepreneurial Experience
+          </h2>
+          <ul class="animate not-prose flex flex-col gap-8">
+            {renderedEntries
+              .filter((entry) => entry.data.type === "entrepreneurial")
+              .map((entry) => (
+                <li class="space-y-2">
+                  <div class="text-sm text-zinc-500 dark:text-zinc-400">
+                    {formatDate(entry.data.dateStart)} -{" "}
+                    {entry.data.dateEnd === "Current" ? "Current" : formatDate(entry.data.dateEnd)}
+                  </div>
+                  <div class="text-lg text-zinc-800 dark:text-zinc-100">{entry.data.company}</div>
+                  <div class="text-zinc-500 dark:text-zinc-400">{entry.data.role}</div>
+                  <div class="prose dark:prose-invert">
+                    <entry.Content />
+                  </div>
+                </li>
+              ))}
+          </ul>
+        </div>
       </div>
     </aside>
   </Container>
