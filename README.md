@@ -1,11 +1,156 @@
-# Introducing [Astro Micro 🔬](https://astro-micro.vercel.app/)
+# Oh, hey. It's my new site.
 
-Astro Micro is an accessible theme for Astro. It's a fork of [Mark Horn's](https://github.com/markhorn-dev) popular theme [Astro Nano](https://astro-nano-demo.vercel.app/). Like Nano, Micro comes with zero frameworks installed.
+# jeffcamacho.com, where I come to brain dump and talk about stuff.
 
-Micro adds features like [Pagefind](https://pagefind.app) for search, [Giscus](https://giscus.app) for comments, and more. For a full list of changes, see this [blog post](https://astro-micro.vercel.app/blog/00-micro-changelog).
-
-Micro still comes with everything great about Nano — full type safety, a sitemap, an RSS feed, and Markdown + MDX support. Styled with TailwindCSS and preconfigured with system, light, and dark themes.
+A minimalist personal website template built with Astro. Forked from [Mark Horn's](https://github.com/markhorn-dev) [Astro Nano](https://astro-nano-demo.vercel.app/) theme, enhanced with additional features while maintaining its lightweight core.
 
 ---
 
-![astro-micro-image](https://github.com/trevortylerlee/astro-micro/assets/49603972/ec5bc96a-3e96-4af1-a182-7711b54c5ef6)
+## 🚀 Features
+
+### Core Features (from Nano)
+- Full TypeScript support
+- Automatic sitemap generation
+- RSS feed
+- Markdown & MDX support
+- TailwindCSS styling
+- System, light, and dark theme support
+
+### Enhanced Features
+- [Pagefind](https://pagefind.app) integration for site search
+- [Giscus](https://giscus.app) comments system
+- Lightbox for images
+- Dynamic status badges for project tracking
+- Comprehensive content management system
+
+---
+
+## 📦 Content Management
+
+The site uses a structured configuration system (`config.ts`) to manage:
+- Work experience
+- Educational background
+- Blog posts
+- Project portfolios
+
+Each content type supports various metadata fields and optional features like:
+- Draft status
+- Project linking
+- Timeline tracking
+- Status indicators
+
+---
+
+## 💻 Development Features
+
+### Status Badges
+- Color-coded status indicators
+- Automatic light/dark mode adjustment
+- Status options: "To Do," "Doing," "Done," "OBE" (Overcome by Events)
+
+### Image Handling
+- Built-in lightbox for image galleries
+- Shield.io badge support
+- Responsive image optimization
+
+---
+
+## 🛠 Getting Started
+
+1. Clone the repository
+```bash
+git clone [repository-url]
+cd [repository-name]
+```
+
+2. Install dependencies
+```bash
+npm install
+```
+
+3. Start development server
+```bash
+npm run dev
+```
+
+4. Build for production
+```bash
+npm run build
+```
+
+---
+
+## ⚙️ Configuration
+
+1. Update site settings in `src/consts.ts`
+2. Configure content types in `src/config.ts`
+3. Customize themes in `tailwind.config.cjs`
+
+---
+
+## 📝 Content Creation
+
+### Blog Posts
+```markdown
+---
+title: "Your Post Title"
+description: "Post description"
+date: "YYYY-MM-DD"
+linkedProject: "/projects/project-slug"  # optional
+draft: false
+---
+```
+
+### Projects
+```markdown
+---
+title: "Project Title"
+description: "Project description"
+startDate: "YYYY-MM-DD"
+endDate: "YYYY-MM-DD"
+demoURL: "https://demo-url"  # optional
+repoURL: "https://repo-url"  # optional
+draft: false
+---
+```
+
+---
+
+## 🎨 Styling
+
+The template uses TailwindCSS for styling with:
+- Responsive design
+- Dark/light mode support
+- Custom component themes
+- Accessible color schemes
+
+---
+
+## 📱 Responsive Design
+
+- Mobile-first approach
+- Adaptive layouts
+- Optimized for all screen sizes
+
+---
+
+## 🔍 SEO
+
+- Automated meta tags
+- Sitemap generation
+- RSS feed
+- Structured data
+
+---
+
+## 📄 License
+
+MIT License - feel free to modify and reuse this template for your own projects.
+
+---
+
+## 🙏 Acknowledgments
+
+- Based on [Astro Nano](https://astro-nano-demo.vercel.app/) by [Mark Horn](https://github.com/markhorn-dev)
+- Enhanced with additional features while maintaining the original minimalist approach
+- My patience for sweating through this.
