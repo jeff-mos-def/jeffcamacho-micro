@@ -1,7 +1,7 @@
 ---
 title: "LinkedIn Automation, Pt. 1"
 description: "Being social on social media... automatically."
-date: "2024-11-12"
+date: "2024-11-17"
 linkedProject: "/projects/liauto"
 draft: false
 ---
