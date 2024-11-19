@@ -15,13 +15,13 @@ This project is a personal pet project to explore the power of automation and AI
 
 The system combines multiple technologies to deliver a polished and professional social media presence while enabling me to learn and grow in several key areas:
 
-- API Integration: Utilizing services like newsapi.org, Perplexity AI, and OpenAI to create an end-to-end automated pipeline.
-- Automation Expertise: Building workflows in make.com to manage complex scenarios efficiently.
-- Scripting and Scheduling: Leveraging Google Apps Script to fetch and filter news content regularly without duplication.
-- Content Optimization: Exploring AI-driven tools to summarize and adapt content specifically for LinkedIn audiences.
-- Social Media Engagement: Gaining insights into what drives engagement and how to craft posts that resonate with professional networks.
-- Data Management: Designing pipelines that ensure relevance, accuracy, and consistency in output.
-- Scalable Solutions: Learning how to build a system that can evolve with new tools and platforms.
+- **API Integration:** Utilizing services like newsapi.org, Perplexity AI, and OpenAI to create an end-to-end automated pipeline.
+- **Automation Expertise:** Building workflows in make.com to manage complex scenarios efficiently.
+- **Scripting and Scheduling:** Leveraging Google Apps Script to fetch and filter news content regularly without duplication.
+- **Content Optimization:** Exploring AI-driven tools to summarize and adapt content specifically for LinkedIn audiences.
+- **Social Media Engagement:** Gaining insights into what drives engagement and how to craft posts that resonate with professional networks.
+- **Data Management:** Designing pipelines that ensure relevance, accuracy, and consistency in output.
+- **Scalable Solutions:** Learning how to build a system that can evolve with new tools and platforms.
 
 This project is about understanding how to leverage modern technology to create meaningful connections and insights in a professional space. Along the way, it provides an opportunity to deepen knowledge in automation, AI, and social media strategy.
 
@@ -47,4 +47,4 @@ I've recently migrated over to [BlueSky](https://bsky.app/profile/jeff-mos-def.b
 
 ## Progress Logs
 
-TBD
+- [LinkedIn Automation, Pt. 1](http://localhost:4321/blog/01-liauto-pt1)

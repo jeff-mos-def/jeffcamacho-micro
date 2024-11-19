@@ -1,0 +1,207 @@
+// src/components/Lightbox.astro
+<div id="lightbox" class="lightbox hidden fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-90">
+  <button id="close-lightbox" class="absolute top-4 right-4 text-white text-2xl">&times;</button>
+  <button id="prev-image" class="absolute left-4 text-white text-4xl">&larr;</button>
+  <button id="next-image" class="absolute right-4 text-white text-4xl">&rarr;</button>
+  <img id="lightbox-image" src="" alt="" class="max-h-[90vh] max-w-[90vw] object-contain scale-95 opacity-0 cursor-pointer">
+</div>
+
+<script>
+  class LightboxHandler {
+    private lightbox: HTMLElement;
+    private lightboxImg: HTMLImageElement;
+    private closeBtn: HTMLButtonElement;
+    private prevBtn: HTMLButtonElement;
+    private nextBtn: HTMLButtonElement;
+    private images: HTMLImageElement[];
+    private currentIndex: number;
+    private imageClickHandlers: Map<HTMLImageElement, (e: MouseEvent) => void>;
+
+    constructor() {
+      this.lightbox = document.getElementById('lightbox') as HTMLElement;
+      this.lightboxImg = document.getElementById('lightbox-image') as HTMLImageElement;
+      this.closeBtn = document.getElementById('close-lightbox') as HTMLButtonElement;
+      this.prevBtn = document.getElementById('prev-image') as HTMLButtonElement;
+      this.nextBtn = document.getElementById('next-image') as HTMLButtonElement;
+      this.images = [];
+      this.currentIndex = 0;
+      this.imageClickHandlers = new Map();
+
+      this.init();
+    }
+
+    private init(): void {
+      this.setupImages();
+
+      document.addEventListener('astro:page-load', () => {
+        this.setupImages();
+      });
+    }
+
+    private setupImages(): void {
+      if (this.imageClickHandlers.size > 0) {
+        this.imageClickHandlers.forEach((handler, img) => {
+          img.removeEventListener('click', handler);
+        });
+        this.imageClickHandlers.clear();
+      }
+
+      this.images = Array.from(document.querySelectorAll('article img')) as HTMLImageElement[];
+      
+      if (this.images.length === 0) return;
+
+      this.images.forEach((img: HTMLImageElement, index: number) => {
+        img.style.cursor = 'pointer';
+        const handler = (e: MouseEvent) => {
+          e.preventDefault();
+          e.stopPropagation();
+          this.openLightbox(index);
+        };
+        this.imageClickHandlers.set(img, handler);
+        img.addEventListener('click', handler);
+        
+        const parentAnchor = img.closest('a');
+        if (parentAnchor) {
+          parentAnchor.style.pointerEvents = 'none';
+          img.style.pointerEvents = 'auto';
+        }
+      });
+
+      if (!this.lightbox.dataset.initialized) {
+        this.setupEventListeners();
+        this.lightbox.dataset.initialized = 'true';
+      }
+    }
+
+    private setupEventListeners(): void {
+      this.lightboxImg.addEventListener('click', (e: MouseEvent) => {
+        e.preventDefault();
+        e.stopPropagation();
+        this.closeLightbox();
+      });
+
+      this.closeBtn.addEventListener('click', (e: MouseEvent) => {
+        e.preventDefault();
+        e.stopPropagation();
+        this.closeLightbox();
+      });
+      
+      this.prevBtn.addEventListener('click', (e: MouseEvent) => {
+        e.preventDefault();
+        e.stopPropagation();
+        this.showPrevImage();
+      });
+      
+      this.nextBtn.addEventListener('click', (e: MouseEvent) => {
+        e.preventDefault();
+        e.stopPropagation();
+        this.showNextImage();
+      });
+
+      this.lightbox.addEventListener('click', (e: MouseEvent) => {
+        if (e.target === this.lightbox) {
+          e.preventDefault();
+          e.stopPropagation();
+          this.closeLightbox();
+        }
+      });
+
+      document.addEventListener('keydown', (e: KeyboardEvent) => {
+        if (!this.lightbox.classList.contains('hidden')) {
+          switch(e.key) {
+            case 'Escape':
+              this.closeLightbox();
+              break;
+            case 'ArrowLeft':
+              this.showPrevImage();
+              break;
+            case 'ArrowRight':
+              this.showNextImage();
+              break;
+          }
+        }
+      });
+    }
+
+    private openLightbox(index: number): void {
+      this.currentIndex = index;
+      this.lightbox.classList.remove('hidden');
+      this.updateImage();
+    }
+
+    private closeLightbox(): void {
+      this.lightboxImg.classList.remove('scale-100', 'opacity-100');
+      this.lightboxImg.classList.add('scale-95', 'opacity-0');
+      setTimeout(() => {
+        this.lightbox.classList.add('hidden');
+      }, 300);
+    }
+
+    private showPrevImage(): void {
+      this.lightboxImg.classList.remove('scale-100', 'opacity-100');
+      this.lightboxImg.classList.add('scale-95', 'opacity-0');
+      
+      setTimeout(() => {
+        this.currentIndex = (this.currentIndex - 1 + this.images.length) % this.images.length;
+        this.updateImage();
+      }, 200);
+    }
+
+    private showNextImage(): void {
+      this.lightboxImg.classList.remove('scale-100', 'opacity-100');
+      this.lightboxImg.classList.add('scale-95', 'opacity-0');
+      
+      setTimeout(() => {
+        this.currentIndex = (this.currentIndex + 1) % this.images.length;
+        this.updateImage();
+      }, 200);
+    }
+
+    private updateImage(): void {
+      const currentImg = this.images[this.currentIndex];
+      
+      this.lightboxImg.classList.remove('scale-100', 'opacity-100');
+      this.lightboxImg.classList.add('scale-95', 'opacity-0');
+      
+      this.lightboxImg.src = currentImg.src;
+      this.lightboxImg.alt = currentImg.alt;
+      
+      setTimeout(() => {
+        this.lightboxImg.classList.remove('scale-95', 'opacity-0');
+        this.lightboxImg.classList.add('scale-100', 'opacity-100');
+      }, 50);
+      
+      this.prevBtn.style.display = this.images.length > 1 ? 'block' : 'none';
+      this.nextBtn.style.display = this.images.length > 1 ? 'block' : 'none';
+    }
+  }
+
+  // Initialize lightbox immediately
+  new LightboxHandler();
+
+  // Also initialize on view transitions
+  document.addEventListener('astro:page-load', () => {
+    new LightboxHandler();
+  });
+</script>
+
+<style>
+  .lightbox {
+    transition: opacity 0.3s ease-in-out;
+  }
+
+  .lightbox img {
+    transition: all 0.3s ease-in-out;
+  }
+
+  #close-lightbox, #prev-image, #next-image {
+    cursor: pointer;
+    padding: 1rem;
+    opacity: 0.8;
+    transition: opacity 0.2s;
+  }
+
+  #close-lightbox:hover, #prev-image:hover, #next-image:hover {
+    opacity: 1;
+  }
+</style>

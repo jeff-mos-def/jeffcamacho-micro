@@ -1,5 +1,5 @@
 ---
-title: "Monthly Agile Workshop - Dec24"
+title: "Monthly Agile Workshop - 17-Dec-24"
 description: "Drop in for an Agile Workshop."
 startDate: "11/18/2024"
 endDate: "12/17/2024"  # can be a date or "TBD"
@@ -9,9 +9,7 @@ draft: false  # optional, defaults to false
 
 <br/><br/>
 
-<a href="https://www.linkedin.com/company/thekeyteamdomingo/posts/" target="_blank">
-    <img src="/img/LIAWS.jpg" alt="LinkedIn Agile Workshop">
-</a>
+<img src="/img/LIAWS.jpg" alt="LinkedIn Agile Workshop">
 
 <p><em>The KEY Community: Agile Workshop</em></p>
 
