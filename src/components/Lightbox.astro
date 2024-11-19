@@ -45,7 +45,7 @@
         this.imageClickHandlers.clear();
       }
 
-      this.images = Array.from(document.querySelectorAll('article img')) as HTMLImageElement[];
+      this.images = Array.from(document.querySelectorAll('article img:not([src*="shields.io"])')) as HTMLImageElement[];
       
       if (this.images.length === 0) return;
 
