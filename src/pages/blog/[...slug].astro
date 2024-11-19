@@ -64,6 +64,7 @@ const { Content, headings } = await post.render();
 const linkedProject = post.data.linkedProject
   ? await getProjectData(post.data.linkedProject)
   : null;
+const projectBoardLink = post.data.projectBoard ?? null;
 ---
 
 <Layout title={post.data.title} description={post.data.description}>
@@ -91,7 +92,15 @@ const linkedProject = post.data.linkedProject
             {linkedProject.title}
           </a>
         </div>
-      )}      
+      )}
+      {projectBoardLink && (
+        <div class="animate mt-4">
+          <span class="font-semibold">Project Board:</span>{" "}
+          <a href={projectBoardLink} class="text-blue-500 hover:underline" target="_blank" rel="noopener noreferrer">
+            GitHub Project Board
+          </a>
+        </div>
+      )}
     </div>
     {headings.length > 0 && <TableOfContents headings={headings} />}
     <article class="animate blog-content">

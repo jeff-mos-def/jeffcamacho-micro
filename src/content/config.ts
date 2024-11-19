@@ -33,6 +33,7 @@ const blog = defineCollection({
     date: z.coerce.date(),
     draft: z.boolean().optional(),
     linkedProject: z.string().optional(), // Optional field to link a blog post to a project
+    projectBoard: z.string().optional(), // Optional field to link a blog post to a GitHub Project Board
   }),
 });
 
