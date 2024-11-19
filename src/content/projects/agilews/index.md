@@ -13,7 +13,7 @@ draft: false  # optional, defaults to false
     <img src="/img/LIAWS.jpg" alt="LinkedIn Agile Workshop">
 </a>
 
-<p><em>The KEY Community: LinkedIn Agile Workshop</em></p>
+<p><em>The KEY Community: Agile Workshop</em></p>
 
 ---
 
