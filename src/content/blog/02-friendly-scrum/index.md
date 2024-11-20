@@ -7,6 +7,16 @@ date: "2024-11-19"
 draft: false
 ---
 
+---
+
+<blockquote class="bluesky-embed" data-bluesky-uri="at://did:plc:p7ufep6w7td4b3gg7eijyhmm/app.bsky.feed.post/3lbdxszoyd226" data-bluesky-cid="bafyreie3qojzbax2cjter6pme2wegqgyxc2r5f7a7duqxdd4ycdowlqsaq"><p lang="en">When empathy meets agile: A gentler approach to building stronger, more connected Scrum teams.
+
+jeffcamacho.com/blog/02-frie...
+
+#agile #scrummaster #leadership<br><br><a href="https://bsky.app/profile/did:plc:p7ufep6w7td4b3gg7eijyhmm/post/3lbdxszoyd226?ref_src=embed">[image or embed]</a></p>&mdash; jeff-mos-def (<a href="https://bsky.app/profile/did:plc:p7ufep6w7td4b3gg7eijyhmm?ref_src=embed">@jeff-mos-def.bsky.social</a>) <a href="https://bsky.app/profile/did:plc:p7ufep6w7td4b3gg7eijyhmm/post/3lbdxszoyd226?ref_src=embed">November 19, 2024 at 9:07 PM</a></blockquote><script async src="https://embed.bsky.app/static/embed.js" charset="utf-8"></script>
+
+---
+
 ## What the heck is a friendly Scrum Master?
 
 Let's be real - most Scrum training focuses on the mechanics. Sprint planning, daily standups, retrospectives... you know the drill. But here's what they don't tell you in those certification courses: being a great Scrum Master is as much about emotional intelligence as it is about managing JIRA boards... or your favorite flavor of work capture.

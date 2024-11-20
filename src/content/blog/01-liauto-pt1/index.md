@@ -7,11 +7,16 @@ linkedProject: "/projects/liauto"
 draft: false
 ---
 
-## Introduction
+---
 
 <blockquote class="bluesky-embed" data-bluesky-uri="at://did:plc:p7ufep6w7td4b3gg7eijyhmm/app.bsky.feed.post/3lbciscqj4s2t" data-bluesky-cid="bafyreidrwxojflvj2skwdtrq4qf72dzbawf2dkm7uamqwogrqnxuicbnr4"><p lang="en">Continuing on w/ my current mindset of building in public, here&#x27;s part 1 of my LinkedIn automation test and implementation. So far, I&#x27;m gathering news sources to act as current events / news topics. More to come. 😉
 
 jeffcamacho.com/blog/01-liau...<br><br><a href="https://bsky.app/profile/did:plc:p7ufep6w7td4b3gg7eijyhmm/post/3lbciscqj4s2t?ref_src=embed">[image or embed]</a></p>&mdash; jeff-mos-def (<a href="https://bsky.app/profile/did:plc:p7ufep6w7td4b3gg7eijyhmm?ref_src=embed">@jeff-mos-def.bsky.social</a>) <a href="https://bsky.app/profile/did:plc:p7ufep6w7td4b3gg7eijyhmm/post/3lbciscqj4s2t?ref_src=embed">November 19, 2024 at 7:05 AM</a></blockquote><script async src="https://embed.bsky.app/static/embed.js" charset="utf-8"></script>
+
+---
+
+
+## Introduction
 
 Hey, so... I'm working to make myself known in the professiona world... awesome...
 
