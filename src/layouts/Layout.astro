@@ -3,7 +3,6 @@ import Head from "@components/Head.astro";
 import Header from "@components/Header.astro";
 import Footer from "@components/Footer.astro";
 import PageFind from "@components/PageFind.astro";
-import GoogleAnalytics from "@components/GoogleAnalytics.astro";
 import { SITE } from "@consts";
 
 type Props = {
@@ -12,13 +11,26 @@ type Props = {
 };
 
 const { title, description } = Astro.props;
+
+// Replace this with your actual Google Analytics ID
+const GOOGLE_ANALYTICS_ID = "G-NQ6ZWFT1NH";
 ---
 
 <!doctype html>
 <html lang="en">
   <head>
     <Head title={`${title} | ${SITE.TITLE}`} description={description} />
-    <GoogleAnalytics measurementId="G-NQ6ZWFT1NH" />
+    <!-- Google Analytics -->
+    <script src={`https://www.googletagmanager.com/gtag/js?id=${GOOGLE_ANALYTICS_ID}`}></script>
+    <script define:vars={{ measurementId: GOOGLE_ANALYTICS_ID }}>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag('js', new Date());
+      gtag('config', measurementId);
+      console.log('Google Analytics initialized with ID:', measurementId);
+    </script>
   </head>
   <body>
     <Header />
