@@ -3,8 +3,13 @@ const { measurementId } = Astro.props;
 ---
 
 <!-- Google tag (gtag.js) -->
-<script src={`https://www.googletagmanager.com/gtag/js?id=${measurementId}`}></script>
 <script define:vars={{ measurementId }}>
+  // Load the script programmatically
+  const script = document.createElement('script');
+  script.src = `https://www.googletagmanager.com/gtag/js?id=${measurementId}`;
+  script.async = true;
+  document.head.appendChild(script);
+
   window.dataLayer = window.dataLayer || [];
   function gtag() {
     dataLayer.push(arguments);
