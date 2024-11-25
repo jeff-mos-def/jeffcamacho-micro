@@ -21,7 +21,7 @@ const GOOGLE_ANALYTICS_ID = "G-NQ6ZWFT1NH";
   <head>
     <Head title={`${title} | ${SITE.TITLE}`} description={description} />
     <!-- Google Analytics -->
-    <script define:vars={{ GOOGLE_ANALYTICS_ID }}>
+    <script define:vars={{ GOOGLE_ANALYTICS_ID }} is:inline>
       // Load the script programmatically
       const script = document.createElement('script');
       script.src = `https://www.googletagmanager.com/gtag/js?id=${GOOGLE_ANALYTICS_ID}`;
