@@ -1,6 +1,6 @@
 ---
 title: "The FrankenPlex"
-description: "Transformed a Dell Optiplex 3040 e-waste product into a desktop daily driver with upgrades."
+description: "Transformed a Dell Optiplex 3040 e-waste product into a desktop daily driver."
 startDate: "03/01/2024"
 endDate: "04/20/2024"  # can be a date or "TBD"
 #demoURL: "https://example.com"  # optional
