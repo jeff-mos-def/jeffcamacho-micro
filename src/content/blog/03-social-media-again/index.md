@@ -19,7 +19,7 @@ jeffcamacho.com/blog/02-soci...
 
 ## Why I’m Moving to Bluesky
 
-Let’s be honest—social media hasn’t exactly felt fun for a while now. For me, X (formerly Twitter) was never appealing enough to really dive into. Between the endless monetization schemes and the constant drama, it felt like more of a headache than a place to connect. 
+Social media hasn’t exactly felt fun for a while now. For me, X (formerly Twitter) was never appealing enough to really dive into. Between the endless monetization schemes and the constant drama, it felt like more of a headache than a place to connect. 
 
 Bluesky, though, feels different, reminding me *kind of* like Reddit in my college days. People hanging out and sharing news and pet pics.
 
