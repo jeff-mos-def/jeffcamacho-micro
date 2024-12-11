@@ -33,7 +33,7 @@ As the exam integrates Agile practices, my day-to-day work with frameworks like 
 
 ## Where I’m At
 
-- **Study Progress**: Continuing practice exams and refining notes. Resources like [Andrew Ramdayal’s course](https://tiaexams.com/course/pmpsimplifiedcourse-bundle) and PMBOK 7 remain central to my study process. I've also got some practice tests through Andrews course and other material through Percipio, which I will be getting into later.
+- **Study Progress**: Continuing practice exams and refining notes. Resources like [Andrew Ramdayal’s course](https://tiaexams.com/course/pmpsimplifiedcourse-bundle) and PMBOK 7 remain central to my study process. I've also got some practice tests through Andrew's course and other material through Percipio, which I will be getting into later.
 - **Application**: Slowly documenting my project experience, an unexpectedly meticulous step. I've gotten some help from a collegue I work with in the application process. His insight really helped me see that *I'm probably over thinking my application*. Very typical of me.
 - **Reflections on Agile & PMP**: The overlap of methodologies has deepened my understanding of how to apply both traditional and adaptive techniques in project work.
 
