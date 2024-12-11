@@ -7,6 +7,14 @@ linkedProject: "/projects/pmp"
 draft: false
 ---
 
+---
+
+<blockquote class="bluesky-embed" data-bluesky-uri="at://did:plc:p7ufep6w7td4b3gg7eijyhmm/app.bsky.feed.post/3lcyrubt4kc22" data-bluesky-cid="bafyreidjo6v2mc2uj4giwodih2bteawaq52cupcx7v67ctda44hltst2cm"><p lang="en">And the path to the PMP continues... Wish me luck.
+
+jeffcamacho.com/blog/05-pmp-...<br><br><a href="https://bsky.app/profile/did:plc:p7ufep6w7td4b3gg7eijyhmm/post/3lcyrubt4kc22?ref_src=embed">[image or embed]</a></p>&mdash; jeff (<a href="https://bsky.app/profile/did:plc:p7ufep6w7td4b3gg7eijyhmm?ref_src=embed">@jeffcamacho.com</a>) <a href="https://bsky.app/profile/did:plc:p7ufep6w7td4b3gg7eijyhmm/post/3lcyrubt4kc22?ref_src=embed">December 10, 2024 at 9:11 PM</a></blockquote><script async src="https://embed.bsky.app/static/embed.js" charset="utf-8"></script>
+
+---
+
 ## The journey continues...
 
 In my continued study for the PMP certification, I’ve been coming across materials that don’t just regurgitate project management mechanics, but focus on the mindset and principles of effective leadership. 
