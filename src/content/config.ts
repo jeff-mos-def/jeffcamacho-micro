@@ -7,7 +7,7 @@ const work = defineCollection({
     role: z.string(),
     dateStart: z.coerce.date(),  // Allows coercion for full dates
     dateEnd: z.union([z.coerce.date(), z.number(), z.literal('Current')]),  // Supports dates, years, and "Current"
-    type: z.enum(['work', 'entrepreneurial']),  // Categorization field
+    type: z.enum(['work', 'entrepreneurial', 'volunteer']),  // Categorization field
   }),
 });
 
