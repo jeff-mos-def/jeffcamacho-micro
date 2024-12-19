@@ -1,0 +1,25 @@
+<style>
+    .calendar-container {
+      background-color: #121212; /* Dark background */
+      padding: 1rem;            /* Optional padding for spacing */
+      border-radius: 8px;       /* Rounded corners */
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4); /* Optional shadow for better contrast */
+    }
+  
+    .calendar-container iframe {
+      filter: invert(1) hue-rotate(180deg); /* Invert to create dark theme */
+      width: 100%;                         /* Full width */
+      height: 600px;                       /* Adjust height as needed */
+      border: none;                        /* Remove iframe border */
+    }
+  </style>
+  
+  <div class="calendar-container">
+    <iframe 
+      src="https://calendar.google.com/calendar/embed?src=jeff%40jeffcamacho.com&ctz=America%2FChicago" 
+      frameborder="0" 
+      scrolling="no">
+    </iframe>
+  </div>
+  

@@ -3,7 +3,7 @@ title: "Monthly Agile Workshop - 17-Dec-24"
 description: "Drop in for an Agile Workshop."
 startDate: "11/18/2024"
 endDate: "12/17/2024"  # can be a date or "TBD"
-status: "Doing"  # "To Do", "Doing", "Done", or "OBE"
+status: "Done"  # "To Do", "Doing", "Done", or "OBE"
 draft: false  # optional, defaults to false
 ---
 

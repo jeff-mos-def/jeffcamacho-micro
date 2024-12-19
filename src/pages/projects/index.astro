@@ -4,6 +4,7 @@ import Layout from "@layouts/Layout.astro";
 import Container from "@components/Container.astro";
 import ArrowCard from "@components/ArrowCard.astro";
 import { PROJECTS } from "@consts";
+import GoogleCalendar from "@components/GoogleCalendar.astro"; 
 
 const projects = (await getCollection("projects"))
   .filter((project) => !project.data.draft)
@@ -12,6 +13,8 @@ const projects = (await getCollection("projects"))
 
 <Layout title={PROJECTS.TITLE} description={PROJECTS.DESCRIPTION}>
   <Container>
+    <!-- <h1>My Events</h1>
+    <GoogleCalendar /> -->
     <aside data-pagefind-ignore>
       <div class="space-y-10">
         <div class="animate font-semibold text-black dark:text-white">
@@ -30,3 +33,4 @@ const projects = (await getCollection("projects"))
     </aside>
   </Container>
 </Layout>
+
