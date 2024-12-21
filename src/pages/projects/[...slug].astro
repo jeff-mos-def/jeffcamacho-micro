@@ -8,7 +8,8 @@ import BackToPrevious from "@components/BackToPrevious.astro";
 import Link from "@components/Link.astro";
 import TableOfContents from "@components/TableOfContents.astro";
 import Giscus from "@components/Giscus.astro";
-import Lightbox from "@components/Lightbox.astro";  // Add this import
+import Lightbox from "@components/Lightbox.astro";
+import StatusBadge from "@components/StatusBadge.astro"; // Import StatusBadge
 
 export async function getStaticPaths() {
   const projects = (await getCollection("projects"))
@@ -66,6 +67,10 @@ const { Content, headings } = await project.render();
             ? 'TBD' 
             : project.data.endDate && <FormattedDate date={project.data.endDate} />
         }
+      </div>
+      <!-- Use the StatusBadge Component -->
+      <div class="mt-2">
+        <StatusBadge status={project.data.status} />
       </div>
     </div>
     <TableOfContents headings={headings} />

@@ -4,33 +4,94 @@ import Layout from "@layouts/Layout.astro";
 import Container from "@components/Container.astro";
 import ArrowCard from "@components/ArrowCard.astro";
 import { PROJECTS } from "@consts";
-import GoogleCalendar from "@components/GoogleCalendar.astro"; 
 
+// Fetch projects and blogs
 const projects = (await getCollection("projects"))
   .filter((project) => !project.data.draft)
   .sort((a, b) => b.data.startDate.valueOf() - a.data.startDate.valueOf());
+
+const blogs = (await getCollection("blog"))
+  .filter((blog) => !blog.data.draft);
+
+// Group projects by status
+const groupedProjects = {
+  "Doing": projects.filter((project) => project.data.status === "Doing"),
+  "To Do": projects.filter((project) => project.data.status === "To Do"),
+  "Done": projects.filter((project) => project.data.status === "Done"),
+  "Backlog": projects.filter((project) => project.data.status === "Backlog"),
+  "OBE": projects.filter((project) => project.data.status === "OBE"),
+};
+
+const tableOfContents = [
+  { title: "Doing", id: "doing" },
+  { title: "To Do", id: "to-do" },
+  { title: "Done", id: "done" },
+  { title: "Backlog", id: "backlog" },
+  { title: "OBE", id: "obe" },
+];
 ---
 
 <Layout title={PROJECTS.TITLE} description={PROJECTS.DESCRIPTION}>
   <Container>
-    <!-- <h1>My Events</h1>
-    <GoogleCalendar /> -->
-    <aside data-pagefind-ignore>
-      <div class="space-y-10">
-        <div class="animate font-semibold text-black dark:text-white">
-          Projects
-        </div>
-        <ul class="animate not-prose flex flex-col gap-4">
-          {
-            projects.map((project) => (
-              <li>
-                <ArrowCard entry={project} />
-              </li>
-            ))
-          }
+    {/* Table of Contents */}
+    <details open class="animate rounded-lg border border-black/15 dark:border-white/20">
+      <summary class="cursor-pointer rounded-t-lg px-3 py-1.5 font-medium transition-colors hover:bg-black/5 dark:hover:bg-white/5 bg-black/5 dark:bg-white/5">
+        Table of Contents
+      </summary>
+      <nav>
+        <ul class="py-3">
+          {tableOfContents.map((item) => (
+            <li class="list-inside list-disc px-6 py-1.5 text-sm">
+              <a href={`#${item.id}`} target="_self" class="inline-block decoration-black/30 dark:decoration-white/30 hover:decoration-black/50 focus-visible:decoration-black/50 dark:hover:decoration-white/50 dark:focus-visible:decoration-white/50 text-current hover:text-black focus-visible:text-black dark:hover:text-white dark:focus-visible:text-white transition-colors duration-300 ease-in-out underline underline-offset-[3px]">
+                {item.title}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </nav>
+    </details>
+
+    {/* Remove unnecessary spacing */}
+    <hr class="border-t border-zinc-200 dark:border-zinc-700" />
+
+    {/* Render projects grouped by status */}
+    {Object.entries(groupedProjects).map(([status, projects], index) => (
+      <div id={status.toLowerCase().replace(" ", "-")} class="mt-8">
+        {/* Divider before each section (except the first one) */}
+        {index > 0 && <hr class="border-t border-zinc-200 dark:border-zinc-700 mt-8" />}
+        <h2 class="animate text-lg font-semibold text-black dark:text-white underline underline-offset-4 mt-4">
+          {status}
+        </h2>
+        <ul class="animate not-prose flex flex-col gap-4 mt-4">
+          {projects.map((project) => (
+            <li>
+              {/* Render the project card */}
+              <ArrowCard entry={project} />
+
+              {/* Render linked blog posts */}
+              <ul class="space-y-2 mt-2">
+                {blogs
+                  .filter((blog) => blog.data.linkedProject === project.slug)
+                  .map((blog) => (
+                    <li>
+                      <a href={`/blog/${blog.slug}`} class="text-blue-500 underline">
+                        {blog.data.title}
+                      </a>
+                      <div class="text-sm text-zinc-500 dark:text-zinc-400">
+                        Published: {new Date(blog.data.date).toLocaleDateString("en-US", {
+                          month: "short",
+                          day: "numeric",
+                          year: "numeric",
+                        })}
+                      </div>
+                    </li>
+                  ))}
+              </ul>
+            </li>
+          ))}
         </ul>
       </div>
-    </aside>
+    ))}
+    <hr class="border-t border-zinc-200 dark:border-zinc-700 mt-8" />
   </Container>
 </Layout>
-
