@@ -41,7 +41,7 @@ If you've known me personally for awhile, you've known that I've been *talking* 
   - Same as above.
 - ⚙️ Create detailed project experience descriptions
   - This too...
-- ❌ Submit PMP application
+- ✅ Submit PMP application
 - ❌ Pass PMI application review
 
 ## Exam
