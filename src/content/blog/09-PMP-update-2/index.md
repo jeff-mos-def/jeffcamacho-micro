@@ -9,9 +9,11 @@ draft: false
 
 ---
 
-<img src="/img/PMP_App.jpg" alt="My PMP Application Submission">
+<blockquote class="bluesky-embed" data-bluesky-uri="at://did:plc:p7ufep6w7td4b3gg7eijyhmm/app.bsky.feed.post/3lf43mfpgn227" data-bluesky-cid="bafyreihd5cpl7l3vwes6p5bl6b4375dum6cwgv7nf2pgnawe6qclj6yida"><p lang="en">Continuing my work in public trend for the year.
 
-<p><em>My PMP Application Submission</em></p>
+First step in my career plan this year: Application to the PMP!
+
+jeffcamacho.com/blog/09-pmp-...<br><br><a href="https://bsky.app/profile/did:plc:p7ufep6w7td4b3gg7eijyhmm/post/3lf43mfpgn227?ref_src=embed">[image or embed]</a></p>&mdash; jeff (<a href="https://bsky.app/profile/did:plc:p7ufep6w7td4b3gg7eijyhmm?ref_src=embed">@jeffcamacho.com</a>) <a href="https://bsky.app/profile/did:plc:p7ufep6w7td4b3gg7eijyhmm/post/3lf43mfpgn227?ref_src=embed">January 6, 2025 at 3:34 PM</a></blockquote><script async src="https://embed.bsky.app/static/embed.js" charset="utf-8"></script>
 
 ---
 
