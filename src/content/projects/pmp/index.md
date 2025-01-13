@@ -35,20 +35,20 @@ If you've known me personally for awhile, you've known that I've been *talking* 
 
 - ✅ Gather proof of educational background (Bachelor's degree or higher)
   - Done.
-- ⚙️ Document 36 months of project management experience
+- ✅ Document 36 months of project management experience
   - Reviewing past work history. Not as easy as I thought it'd be.
-- ⚙️ Record 4,500 hours leading projects
+- ✅ Record 4,500 hours leading projects
   - Same as above.
-- ⚙️ Create detailed project experience descriptions
+- ✅ Create detailed project experience descriptions
   - This too...
 - ✅ Submit PMP application
-- ❌ Pass PMI application review
+- ✅ Pass PMI application review
 
 ## Exam
 
 - ❌ Schedule PMP exam
 - ❌ Complete mock exams with >80% score
-- ❌ Prepare exam day materials
+- ✅ Prepare exam materials
 - ❌ Pass PMP exam
 
 ## Work in Public
