@@ -9,7 +9,7 @@ draft: false
 
 ---
 
-<blockquote class="bluesky-embed" data-bluesky-uri="at://did:plc:p7ufep6w7td4b3gg7eijyhmm/app.bsky.feed.post/3lg7b32ftu22q" data-bluesky-cid="bafyreid2kfii3shusqer2iqxcse7f76qm2vgg6leob23dsh4sg2vttwmdi"><p lang="en">Mock exams, reading, and flashcards are on the menu this week for my PMP studying.<br><br><a href="https://bsky.app/profile/did:plc:p7ufep6w7td4b3gg7eijyhmm/post/3lg7b32ftu22q?ref_src=embed">[image or embed]</a></p>&mdash; jeff (<a href="https://bsky.app/profile/did:plc:p7ufep6w7td4b3gg7eijyhmm?ref_src=embed">@jeffcamacho.com</a>) <a href="https://bsky.app/profile/did:plc:p7ufep6w7td4b3gg7eijyhmm/post/3lg7b32ftu22q?ref_src=embed">January 20, 2025 at 3:15 PM</a></blockquote><script async src="https://embed.bsky.app/static/embed.js" charset="utf-8"></script>
+<blockquote class="bluesky-embed" data-bluesky-uri="at://did:plc:p7ufep6w7td4b3gg7eijyhmm/app.bsky.feed.post/3lg7bbohkgk25" data-bluesky-cid="bafyreigsmzistco2vrv7dugi3qhe4kiidettkn6wv4g2hd7pozwuwp6lzm"><p lang="en">Mock exams, reading, and flashcards are on the menu this week for my PMP studying.<br><br><a href="https://bsky.app/profile/did:plc:p7ufep6w7td4b3gg7eijyhmm/post/3lg7bbohkgk25?ref_src=embed">[image or embed]</a></p>&mdash; jeff (<a href="https://bsky.app/profile/did:plc:p7ufep6w7td4b3gg7eijyhmm?ref_src=embed">@jeffcamacho.com</a>) <a href="https://bsky.app/profile/did:plc:p7ufep6w7td4b3gg7eijyhmm/post/3lg7bbohkgk25?ref_src=embed">January 20, 2025 at 3:19 PM</a></blockquote><script async src="https://embed.bsky.app/static/embed.js" charset="utf-8"></script>
 
 ---
 
