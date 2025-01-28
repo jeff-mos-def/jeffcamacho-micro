@@ -27,3 +27,16 @@ DONE
 - refactor pagefind js
 - create changelog post
 - recolor light mode
+
+GALLERY IMPLEMENTATION
+
+- Rename post to .mdx
+- Add images: array to frontmatter
+- images:
+  - "image-1.jpg"
+  - "image-2.jpg"
+  - "image-3.jpg"
+- Import gallery: import Gallery from "@components/Gallery.astro";
+- Place in post: <Gallery images={frontmatter.images} />
+- Store images in public/img/
+- Run: npm run dev

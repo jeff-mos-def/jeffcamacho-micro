@@ -1,0 +1,172 @@
+---
+title: "Feature Update: Gallery"
+description: "Added function of galleries in blog posts"
+images:
+  - "DO_Optiplex.jpg"
+  - "FrankenPlex_Done.jpg"
+  - "LIAWS.jpg"
+  - "PMP_App.jpg"
+caption: "Gallery Feature / <a href='https://www.jeffcamacho.com/' target='_blank'>www.jeffcamacho.com</a>"
+date: "2025-01-28"
+#linkedProject: "/projects/pmp"
+#projectBoard: "https://github.com/users/jeff-mos-def/projects/9"
+draft: false
+---
+
+import Gallery from "@components/Gallery.astro";
+
+*So*... I've needed two things as of late:
+
+- A gallery for my blog posts
+- A ***small*** break from my PMP studies
+
+So here we are!
+
+<Gallery images={frontmatter.images} caption={frontmatter.caption} />
+
+---
+
+## Needs Overview
+
+I need a way to integrate a **gallery** into my Astro blog that allows image selection at the **blog post level** using **frontmatter**, ensuring flexibility without modifying the component. The gallery must be **styled with CSS Grid** for a responsive and clean layout. Captions should be **dynamic**, supporting **HTML links** so each post can have custom descriptions without hardcoding them in the component. This also serves as a **break from PMP studies** while improving the blog’s functionality.
+
+### Requirements:
+- **Astro Blog Integration** – The gallery must be inserted dynamically in individual blog posts, with *some* exception.
+- **Frontmatter Image Selection** – Images should be defined at the post level, not inside the component.
+- **CSS Grid Styling** – The gallery layout should be responsive and visually structured.
+- **Dynamic Captions** – Each post should be able to define its own caption.
+- **HTML Support in Captions** – Links and formatting should work within the caption.
+- **Low Maintenance** – The component should be reusable without post-by-post modifications.
+- **Break from PMP Studies** – This serves as both a technical project and a mental reset.
+
+---
+
+## Building a Dynamic Image Gallery in Astro
+
+Integrating a **gallery** into my Astro blog required a flexible approach that allows each blog post to define its own images and captions without modifying the gallery component itself. The solution needed to support **frontmatter-based image selection**, **CSS Grid styling for responsiveness**, and **HTML-compatible captions** for better formatting. Additionally, this served as a **break from PMP studies** while improving the overall structure of my blog.
+
+---
+
+## Defining Images at the Blog Level
+
+Instead of hardcoding images in the component, I set up **frontmatter in MDX** to let each post specify which images to display.
+
+```
+---
+title: "My Blog Post"
+images:
+  - "DO_Optiplex.jpg"
+  - "FrankenPlex_Done.jpg"
+  - "LIAWS.jpg"
+  - "PMP_App.jpg"
+caption: "Gallery Feature / <a href='https://www.jeffcamacho.com/' target='_blank'>www.jeffcamacho.com</a>"
+---
+```
+
+This ensures that image selection is handled per post, allowing different blog entries to have unique galleries without modifying the component.
+
+---
+
+## Passing Data to the Gallery Component
+
+Since Astro components don’t process frontmatter directly, the data needed to be explicitly passed.
+
+```
+import Gallery from "@components/Gallery.astro";
+
+<Gallery images={frontmatter.images} caption={frontmatter.caption} />
+```
+
+This keeps the component reusable while allowing each post to display different images and captions.
+
+---
+
+## Making the Gallery Component Dynamic
+
+To ensure flexibility, the `Gallery.astro` component was designed to:
+
+- Accept images and captions via `props`
+- Render dynamically based on the frontmatter
+- Support HTML captions for links and formatting
+
+```
+---
+interface Props {
+  images: string[];
+  caption?: string;
+}
+
+const { images, caption } = Astro.props as Props;
+---
+
+<div class="gallery-box">
+  <div class="gallery">
+    {images.map((image: string) => (
+      <img src={`/img/${image}`} alt={image} loading="lazy" />
+    ))}
+  </div>
+  {caption && <div class="gallery-caption" set:html={caption} />}
+</div>
+```
+
+Using `set:html={caption}` allows captions with HTML while ensuring the gallery remains fully reusable.
+
+---
+
+## Styling the Gallery for a Clean Layout
+
+To maintain a responsive grid layout, CSS Grid was used. This ensures images scale properly across different screen sizes.
+
+```
+.gallery-box {
+  text-align: center;
+  margin: 20px 0;
+}
+
+.gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 10px;
+  justify-content: center;
+}
+
+.gallery img {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+  border-radius: 8px;
+  box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.gallery-caption {
+  text-align: center;
+  font-size: 0.9rem;
+  margin-top: 10px;
+}
+
+.gallery-caption a {
+  color: #4a90e2;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.gallery-caption a:hover {
+  text-decoration: underline;
+}
+```
+
+Now, every post can include custom image galleries with captions, formatted consistently across the site.
+
+---
+
+## Aaannnnddd, done.
+
+This feature work successfully integrates a gallery into my Astro blog, allowing per-post customization through frontmatter while keeping the component lightweight and reusable. The CSS Grid layout ensures responsiveness, and HTML captions provide flexibility for adding links. 
+
+**Most importantly**, it served as a productive break from PMP studies while improving the blog’s functionality.
+
+Now back to my studies....
+
+All the best.
+
+- Jeff

@@ -1,0 +1,55 @@
+---
+interface Props {
+  images: string[];
+  caption?: string;
+}
+
+const { images, caption } = Astro.props as Props;
+---
+
+<div class="gallery-box">
+  <div class="gallery">
+    {images.map((image: string) => (
+      <img src={`/img/${image}`} alt={image} loading="lazy" />
+    ))}
+  </div>
+  {caption && <div class="gallery-caption" set:html={caption} />}
+</div>
+
+<style>
+  .gallery-box {
+    text-align: center;
+    margin: 20px 0;
+  }
+
+  .gallery {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 10px;
+    justify-content: center;
+  }
+
+  .gallery img {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    border-radius: 8px;
+    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+  }
+
+  .gallery-caption {
+    text-align: center;
+    font-size: 0.9rem;
+    margin-top: 10px;
+  }
+
+  .gallery-caption a {
+    color: #4a90e2;
+    text-decoration: none;
+    font-weight: bold;
+  }
+
+  .gallery-caption a:hover {
+    text-decoration: underline;
+  }
+</style>
