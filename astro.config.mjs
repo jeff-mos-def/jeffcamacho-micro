@@ -6,10 +6,10 @@ import pagefind from "astro-pagefind";
 
 // https://astro.build/config
 export default defineConfig({
-  site: "https://www.jeffcamacho.com", // Your actual website URL
+  site: "https://www.jeffcamacho.com",
   integrations: [
     tailwind(),
-    sitemap(), // Generates your sitemap automatically
+    sitemap(),
     mdx(),
     pagefind(),
   ],
@@ -17,6 +17,11 @@ export default defineConfig({
     shikiConfig: {
       theme: "css-variables",
     },
+  },
+  vite: {
+    optimizeDeps: {
+      exclude: ["astro:content-layer-deferred-module"]
+    }
   },
   build: {
     rollupOptions: {
