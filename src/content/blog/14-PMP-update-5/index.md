@@ -26,7 +26,7 @@ Lately, I’ve been diving into the core areas of the PMP exam—people, process
 
 ---
 
-## People (42%): 
+## People (42%)
 
 Team Dynamics and Getting Work Done Through Others
 
@@ -40,7 +40,7 @@ This section's all about how people work together—or don’t. It’s the human
 - **Emotional Intelligence:** Self-awareness and self-management aren’t just trendy terms. The exam expects you to know how they impact team performance.
 - **Practical Tools:** RACI charts, team charters, stakeholder mapping—these aren’t theoretical. Understand when and why you'd use them.
 
-I’ve found that flipping through flashcards on team dynamics helps lock in some of these concepts. Plus, rewatching Vargas's breakdown on leadership styles gave me a better sense of when to flex my approach.
+I’ve found that flipping through flashcards on team dynamics helps lock in some of these concepts. Plus, rewatching McLachlan's breakdown on PMP readiness gave me a better sense of when to flex my approach.
 
 ---
 
