@@ -19,7 +19,7 @@ If you've known me personally for awhile, you've known that I've been *talking* 
 - ✅ Complete 35 hours of project management education/training
   - [Andrew Ramdayal's course completed](https://tiaexams.com/pmcourses)
 - ✅ Study [PMBOK Guide 7th Edition](https://www.pmi.org/standards/pmbok)
-- ❌ Take practice exams
+- 🚧 Take practice exams
   - Tests being taken at [Percipio](https://uso.percipio.com/)
 - 🚧 Join PMP study groups
   - This is a maybe. Involved in conversations w/ other PMPs at the time being.
@@ -46,8 +46,8 @@ If you've known me personally for awhile, you've known that I've been *talking* 
 
 ## Exam
 
-- ❌ Schedule PMP exam
-- ❌ Complete mock exams with >80% score
+- 🚧 Schedule PMP exam
+- 🚧 Complete mock exams with >80% score
 - ✅ Prepare exam materials
 - ❌ Pass PMP exam
 
@@ -67,6 +67,8 @@ If you've known me personally for awhile, you've known that I've been *talking* 
   - So far:
     - [Andrew Ramdayal's course](https://tiaexams.com/pmcourses)
     - David McLachlan's video's, especially the 150 [PMBOK 7 Scenario-Based PMP Exam Questions and Answers](https://www.youtube.com/watch?v=Zht0-j03NfQ)
+    - Added [Notebook LM](https://notebooklm.google/) as part of my study plan. 
+      - Created "podcasts" and study notes from various online resources.
     - Your **patience** and **persistance**! You got this!
 - ⚙️ Add tips and lessons learned
   - In progress.
