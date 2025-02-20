@@ -70,7 +70,7 @@ If you've known me personally for awhile, you've known that I've been *talking* 
     - David McLachlan's video's, especially the 150 [PMBOK 7 Scenario-Based PMP Exam Questions and Answers](https://www.youtube.com/watch?v=Zht0-j03NfQ)
     - Added [Notebook LM](https://notebooklm.google/) as part of my study plan. 
       - Created "podcasts" and study notes from various online resources.
-    - Your **patience** and **persistance**! You got this!
+    - **Patience** and **persistance**! I got this!
 - ⚙️ Add tips and lessons learned
   - In progress.
 
