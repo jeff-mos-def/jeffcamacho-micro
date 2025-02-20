@@ -8,7 +8,7 @@ import { PROJECTS } from "@consts";
 // Fetch projects and blogs
 const projects = (await getCollection("projects"))
   .filter((project) => !project.data.draft)
-  .sort((a, b) => b.data.startDate.valueOf() - a.data.startDate.valueOf());
+  .sort((a, b) => new Date(b.data.startDate).valueOf() - new Date(a.data.startDate).valueOf());
 
 const blogs = (await getCollection("blog"))
   .filter((blog) => !blog.data.draft);
@@ -68,6 +68,19 @@ const tableOfContents = [
               {/* Render the project card */}
               <ArrowCard entry={project} />
 
+              {/* Project Dates - EXACTLY WHAT YOU ASKED FOR */}
+              <div class="text-sm text-zinc-500 dark:text-zinc-400 mt-1">
+                Projected Start Date: {new Date(String(project.data.startDate)).toLocaleDateString("en-US", {
+                  month: "long",
+                  day: "numeric",
+                  year: "numeric",
+                })} - Projected End Date: {project.data.endDate === "TBD" ? "TBD" : new Date(String(project.data.endDate)).toLocaleDateString("en-US", {
+                  month: "long",
+                  day: "numeric",
+                  year: "numeric",
+                })}
+              </div>
+
               {/* Render linked blog posts */}
               <ul class="space-y-2 mt-2">
                 {blogs
@@ -78,7 +91,7 @@ const tableOfContents = [
                         {blog.data.title}
                       </a>
                       <div class="text-sm text-zinc-500 dark:text-zinc-400">
-                        Published: {new Date(blog.data.date).toLocaleDateString("en-US", {
+                        Published: {new Date(String(blog.data.date)).toLocaleDateString("en-US", {
                           month: "short",
                           day: "numeric",
                           year: "numeric",

@@ -1,7 +1,8 @@
 ---
 title: "PMP Certification"
 description: "Obtain the PMP, finally."
-startDate: "03/01/2024"
+date: "01/01/2025"
+startDate: "03/01/2025"
 endDate: "03/30/2025"  # can be a date or "TBD"
 status: "Doing"  # "To Do", "Doing", "Done", or "OBE"
 draft: false  # optional, defaults to false

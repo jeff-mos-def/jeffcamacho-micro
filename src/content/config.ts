@@ -42,6 +42,7 @@ const projects = defineCollection({
   schema: z.object({
     title: z.string(),
     description: z.string(),
+    date: z.coerce.date().default(new Date()), // <-- ADDED THIS
     startDate: z.coerce.date(),
     endDate: z.union([z.coerce.date(), z.literal('TBD')]).optional(),
     draft: z.boolean().optional(),

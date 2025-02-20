@@ -1,10 +1,9 @@
 ---
 title: "The FrankenPlex"
 description: "Transformed a Dell Optiplex 3040 e-waste product into a desktop daily driver."
+date: "03/01/2024"
 startDate: "03/01/2024"
 endDate: "04/20/2024"  # can be a date or "TBD"
-#demoURL: "https://example.com"  # optional
-#repoURL: "https://github.com/..."  # optional
 status: "Done"  # "To Do", "Doing", "Done", or "OBE"
 draft: false  # optional, defaults to false
 ---

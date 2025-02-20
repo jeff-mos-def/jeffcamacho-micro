@@ -14,7 +14,7 @@ import StatusBadge from "@components/StatusBadge.astro"; // Import StatusBadge
 export async function getStaticPaths() {
   const projects = (await getCollection("projects"))
     .filter((post) => !post.data.draft)
-    .sort((a, b) => b.data.startDate.valueOf() - a.data.startDate.valueOf());
+    .sort((a, b) => new Date(b.data.startDate).valueOf() - new Date(a.data.startDate).valueOf());
   return projects.map((project) => ({
     params: { slug: project.slug },
     props: project,
@@ -33,8 +33,9 @@ const { Content, headings } = await project.render();
     </div>
     <div class="animate my-10 space-y-1">
       <div class="flex items-center gap-1.5">
+        <!-- Ensure `date` is always defined -->
         <div class="font-base text-sm">
-          <FormattedDate date={project.data.startDate} />
+          <FormattedDate date={project.data.date ?? new Date()} />
         </div>
         &bull;
         <div class="font-base text-sm">
@@ -61,13 +62,15 @@ const { Content, headings } = await project.render();
           </nav>
         )
       }
+
+      <!-- FIXED DATE FORMATTING -->
       <div class="text-sm text-black/60 dark:text-white/60">
-        Projected End Date: {
-          project.data.endDate === 'TBD' 
-            ? 'TBD' 
-            : project.data.endDate && <FormattedDate date={project.data.endDate} />
-        }
+        Projected Start Date: <FormattedDate date={project.data.startDate ?? new Date()} /> - 
+        Projected End Date: {project.data.endDate !== 'TBD' 
+          ? <FormattedDate date={project.data.endDate ?? new Date()} />
+          : 'TBD'}
       </div>
+
       <!-- Use the StatusBadge Component -->
       <div class="mt-2">
         <StatusBadge status={project.data.status} />

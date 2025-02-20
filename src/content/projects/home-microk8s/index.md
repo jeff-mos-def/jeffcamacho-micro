@@ -1,6 +1,7 @@
 ---
 title: "Home MicroK8s Cluster Implementation"
 description: "From eWaste to a scalable Kubernetes cluster using MicroK8s."
+date: "11/01/2024"
 startDate: "12/20/2025"
 endDate: "TBD"  # can be finalized once the project timeline is set
 #demoURL: "https://example.com"  # optional
