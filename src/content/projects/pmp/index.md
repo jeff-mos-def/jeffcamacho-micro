@@ -73,4 +73,3 @@ If you've known me personally for awhile, you've known that I've been *talking* 
     - **Patience** and **persistance**! I got this!
 - ⚙️ Add tips and lessons learned
   - In progress.
-
