@@ -14,21 +14,23 @@ import { SITE } from "@consts";
       </Link>
       <nav class="flex items-center gap-1 text-sm">
         <Link href="/work">work</Link>
-        <span>
-          {`/`}
-        </span>
+        <span>{`/`}</span>
         <Link href="/education">education</Link>
-        <span>
-          {`/`}
-        </span>
-        <Link href="/blog">blog</Link>
-        <span>
-          {`/`}
-        </span>
+        <span>{`/`}</span>
+
+        <!-- Blog Dropdown -->
+        <div class="relative group" id="blog-dropdown">
+          <Link href="/blog">blog</Link>
+          <div class="absolute left-1/2 -translate-x-1/2 mt-2 hidden min-w-[8rem] rounded-lg bg-neutral-100 p-2 text-sm shadow-lg dark:bg-neutral-900 group-hover:block" id="blog-menu">
+            <a href="/tags" class="block px-3 py-1 w-full text-center rounded hover:bg-neutral-200 dark:hover:bg-neutral-800">
+              tags
+            </a>
+          </div>
+        </div>
+
+        <span>{`/`}</span>
         <Link href="/projects">projects</Link>
-        <span>
-          {`/`}
-        </span>
+        <span>{`/`}</span>
         <button
           id="magnifying-glass"
           aria-label="Search"
@@ -40,15 +42,43 @@ import { SITE } from "@consts";
             viewBox="0 0 16 16"
             width="16"
             style="color: currentcolor;"
-            ><path
+          >
+            <path
               fill-rule="evenodd"
               clip-rule="evenodd"
               d="M3.5 7C3.5 5.067 5.067 3.5 7 3.5C8.933 3.5 10.5 5.067 10.5 7C10.5 7.88461 10.1718 8.69256 9.63058 9.30876L9.30876 9.63058C8.69256 10.1718 7.88461 10.5 7 10.5C5.067 10.5 3.5 8.933 3.5 7ZM9.96544 11.0261C9.13578 11.6382 8.11014 12 7 12C4.23858 12 2 9.76142 2 7C2 4.23858 4.23858 2 7 2C9.76142 2 12 4.23858 12 7C12 8.11014 11.6382 9.13578 11.0261 9.96544L14.0303 12.9697L14.5607 13.5L13.5 14.5607L12.9697 14.0303L9.96544 11.0261Z"
-              fill="currentColor"></path></svg
-          >
+              fill="currentColor"
+            ></path>
+          </svg>
           &nbsp;Search
         </button>
       </nav>
     </div>
   </Container>
 </header>
+
+<!-- JavaScript to Keep Dropdown Open -->
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const blogDropdown = document.getElementById("blog-dropdown") as HTMLElement | null;
+    const blogMenu = document.getElementById("blog-menu") as HTMLElement | null;
+
+    if (!blogDropdown || !blogMenu) return; // Prevent TypeScript errors
+
+    let timeout: NodeJS.Timeout | null = null;
+
+    function showDropdown() {
+      if (timeout) clearTimeout(timeout);
+      blogMenu!.classList.remove("hidden");
+    }
+
+    function hideDropdown() {
+      timeout = setTimeout(() => {
+        blogMenu?.classList.add("hidden");
+      }, 200); // Small delay to prevent flickering
+    }
+
+    blogDropdown.addEventListener("mouseenter", showDropdown);
+    blogDropdown.addEventListener("mouseleave", hideDropdown);
+  });
+</script>

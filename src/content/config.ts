@@ -34,6 +34,7 @@ const blog = defineCollection({
     draft: z.boolean().optional(),
     linkedProject: z.string().optional(), // Optional field to link a blog post to a project
     projectBoard: z.string().optional(), // Optional field to link a blog post to a GitHub Project Board
+    tags: z.array(z.string()).optional(),
   }),
 });
 

@@ -1,0 +1,32 @@
+---
+import Layout from "@layouts/Layout.astro";
+import Container from "@components/Container.astro";
+import { getCollection } from "astro:content";
+
+const blogPosts = (await getCollection("blog")).filter((post) => !post.data.draft);
+
+const tagCounts = blogPosts.reduce((acc, post) => {
+  post.data.tags?.forEach((tag) => {
+    acc.set(tag, (acc.get(tag) || 0) + 1);
+  });
+  return acc;
+}, new Map());
+
+const tags = [...tagCounts.keys()].sort((a, b) => {
+  const countDiff = tagCounts.get(b)! - tagCounts.get(a)!;
+  return countDiff !== 0 ? countDiff : a.localeCompare(b);
+});
+---
+
+<Layout title="tags" description="Browse posts by tags">
+  <Container>
+    <h1 class="text-3xl font-semibold">tags</h1>
+    <div class="mt-6 flex flex-wrap gap-3">
+      {tags.map((tag) => (
+        <a href={`/tags/${tag}`} class="px-3 py-1 text-sm font-medium rounded bg-neutral-200 dark:bg-neutral-800 text-black dark:text-white">
+          #{tag} <span class="text-xs text-muted-foreground">({tagCounts.get(tag)})</span>
+        </a>
+      ))}
+    </div>
+  </Container>
+</Layout>

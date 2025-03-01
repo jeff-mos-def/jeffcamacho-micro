@@ -2,6 +2,7 @@
 title: "PMP Certification Project Update, Part 5"
 description: "PMP Mindset Notes"
 date: "2025-02-13"
+tags: ["pmp", "certification"]
 linkedProject: "/projects/pmp"
 #projectBoard: "https://github.com/users/jeff-mos-def/projects/9"
 draft: false

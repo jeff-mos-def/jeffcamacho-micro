@@ -85,6 +85,15 @@ const projectBoardLink = post.data.projectBoard ?? null;
       <h1 class="animate text-3xl font-semibold text-black dark:text-white">
         {post.data.title}
       </h1>
+      {post.data.tags && post.data.tags.length > 0 && (
+        <div class="mt-4 flex flex-wrap gap-2">
+          {post.data.tags.map((tag) => (
+            <a href={`/tags/${tag}`} class="px-2 py-1 text-xs font-medium rounded bg-neutral-200 dark:bg-neutral-800 text-black dark:text-white hover:bg-neutral-300 dark:hover:bg-neutral-700 transition-colors">
+              #{tag}
+            </a>
+          ))}
+        </div>
+      )}
       {linkedProject && (
         <div class="animate mt-4">
           <span class="font-semibold">Related Project:</span>{" "}

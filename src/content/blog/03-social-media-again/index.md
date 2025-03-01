@@ -2,6 +2,7 @@
 title: "Bluesky... back to miniblog socials?"
 description: "Moving to Bluesky: A fresh start for social media."
 date: "2024-11-20"
+tags: ["social media"]
 #linkedProject: "/projects/liauto"
 #projectBoard: "https://github.com/users/jeff-mos-def/projects/9"
 draft: false

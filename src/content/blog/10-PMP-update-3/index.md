@@ -2,6 +2,7 @@
 title: "PMP Certification Project Update, Part Tres"
 description: "Application... APPROVED!"
 date: "2025-01-13"
+tags: ["pmp", "certification"]
 linkedProject: "/projects/pmp"
 #projectBoard: "https://github.com/users/jeff-mos-def/projects/9"
 draft: false

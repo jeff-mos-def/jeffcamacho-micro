@@ -2,6 +2,7 @@
 title: "PMP Certification Project Update, Part Deux"
 description: "Application... It's getting real now..."
 date: "2025-01-06"
+tags: ["pmp", "certification"]
 linkedProject: "/projects/pmp"
 #projectBoard: "https://github.com/users/jeff-mos-def/projects/9"
 draft: false
