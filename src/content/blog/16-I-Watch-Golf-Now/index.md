@@ -18,8 +18,11 @@ The part that stuck with me wasn’t the record or the trophy. It was how calm h
 
 ---
 
-<div style="text-align: center;">
-    <iframe width="560" height="315" src="https://www.youtube.com/embed/6bKoORH2sY4" frameborder="0" allowfullscreen></iframe>
+<div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; max-width: 100%; height: auto;">
+  <iframe src="https://www.youtube.com/embed/6bKoORH2sY4" 
+          style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;" 
+          frameborder="0" allowfullscreen>
+  </iframe>
 </div>
 
 ---
