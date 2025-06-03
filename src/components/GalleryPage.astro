@@ -3,6 +3,12 @@ interface ImageData {
   src: string;
   alt: string;
   description?: string;
+  exif?: {
+    camera?: string;
+    resolution?: string;
+    software?: string;
+    date?: string;
+  };
 }
 
 const props = Astro.props as { images: ImageData[] };
@@ -19,6 +25,7 @@ const props = Astro.props as { images: ImageData[] };
           data-src={image.src}
           data-alt={image.alt}
           data-desc={image.description || "No description available"}
+          data-exif={JSON.stringify(image.exif || {})}
         />
       </div>
     ))}
@@ -32,12 +39,15 @@ const props = Astro.props as { images: ImageData[] };
     <div id="lightbox-text">
       <p id="lightbox-alt"></p>
       <p id="lightbox-desc"></p>
+      <details id="lightbox-exif" style="text-align: left; padding: 0 1rem;">
+        <summary>Photo Information</summary>
+        <ul id="exif-list" style="margin: 0.5rem 0 0; padding-left: 1rem;"></ul>
+      </details>
     </div>
   </div>
 </div>
 
 <style>
-  /* Center the gallery */
   .gallery-container {
     display: flex;
     justify-content: center;
@@ -71,7 +81,6 @@ const props = Astro.props as { images: ImageData[] };
     transform: scale(1.05);
   }
 
-  /* Lightbox Styles */
   .lightbox {
     position: fixed;
     top: 0;
@@ -108,7 +117,6 @@ const props = Astro.props as { images: ImageData[] };
     border-radius: 8px;
   }
 
-  /* Move text inside the image */
   #lightbox-text {
     position: absolute;
     bottom: 10px;
@@ -121,7 +129,6 @@ const props = Astro.props as { images: ImageData[] };
     border-radius: 5px;
   }
 
-  /* Fixed Close Button */
   .close-x {
     position: absolute;
     top: 10px;
@@ -146,7 +153,6 @@ const props = Astro.props as { images: ImageData[] };
     color: black;
   }
 
-  /* Responsive Fixes */
   @media (max-width: 1024px) {
     .gallery {
       column-count: 2;
@@ -171,36 +177,55 @@ const props = Astro.props as { images: ImageData[] };
 
 <script>
   document.addEventListener("DOMContentLoaded", () => {
-    const images = document.querySelectorAll(".gallery-item img") as NodeListOf<HTMLImageElement>;
-    const lightbox = document.getElementById("lightbox") as HTMLDivElement | null;
-    const lightboxImg = document.getElementById("lightbox-img") as HTMLImageElement | null;
-    const lightboxAlt = document.getElementById("lightbox-alt") as HTMLParagraphElement | null;
-    const lightboxDesc = document.getElementById("lightbox-desc") as HTMLParagraphElement | null;
-    const closeBtn = document.querySelector(".close-x") as HTMLSpanElement | null;
+    const images = document.querySelectorAll(".gallery-item img");
+    const lightbox = document.getElementById("lightbox");
+    const lightboxImg = document.getElementById("lightbox-img");
+    const lightboxAlt = document.getElementById("lightbox-alt");
+    const lightboxDesc = document.getElementById("lightbox-desc");
+    const lightboxExif = document.getElementById("exif-list");
+    const closeBtn = document.querySelector(".close-x");
 
-    if (!lightbox || !lightboxImg || !lightboxAlt || !lightboxDesc || !closeBtn) {
-      console.error("Lightbox elements not found");
-      return;
+images.forEach((img) => {
+  img.addEventListener("click", (e) => {
+    if (!lightbox || !lightboxImg || !lightboxAlt || !lightboxDesc || !lightboxExif) return;
+
+    const element = e.currentTarget as HTMLElement;
+
+    lightboxImg.setAttribute("src", element.getAttribute("data-src") || "");
+    lightboxAlt.textContent = element.getAttribute("data-alt") || "";
+    lightboxDesc.textContent = element.getAttribute("data-desc") || "";
+
+    let exifData = {};
+    try {
+      exifData = JSON.parse(element.getAttribute("data-exif") || "{}");
+    } catch {}
+
+    const exifDetails = document.getElementById("lightbox-exif") as HTMLDetailsElement;
+    exifDetails.open = false;
+
+    lightboxExif.innerHTML = "";
+    Object.entries(exifData).forEach(([key, value]) => {
+      const li = document.createElement("li");
+      li.textContent = `${key[0].toUpperCase() + key.slice(1)}: ${value}`;
+      lightboxExif.appendChild(li);
+    });
+
+    lightbox.classList.add("show");
+  });
+});
+
+    if (closeBtn) {
+      closeBtn.addEventListener("click", () => {
+        if (lightbox) lightbox.classList.remove("show");
+      });
     }
 
-    images.forEach(img => {
-      img.addEventListener("click", (e) => {
-        const target = e.target as HTMLImageElement | null;
-        if (!target) return;
-
-        lightboxImg.src = target.getAttribute("data-src") || "";
-        lightboxAlt.textContent = target.getAttribute("data-alt") || "";
-        lightboxDesc.textContent = target.getAttribute("data-desc") || "";
-        lightbox.classList.add("show");
+    if (lightbox) {
+      lightbox.addEventListener("click", (e) => {
+        if (e.target === lightbox) {
+          lightbox.classList.remove("show");
+        }
       });
-    });
-
-    closeBtn.addEventListener("click", () => {
-      lightbox.classList.remove("show");
-    });
-
-    lightbox.addEventListener("click", (e) => {
-      if (e.target === lightbox) lightbox.classList.remove("show");
-    });
+    }
   });
 </script>
