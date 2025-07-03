@@ -47,4 +47,4 @@ I've recently migrated over to [BlueSky](https://bsky.app/profile/jeff-mos-def.b
 
 ## Progress Logs
 
-- [LinkedIn Automation, Pt. 1](http://localhost:4321/blog/01-liauto-pt1)
+- [LinkedIn Automation, Pt. 1](https://jeffcamacho.com/blog/01-liauto-pt1)
