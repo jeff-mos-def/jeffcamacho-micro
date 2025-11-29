@@ -1,6 +1,6 @@
 ---
 title: "PMP... DONE!"
-description: "A reflection on today's energy, focus, and thoughts."
+description: "A certification 20 years in the making."
 date: "2025-11-28"
 tags: ["PMP", "certification", "achievement"]
 draft: false
@@ -19,7 +19,7 @@ draft: false
 
 ---
 
-I’m officially a Project Management Professional.
+I’m officially a Project Management Professional. After 20 years of thinking about this certification, *it's finally finished*.
 
 If you look at my original plan, I missed my completion date by about 8 months. I’d love to say it was all part of the strategy, but the truth is simpler: the material was harder to absorb than I expected, and the government shutdown threw a massive wrench in my schedule. The extra workload from the shutdown meant studying took a back seat to actual work for a while.
 
