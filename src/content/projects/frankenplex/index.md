@@ -52,7 +52,7 @@ To connect the new power supply to the Dell motherboard, I used a 24 Pin to 6 Pi
 
 ### Processor
 
-The heart of the upgrade is the Intel Core i9-9900. This processor, with its 5.0 GHz speed and eight cores, provided a significant performance boost over the original i3. The increased power and "efficiency" made it the prime choice for this build.... and because I had this processor on hand, through swapping and collecting PC parts over the years... so it was about time this was used. *If I had known...* I would have opted for the i9-9900K. The Intel i9-9900 has a locked multiplier, limiting overclocking, while the i9-9900K has an unlocked multiplier, allowing for overclocking when paired with a compatible motherboard. Would the Dell Optiplex 7070 have even accomodated that? Don't know. Went for the economic factor here and this is what we had on hand. Like I said before... *$24 on eBay.*
+The heart of the upgrade is the Intel Core i9-9900. This processor, with its 5.0 GHz speed and eight cores, provided a significant performance boost over the original i3. The increased power and "efficiency" made it the prime choice for this build.... and because I had this processor on hand, through swapping and collecting PC parts over the years... so it was about time this was used. *If I had known...* I would have opted for the i9-9900K. The Intel i9-9900 has a locked multiplier, limiting overclocking, while the i9-9900K has an unlocked multiplier, allowing for overclocking when paired with a compatible motherboard. Would the Dell Optiplex 7070 have even accommodated that? Don't know. Went for the economic factor here and this is what we had on hand. Like I said before... *$24 on eBay.*
 
 ### Storage
 
