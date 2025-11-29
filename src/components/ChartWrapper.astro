@@ -1,0 +1,23 @@
+---
+import Chart from "./Chart.jsx";
+const {
+  type,
+  labels,
+  datasets,
+  options,
+  plugins = [],
+  bgColor = "#ffffff",
+  chartId = "chart",
+} = Astro.props;
+---
+<Chart client:load {...{ type, labels, datasets, options, plugins, bgColor, chartId }} />
+
+
+<Chart
+  client:load
+  type={type}
+  labels={labels}
+  datasets={datasets}
+  options={options}
+  plugins={plugins}
+/>

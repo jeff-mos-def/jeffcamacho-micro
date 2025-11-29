@@ -4,7 +4,7 @@ description: "Obtain the PMP, finally."
 date: "01/01/2025"
 startDate: "03/01/2025"
 endDate: "03/30/2025"  # can be a date or "TBD"
-status: "Doing"  # "To Do", "Doing", "Done", or "OBE"
+status: "Done"  # "To Do", "Doing", "Done", or "OBE"
 draft: false  # optional, defaults to false
 ---
 
@@ -20,11 +20,11 @@ If you've known me personally for awhile, you've known that I've been *talking* 
 - ✅ Complete 35 hours of project management education/training
   - [Andrew Ramdayal's course completed](https://tiaexams.com/pmcourses)
 - ✅ Study [PMBOK Guide 7th Edition](https://www.pmi.org/standards/pmbok)
-- 🚧 Take practice exams
+- ✅ Take practice exams
   - Tests being taken at [Percipio](https://uso.percipio.com/)
-- 🚧 Join PMP study groups
+- ✅ Join PMP study groups
   - This is a maybe. Involved in conversations w/ other PMPs at the time being.
-- 🚧 Create study notes/flashcards
+- ✅ Create study notes/flashcards
   - Purchased a flash card set, but have been taking notes instead.
 - ✅ Set up exam day requirements
 - ✅ Review Agile practices
@@ -47,12 +47,12 @@ If you've known me personally for awhile, you've known that I've been *talking* 
 
 ## Exam
 
-- 🚧 Schedule PMP exam
-- 🚧 Complete mock exams with >80% score
+- ✅ Schedule PMP exam
+- ✅ Complete mock exams with >80% score
 - ✅ Prepare exam materials
-- ❌ Pass PMP exam
+- ✅ Pass PMP exam - 22 Nov 25!!!
 
-## Work in Public
+## Work in Public - Moved to OBE
 
 - ✅ Set up blog infrastructure
   - You're reading it!

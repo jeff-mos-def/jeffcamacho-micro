@@ -1,0 +1,24 @@
+---
+const {
+  chartId = 'chart-' + Math.random().toString(36).slice(2),
+  type = 'bar',
+  labels = [],
+  datasets = [],
+  options = {}
+} = Astro.props;
+---
+
+<canvas id={chartId}></canvas>
+
+<script define:vars={{ chartId, type, labels, datasets, options }}>
+  import Chart from 'chart.js/auto';
+
+  const el = document.getElementById(chartId);
+  if (el) {
+    new Chart(el, {
+      type,
+      data: { labels, datasets },
+      options
+    });
+  }
+</script>
