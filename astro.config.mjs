@@ -4,6 +4,7 @@ import mdx from "@astrojs/mdx";
 import sitemap from "@astrojs/sitemap";
 import pagefind from "astro-pagefind";
 import react from "@astrojs/react";
+import rehypeMermaid from "rehype-mermaid";
 
 // https://astro.build/config
 export default defineConfig({
@@ -16,9 +17,14 @@ export default defineConfig({
     react(),
   ],
   markdown: {
+    syntaxHighlight: {
+      type: "shiki",
+      excludeLangs: ["mermaid"],
+    },
     shikiConfig: {
       theme: "css-variables",
     },
+    rehypePlugins: [[rehypeMermaid, { strategy: "img-svg" }]],
   },
   vite: {
     optimizeDeps: {
