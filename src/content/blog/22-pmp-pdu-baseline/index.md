@@ -12,8 +12,6 @@ I seriously just passed the PMP, and I need something that keeps me sharp outsid
 
 [You can read about that 20 year journey here.](20-pmp-done)
 
-Test
-
 ---
 
 ## The Honest Reason This Exists
