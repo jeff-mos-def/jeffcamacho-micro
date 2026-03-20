@@ -1,0 +1,90 @@
+<canvas id="velocityChart" height="220" style="margin: 2rem 0; width: 100%;"></canvas>
+
+<script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+
+<script is:inline>
+(function () {
+  function renderChart() {
+    var canvas = document.getElementById('velocityChart');
+    if (!canvas || !window.Chart) return;
+    var dark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    var gridColor = dark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.07)';
+    var labelColor = dark ? '#9c9a92' : '#5f5e5a';
+    new Chart(canvas.getContext('2d'), {
+      type: 'line',
+      data: {
+        labels: ['Sprint 1', 'Sprint 2', 'Sprint 3', 'Sprint 4', 'Sprint 5', 'Sprint 6'],
+        datasets: [
+          {
+            label: 'Scope velocity (story points)',
+            data: [28, 31, 29, 33, 30, 32],
+            borderColor: '#534AB7',
+            backgroundColor: 'rgba(83,74,183,0.08)',
+            borderWidth: 2,
+            pointRadius: 4,
+            pointBackgroundColor: '#534AB7',
+            tension: 0.35,
+            fill: true,
+            yAxisID: 'y',
+          },
+          {
+            label: 'Cloud cost per sprint ($)',
+            data: [820, 970, 940, 1280, 1190, 1650],
+            borderColor: '#D85A30',
+            backgroundColor: 'rgba(216,90,48,0.07)',
+            borderWidth: 2,
+            pointRadius: 4,
+            pointBackgroundColor: '#D85A30',
+            tension: 0.35,
+            fill: true,
+            yAxisID: 'y1',
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        interaction: { mode: 'index', intersect: false },
+        plugins: {
+          legend: {
+            labels: { color: labelColor, font: { size: 12 }, boxWidth: 12 },
+          },
+          tooltip: {
+            backgroundColor: dark ? '#2c2c2a' : '#fff',
+            titleColor: labelColor,
+            bodyColor: labelColor,
+            borderColor: gridColor,
+            borderWidth: 1,
+          },
+        },
+        scales: {
+          x: {
+            ticks: { color: labelColor, font: { size: 12 } },
+            grid: { color: gridColor },
+          },
+          y: {
+            type: 'linear',
+            position: 'left',
+            title: { display: true, text: 'Story points', color: '#534AB7', font: { size: 11 } },
+            ticks: { color: '#534AB7', font: { size: 11 } },
+            grid: { color: gridColor },
+          },
+          y1: {
+            type: 'linear',
+            position: 'right',
+            title: { display: true, text: 'Cloud spend ($)', color: '#D85A30', font: { size: 11 } },
+            ticks: {
+              color: '#D85A30',
+              font: { size: 11 },
+              callback: function (v) { return '$' + v.toLocaleString(); },
+            },
+            grid: { drawOnChartArea: false },
+          },
+        },
+      },
+    });
+  }
+
+  document.addEventListener('astro:page-load', renderChart);
+  if (document.readyState !== 'loading') renderChart();
+})();
+</script>

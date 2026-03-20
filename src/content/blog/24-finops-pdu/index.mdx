@@ -1,0 +1,125 @@
+---
+title: "FinOps Is Now a PM Problem"
+description: "What every project manager needs to know about cloud cost governance."
+date: "2026-03-20"
+tags: ["FinOps", "Cloud", "PMP", "PDUs", "Project Management", "Business Acumen"]
+draft: false
+---
+
+import VelocityChart from '../../../components/VelocityChart.astro';
+
+---
+
+You've managed scope. You've managed schedule. You've managed risk. But if your projects involve cloud infrastructure - even tangentially - there's a fourth dimension quietly eating your budget while you sleep: **cloud spend**.
+
+This is where FinOps comes in. And as a project manager, understanding it isn't optional anymore.
+
+---
+
+## What Is FinOps, Exactly?
+
+FinOps (short for Financial Operations) is a cloud financial management discipline that helps organizations get maximum business value from their cloud investments. Think of it as the Agile framework equivalent for cloud cost governance - iterative, cross-functional, and built around continuous improvement.
+
+The FinOps Foundation defines three core phases:
+
+- **Inform** - Make costs visible. Teams need to see what they're spending, on what, and why.
+- **Optimize** - Use that visibility to eliminate waste and right-size resources.
+- **Operate** - Embed cost accountability into ongoing team workflows.
+
+![FinOps to PM cycle mapping](/img/finops_pm_cycle_mapping.svg)
+
+Sound familiar? It should. These phases map almost directly onto the Plan &#8594; Execute &#8594; Monitor &amp; Control cycle you already use every day.
+
+---
+
+## Why This Is Now a PM Problem
+
+A few years ago, cloud costs were an infrastructure concern. They lived in IT. PMs didn't touch them.
+
+That's no longer true - for three reasons:
+
+**1. Cloud spend is project spend.**
+When your team spins up a dev environment, runs load testing, or deploys a feature to production, they're generating costs in real time. Those costs belong to your project budget, even if no one is tracking them that way.
+
+**2. No one else is connecting the dots.**
+Engineers optimize for performance. Finance tracks invoices. PMs track scope and schedule. Without someone bridging those worlds, cloud waste accumulates silently - often discovered only at month-end invoice review, when it's too late to course-correct.
+
+![Cloud cost ownership gap](/img/cloud_cost_ownership_gap.svg)
+
+**3. Cloud cost overruns are becoming project failures.**
+It's increasingly common to see technically successful projects that are considered business failures because they delivered at 3x the projected cloud run rate. Value delivery includes cost efficiency. That's squarely in PM territory.
+
+---
+
+## The FinOps Talent Triangle Connection
+
+PMI's Talent Triangle identifies three competency domains for modern PMs. FinOps touches all three - and that means engaging with it directly earns PDUs across every domain.
+
+![FinOps Talent Triangle map](/img/finops_talent_triangle_map.svg)
+
+This isn't a stretch - it's a real skill gap that the market is starting to price in.
+
+---
+
+## What PMs Actually Need to Know (Without Becoming a Cloud Engineer)
+
+You don't need to understand reserved instances or spot pricing at a technical level. But you *do* need to be fluent in the following:
+
+### 1. Cloud costs are variable and dynamic
+
+Unlike traditional project costs, cloud spend is consumption-based. A misconfigured auto-scaling policy or a forgotten test environment can generate thousands of dollars in unexpected costs overnight. Build a **cost review cadence** into your project rhythm - weekly is not too frequent.
+
+### 2. Tagging is your best friend
+
+Cloud resources (servers, storage, databases) can be tagged with metadata - project name, team, environment, sprint number. When tags are applied consistently, you can allocate costs accurately. When they're not, finance sends everyone a mysterious AWS bill and no one knows who owns what. Make tagging a **definition of done** criterion.
+
+![Cloud tagging hierarchy](/img/cloud_tagging_hierarchy.svg)
+
+### 3. Estimate vs. Forecast vs. Actual
+
+Traditional PM thinking treats budget as a plan-once activity. FinOps operates on rolling forecasts. Cloud spend changes as architecture evolves. Get comfortable with the idea of **re-forecasting cloud costs at each sprint boundary** based on actual consumption data.
+
+### 4. Shared costs need governance
+
+Many cloud costs are shared across projects or teams - a central data platform, a shared Kubernetes cluster, a monitoring stack. Agree early on how shared costs will be allocated. This prevents the end-of-project accounting surprise that tanks your CPI.
+
+### 5. Cost has a velocity, just like scope
+
+If you're tracking velocity in Agile, consider tracking **cost velocity** alongside it: how much cloud spend is being generated per sprint? Are you trending toward your budget at completion, or trending over? This gives you early warning signals - not end-of-month surprises.
+
+<VelocityChart />
+
+The chart above illustrates this dynamic with realistic, albiet fictional, data. Early in the project, cloud spend tracks loosely with sprint velocity: a higher-output sprint pulls more cloud resources, a lighter sprint eases off. That's expected behavior. What you're watching for is the decoupling: notice how by Sprint 5 and 6, velocity barely moves while cost climbs sharply on its own. 
+
+*That's the signal.*
+
+Forgotten environments, accumulated test infrastructure, auto-scaling policies that were never tuned, they don't show up in your scope metrics, but they show up in your bill. If you're only reviewing cloud costs at month-end, you're already too late to course correct. Build the cadence in now, while the numbers are still manageable.
+
+---
+
+## A Practical Starting Point for PMs
+
+You don't need to become a FinOps practitioner overnight. Start here:
+
+1. **Ask your cloud team for a cost dashboard.** AWS Cost Explorer, Google Cloud Billing, and Azure Cost Management all have free dashboards. Request view access.
+2. **Add a "Cloud Cost Review" line item to your sprint reviews.** Even 10 minutes of visibility changes team behavior.
+3. **Include cloud cost in your risk register.** Treat significant spend deviation as a project risk with likelihood, impact, and mitigation strategy.
+4. **Get familiar with the FinOps Foundation.** Their website (<a href="https://www.finops.org/" target="_blank" rel="noopener noreferrer">finops.org</a>) has free resources, and the <a href="https://learn.finops.org/page/finops-certified-practitioner
+" target="_blank" rel="noopener noreferrer">FinOps Certified Practitioner (FOCP)</a> certification is lightweight enough to complement a PMP.
+
+---
+
+
+## Final Thought
+
+The PMs who will be most valuable over the next five years aren't just the ones who deliver on time and on scope. They're the ones who understand that **cloud infrastructure is now a project variable** - one that requires the same discipline, visibility, and accountability we bring to everything else.
+
+FinOps isn't a finance team problem. It's a delivery problem. And delivery is what we do.
+
+---
+
+*If you found this useful, I'd love to connect - particularly if you're a PM navigating cloud-heavy projects and want to compare notes. Drop a comment below or find me on <a href="https://www.linkedin.com/in/jeff-camacho/" target="_blank" rel="noopener noreferrer">LinkedIn</a>.*
+
+---
+
+**PDU Note:** *This post was created as part of my ongoing recertification under <a href="https://www.pmi.org/certifications/certification-resources/maintain/earn-pdus" target="_blank" rel="noopener noreferrer">PMI's Giving Back - Create Content</a> category. Writing and publishing original content in your area of professional practice is a qualifying PDU activity. For reference, this post directly addresses all three domains of the PMI Talent Triangle: Ways of Working (cloud cost governance in Agile and hybrid delivery), Business Acumen (cloud ROI, opex vs. capex, cost-to-value alignment), and Power Skills (cross-functional collaboration across engineering, finance, and leadership). If you're a PMP building your PDU pipeline, content creation is one of the most underutilized - and most scalable - paths to recertification.*
