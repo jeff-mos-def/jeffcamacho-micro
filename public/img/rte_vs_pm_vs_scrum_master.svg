@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="100%" viewBox="0 0 680 500">
+<style>
+  text { font-family: system-ui, -apple-system, sans-serif; }
+  .th { font-size: 14px; font-weight: 500; }
+  .ts { font-size: 12px; font-weight: 400; }
+  .label { fill: #D3D1C7; }
+  .purple-fill { fill: #EEEDFE; stroke: #534AB7; }
+  .purple-text { fill: #3C3489; }
+  .purple-sub { fill: #534AB7; }
+  .teal-fill { fill: #E1F5EE; stroke: #0F6E56; }
+  .teal-text { fill: #085041; }
+  .teal-sub { fill: #0F6E56; }
+  .coral-fill { fill: #FAECE7; stroke: #993C1D; }
+  .coral-text { fill: #712B13; }
+  .coral-sub { fill: #993C1D; }
+</style>
+<rect x="40" y="40" width="180" height="44" rx="8" class="purple-fill" stroke-width="0.5"/>
+<text class="th purple-text" x="130" y="62" text-anchor="middle" dominant-baseline="central">Project Manager</text>
+<rect x="250" y="40" width="180" height="44" rx="8" class="teal-fill" stroke-width="0.5"/>
+<text class="th teal-text" x="340" y="62" text-anchor="middle" dominant-baseline="central">Scrum Master</text>
+<rect x="460" y="40" width="180" height="44" rx="8" class="coral-fill" stroke-width="0.5"/>
+<text class="th coral-text" x="550" y="62" text-anchor="middle" dominant-baseline="central">RTE</text>
+<text class="th label" x="40" y="120" dominant-baseline="central">Scope</text>
+<rect x="40" y="134" width="180" height="36" rx="6" class="purple-fill" stroke-width="0.5"/>
+<text class="ts purple-sub" x="130" y="152" text-anchor="middle" dominant-baseline="central">Single project</text>
+<rect x="250" y="134" width="180" height="36" rx="6" class="teal-fill" stroke-width="0.5"/>
+<text class="ts teal-sub" x="340" y="152" text-anchor="middle" dominant-baseline="central">Single team</text>
+<rect x="460" y="134" width="180" height="36" rx="6" class="coral-fill" stroke-width="0.5"/>
+<text class="ts coral-sub" x="550" y="152" text-anchor="middle" dominant-baseline="central">Entire ART (5-12 teams)</text>
+<text class="th label" x="40" y="200" dominant-baseline="central">Primary focus</text>
+<rect x="40" y="214" width="180" height="36" rx="6" class="purple-fill" stroke-width="0.5"/>
+<text class="ts purple-sub" x="130" y="232" text-anchor="middle" dominant-baseline="central">Scope, schedule, budget</text>
+<rect x="250" y="214" width="180" height="36" rx="6" class="teal-fill" stroke-width="0.5"/>
+<text class="ts teal-sub" x="340" y="232" text-anchor="middle" dominant-baseline="central">Team effectiveness</text>
+<rect x="460" y="214" width="180" height="36" rx="6" class="coral-fill" stroke-width="0.5"/>
+<text class="ts coral-sub" x="550" y="232" text-anchor="middle" dominant-baseline="central">ART value flow</text>
+<text class="th label" x="40" y="280" dominant-baseline="central">Key events</text>
+<rect x="40" y="294" width="180" height="36" rx="6" class="purple-fill" stroke-width="0.5"/>
+<text class="ts purple-sub" x="130" y="312" text-anchor="middle" dominant-baseline="central">Status, gates, steering</text>
+<rect x="250" y="294" width="180" height="36" rx="6" class="teal-fill" stroke-width="0.5"/>
+<text class="ts teal-sub" x="340" y="312" text-anchor="middle" dominant-baseline="central">Sprint ceremonies</text>
+<rect x="460" y="294" width="180" height="36" rx="6" class="coral-fill" stroke-width="0.5"/>
+<text class="ts coral-sub" x="550" y="312" text-anchor="middle" dominant-baseline="central">PI Planning, ART Sync, I&amp;A</text>
+<text class="th label" x="40" y="360" dominant-baseline="central">Stakeholders</text>
+<rect x="40" y="374" width="180" height="36" rx="6" class="purple-fill" stroke-width="0.5"/>
+<text class="ts purple-sub" x="130" y="392" text-anchor="middle" dominant-baseline="central">Sponsor, steering cmte</text>
+<rect x="250" y="374" width="180" height="36" rx="6" class="teal-fill" stroke-width="0.5"/>
+<text class="ts teal-sub" x="340" y="392" text-anchor="middle" dominant-baseline="central">Product Owner, team</text>
+<rect x="460" y="374" width="180" height="36" rx="6" class="coral-fill" stroke-width="0.5"/>
+<text class="ts coral-sub" x="550" y="392" text-anchor="middle" dominant-baseline="central">Business Owners, PMs, SAs</text>
+<text class="th label" x="40" y="440" dominant-baseline="central">Leadership style</text>
+<rect x="40" y="454" width="180" height="36" rx="6" class="purple-fill" stroke-width="0.5"/>
+<text class="ts purple-sub" x="130" y="472" text-anchor="middle" dominant-baseline="central">Directive + collaborative</text>
+<rect x="250" y="454" width="180" height="36" rx="6" class="teal-fill" stroke-width="0.5"/>
+<text class="ts teal-sub" x="340" y="472" text-anchor="middle" dominant-baseline="central">Servant leader (team)</text>
+<rect x="460" y="454" width="180" height="36" rx="6" class="coral-fill" stroke-width="0.5"/>
+<text class="ts coral-sub" x="550" y="472" text-anchor="middle" dominant-baseline="central">Servant leader (train)</text>
+</svg>
