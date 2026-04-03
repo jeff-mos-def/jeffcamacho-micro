@@ -123,7 +123,7 @@ pre {
   @apply scale-90 transition-transform;
 }
 
-article img {
+article {
   position: relative;
   z-index: 1;
 }
