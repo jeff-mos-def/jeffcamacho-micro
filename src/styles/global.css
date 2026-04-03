@@ -123,7 +123,8 @@ pre {
   @apply scale-90 transition-transform;
 }
 
-article {
+article img[src*="mermaid"] {
   position: relative;
-  z-index: 1;
+  z-index: 10;
+  display: block;
 }
