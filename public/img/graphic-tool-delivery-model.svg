@@ -6,50 +6,50 @@
   </defs>
 
   <!-- Column headers -->
-  <text x="40" y="28" font-size="12" fill="#888" font-family="Georgia, serif">Delivery model</text>
-  <text x="230" y="28" font-size="12" fill="#888" font-family="Georgia, serif">What your tooling must support</text>
+  <text x="40" y="28" font-size="12" fill="#ffffff" font-family="Georgia, serif">Delivery model</text>
+  <text x="230" y="28" font-size="12" fill="#ffffff" font-family="Georgia, serif">What your tooling must support</text>
 
   <!-- Row 1: Waterfall -->
-  <rect x="40" y="44" width="160" height="44" rx="8" fill="#E6F1FB" stroke="#185FA5" stroke-width="0.5"/>
-  <text x="120" y="71" text-anchor="middle" font-size="14" font-weight="bold" fill="#0C447C" font-family="Georgia, serif">Waterfall</text>
-  <line x1="200" y1="66" x2="226" y2="66" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
-  <rect x="230" y="44" width="410" height="44" rx="8" fill="#f5f5f3" stroke="#ccc" stroke-width="0.5"/>
-  <text x="246" y="63" font-size="12" fill="#333" font-family="Georgia, serif">Gantt charts · milestone tracking · dependency mapping</text>
-  <text x="246" y="79" font-size="12" fill="#333" font-family="Georgia, serif">resource loading · baseline vs. actual</text>
+  <rect x="40" y="44" width="160" height="44" rx="8" fill="#1a3a5c" stroke="#378ADD" stroke-width="0.5"/>
+  <text x="120" y="71" text-anchor="middle" font-size="14" font-weight="bold" fill="#85B7EB" font-family="Georgia, serif">Waterfall</text>
+  <line x1="200" y1="66" x2="226" y2="66" stroke="#aaaaaa" stroke-width="1" marker-end="url(#arrow)"/>
+  <rect x="230" y="44" width="410" height="44" rx="8" fill="#1e1e1e" stroke="#444" stroke-width="0.5"/>
+  <text x="246" y="63" font-size="12" fill="#dddddd" font-family="Georgia, serif">Gantt charts · milestone tracking · dependency mapping</text>
+  <text x="246" y="79" font-size="12" fill="#dddddd" font-family="Georgia, serif">resource loading · baseline vs. actual</text>
 
   <!-- Row 2: Scrum -->
-  <rect x="40" y="104" width="160" height="44" rx="8" fill="#E1F5EE" stroke="#0F6E56" stroke-width="0.5"/>
-  <text x="120" y="131" text-anchor="middle" font-size="14" font-weight="bold" fill="#085041" font-family="Georgia, serif">Scrum</text>
-  <line x1="200" y1="126" x2="226" y2="126" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
-  <rect x="230" y="104" width="410" height="44" rx="8" fill="#f5f5f3" stroke="#ccc" stroke-width="0.5"/>
-  <text x="246" y="123" font-size="12" fill="#333" font-family="Georgia, serif">Sprint boards · backlog management</text>
-  <text x="246" y="139" font-size="12" fill="#333" font-family="Georgia, serif">velocity tracking · burndown charts</text>
+  <rect x="40" y="104" width="160" height="44" rx="8" fill="#0d3328" stroke="#1D9E75" stroke-width="0.5"/>
+  <text x="120" y="131" text-anchor="middle" font-size="14" font-weight="bold" fill="#5DCAA5" font-family="Georgia, serif">Scrum</text>
+  <line x1="200" y1="126" x2="226" y2="126" stroke="#aaaaaa" stroke-width="1" marker-end="url(#arrow)"/>
+  <rect x="230" y="104" width="410" height="44" rx="8" fill="#1e1e1e" stroke="#444" stroke-width="0.5"/>
+  <text x="246" y="123" font-size="12" fill="#dddddd" font-family="Georgia, serif">Sprint boards · backlog management</text>
+  <text x="246" y="139" font-size="12" fill="#dddddd" font-family="Georgia, serif">velocity tracking · burndown charts</text>
 
   <!-- Row 3: Kanban -->
-  <rect x="40" y="164" width="160" height="44" rx="8" fill="#FAEEDA" stroke="#854F0B" stroke-width="0.5"/>
-  <text x="120" y="191" text-anchor="middle" font-size="14" font-weight="bold" fill="#633806" font-family="Georgia, serif">Kanban</text>
-  <line x1="200" y1="186" x2="226" y2="186" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
-  <rect x="230" y="164" width="410" height="44" rx="8" fill="#f5f5f3" stroke="#ccc" stroke-width="0.5"/>
-  <text x="246" y="183" font-size="12" fill="#333" font-family="Georgia, serif">WIP limits · flow metrics</text>
-  <text x="246" y="199" font-size="12" fill="#333" font-family="Georgia, serif">queue visualization · cycle time</text>
+  <rect x="40" y="164" width="160" height="44" rx="8" fill="#3d2a08" stroke="#BA7517" stroke-width="0.5"/>
+  <text x="120" y="191" text-anchor="middle" font-size="14" font-weight="bold" fill="#FAC775" font-family="Georgia, serif">Kanban</text>
+  <line x1="200" y1="186" x2="226" y2="186" stroke="#aaaaaa" stroke-width="1" marker-end="url(#arrow)"/>
+  <rect x="230" y="164" width="410" height="44" rx="8" fill="#1e1e1e" stroke="#444" stroke-width="0.5"/>
+  <text x="246" y="183" font-size="12" fill="#dddddd" font-family="Georgia, serif">WIP limits · flow metrics</text>
+  <text x="246" y="199" font-size="12" fill="#dddddd" font-family="Georgia, serif">queue visualization · cycle time</text>
 
   <!-- Row 4: Hybrid -->
-  <rect x="40" y="224" width="160" height="44" rx="8" fill="#EEEDFE" stroke="#534AB7" stroke-width="0.5"/>
-  <text x="120" y="251" text-anchor="middle" font-size="14" font-weight="bold" fill="#3C3489" font-family="Georgia, serif">Hybrid</text>
-  <line x1="200" y1="246" x2="226" y2="246" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
-  <rect x="230" y="224" width="410" height="44" rx="8" fill="#f5f5f3" stroke="#ccc" stroke-width="0.5"/>
-  <text x="246" y="243" font-size="12" fill="#333" font-family="Georgia, serif">Flexibility across views · cross-functional reporting</text>
-  <text x="246" y="259" font-size="12" fill="#333" font-family="Georgia, serif">portfolio-level visibility</text>
+  <rect x="40" y="224" width="160" height="44" rx="8" fill="#1e1a3d" stroke="#7F77DD" stroke-width="0.5"/>
+  <text x="120" y="251" text-anchor="middle" font-size="14" font-weight="bold" fill="#AFA9EC" font-family="Georgia, serif">Hybrid</text>
+  <line x1="200" y1="246" x2="226" y2="246" stroke="#aaaaaa" stroke-width="1" marker-end="url(#arrow)"/>
+  <rect x="230" y="224" width="410" height="44" rx="8" fill="#1e1e1e" stroke="#444" stroke-width="0.5"/>
+  <text x="246" y="243" font-size="12" fill="#dddddd" font-family="Georgia, serif">Flexibility across views · cross-functional reporting</text>
+  <text x="246" y="259" font-size="12" fill="#dddddd" font-family="Georgia, serif">portfolio-level visibility</text>
 
   <!-- Row 5: SAFe -->
-  <rect x="40" y="284" width="160" height="44" rx="8" fill="#FAECE7" stroke="#993C1D" stroke-width="0.5"/>
-  <text x="120" y="311" text-anchor="middle" font-size="14" font-weight="bold" fill="#712B13" font-family="Georgia, serif">Scaled Agile (SAFe)</text>
-  <line x1="200" y1="306" x2="226" y2="306" stroke="#888" stroke-width="1" marker-end="url(#arrow)"/>
-  <rect x="230" y="284" width="410" height="44" rx="8" fill="#f5f5f3" stroke="#ccc" stroke-width="0.5"/>
-  <text x="246" y="303" font-size="12" fill="#333" font-family="Georgia, serif">Program board · PI objectives · ART-level reporting</text>
-  <text x="246" y="319" font-size="12" fill="#333" font-family="Georgia, serif">dependency tracking across teams</text>
+  <rect x="40" y="284" width="160" height="44" rx="8" fill="#3d1a0a" stroke="#D85A30" stroke-width="0.5"/>
+  <text x="120" y="311" text-anchor="middle" font-size="14" font-weight="bold" fill="#F0997B" font-family="Georgia, serif">Scaled Agile (SAFe)</text>
+  <line x1="200" y1="306" x2="226" y2="306" stroke="#aaaaaa" stroke-width="1" marker-end="url(#arrow)"/>
+  <rect x="230" y="284" width="410" height="44" rx="8" fill="#1e1e1e" stroke="#444" stroke-width="0.5"/>
+  <text x="246" y="303" font-size="12" fill="#dddddd" font-family="Georgia, serif">Program board · PI objectives · ART-level reporting</text>
+  <text x="246" y="319" font-size="12" fill="#dddddd" font-family="Georgia, serif">dependency tracking across teams</text>
 
   <!-- Footer -->
-  <line x1="40" y1="350" x2="640" y2="350" stroke="#ddd" stroke-width="0.5"/>
-  <text x="40" y="372" font-size="12" fill="#999" font-family="Georgia, serif" font-style="italic">None of these tools is universally right. All of them are situationally correct.</text>
+  <line x1="40" y1="350" x2="640" y2="350" stroke="#444" stroke-width="0.5"/>
+  <text x="40" y="372" font-size="12" fill="#aaaaaa" font-family="Georgia, serif" font-style="italic">None of these tools is universally right. All of them are situationally correct.</text>
 </svg>

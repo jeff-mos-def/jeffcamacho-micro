@@ -1,9 +1,9 @@
 ---
 title: "Jira Is Not a Strategy — Tool Selection for Real Teams"
 description: "Tool selection is a strategy problem, not a software problem."
-date: "2026-03-28"
+date: "2026-04-03"
 tags: ["tools", "jira", "project management", "PMP", "PDUs", "agile", "SAFe"]
-draft: true
+draft: false
 ---
  
 Every PM has been in this meeting. Leadership decides the organization needs to "get serious about project management." Someone says Jira. Someone else says Monday.com. A third person mentions they heard good things about Smartsheet. The decision gets made based on who spoke loudest, what the IT team already licenses, or what the last consultant recommended.
@@ -11,7 +11,7 @@ Every PM has been in this meeting. Leadership decides the organization needs to 
 Three months later, the tool is half-configured, adoption is spotty, and the team is maintaining both the tool and a parallel spreadsheet.
  
 This is not a tool problem. It is a strategy problem.
- 
+
 ---
  
 ## 1. The Tool Is Not the Process
@@ -33,14 +33,6 @@ This is where most organizations go wrong. They pick a tool based on brand recog
 The right sequence is the opposite.
 
 ![Match the tool to the delivery model](/img/graphic-tool-delivery-model.svg)
- 
-| Delivery Model | Tool Characteristics You Need |
-|---|---|
-| **Waterfall / Traditional** | Gantt charts, milestone tracking, dependency mapping, resource loading, baseline vs. actual |
-| **Scrum** | Sprint boards, backlog management, velocity tracking, burndown charts |
-| **Kanban** | WIP limits, flow metrics, queue visualization, cycle time |
-| **Hybrid** | Flexibility across both views, cross-functional reporting, portfolio-level visibility |
-| **Scaled Agile (SAFe)** | Program board capability, PI objectives, ART-level reporting, dependency tracking across teams |
  
 Jira is excellent for Scrum and Kanban. It is not the right tool for a traditional waterfall project with resource-leveled schedules and earned value reporting. Smartsheet is strong for plan-driven work but can feel clunky in a fast-moving Agile environment. Microsoft Project is powerful for complex scheduling but has a learning curve that will slow down team adoption.
  
@@ -86,29 +78,36 @@ Start with the delivery model and team maturity. Layer in integration requiremen
  
 Then do the thing most organizations skip: **build a configuration playbook.** Document how the tool is set up, what fields mean, what workflows exist, and why decisions were made. This eliminates the "we lost our Jira admin and nobody knows how any of this works" problem that surfaces six months later when the original champion moves to a different team.
 
+### Tool Selection Decision Flow
+
 ```mermaid
-flowchart TD
-    A([Start: Tool selection needed]) --> B{Do you have a\ndefined delivery process?}
-    B -- No --> C[Define your process first.\nTool selection comes second.]
-    B -- Yes --> D{What is your\ndelivery model?}
+%%{init: {'theme': 'dark', 'title': 'Tool Selection Decision Flow', 'themeVariables': {'primaryColor': '#2a2860', 'primaryTextColor': '#ffffff', 'primaryBorderColor': '#7B74E0', 'lineColor': '#aaaaaa', 'secondaryColor': '#1a1a2e', 'tertiaryColor': '#1a1a2e', 'edgeLabelBackground': '#1a1a2e', 'clusterBkg': '#1a1a2e', 'titleColor': '#ffffff', 'fontFamily': 'Georgia, serif'}}}%%
+flowchart LR
+    A([Start: Tool selection needed]) --> B{Do you have a<br/>defined delivery process?}
+    B -- No --> C[Define your process first.<br/>Tool selection comes second.]
+    C --> B
+    B -- Yes --> D{What is your<br/>delivery model?}
  
-    D -- Waterfall --> E[Microsoft Project\nSmartsheet]
-    D -- Scrum/Kanban --> F[Jira\nLinear]
-    D -- Hybrid --> G[Jira + Smartsheet\nor Monday.com]
-    D -- SAFe --> H[Jira Align\nTargetProcess]
+    D -- Waterfall --> E[Microsoft Project<br/>Smartsheet]
+    D -- Scrum/Kanban --> F[Jira<br/>Linear]
+    D -- Hybrid --> G[Jira + Smartsheet<br/>Monday.com]
+    D -- SAFe --> H[Jira Align<br/>Rally]
  
-    E --> I{Will the team\nactually use it?}
-    F --> I
-    G --> I
-    H --> I
+    E --> J[Run a time-boxed pilot<br/>with real work]
+    F --> J
+    G --> J
+    H --> J
  
-    I -- No --> J[Run a time-boxed pilot\nwith real work]
-    J --> I
-    I -- Yes --> K{Does it integrate\nwith existing workflow?}
-    K -- No --> L[Evaluate integration layer\nor reconsider tool]
-    L --> K
-    K -- Yes --> M([Commit and build\na configuration playbook])
+    J --> I{Will the team<br/>actually use it?}
+    I -- No --> D
+    I -- Yes --> K{Does it integrate<br/>with existing workflow?}
+    K -- No --> L[Evaluate a different tool<br/>for your delivery model]
+    L --> D
+    K -- Yes --> M([Commit and build<br/>a configuration playbook])
+    M --> N[/Tool selection is a structured decision.<br/>Start with process. End with commitment./]
 ```
+
+*Start with your delivery model. Validate adoption. Confirm integration. Then commit. Document how the tool is configured so the knowledge doesn't walk out the door.*
  
 ---
  
@@ -131,5 +130,7 @@ The strategy is clarity on how work gets done, who owns what, and how progress i
 Get the strategy right first. The tool selection gets much easier from there.
  
 ---
+
+*Note: It may seem that I'm picking on Jira here. I'm not. This tool just happens to be the tool that has the closest proximity to me in my day-to-day work life. You could switch Jira with any other ALM and these points would ring almost completely true with them as well.*
  
-*PDU Note: Writing this post counts toward PMI's Giving Back to the Profession category under Create Content. Research, tool evaluation frameworks, and hybrid delivery considerations apply across all three Talent Triangle domains: Ways of Working, Business Acumen, and Power Skills. Log time spent writing and researching separately in CCRS.*
+*PDU Note: Writing this post counts toward <a href="https://www.pmi.org/certifications/certification-resources/maintain/earn-pdus" target="_blank" rel="noopener noreferrer">PMI's Giving Back</a> under Create Content. Research, tool evaluation frameworks, and hybrid delivery considerations apply across all three Talent Triangle domains: Ways of Working, Business Acumen, and Power Skills. Log time spent writing and researching separately in CCRS.*
