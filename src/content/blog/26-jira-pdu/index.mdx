@@ -5,6 +5,8 @@ date: "2026-04-03"
 tags: ["tools", "jira", "project management", "PMP", "PDUs", "agile", "SAFe"]
 draft: false
 ---
+
+import Mermaid from "@components/Mermaid.astro";
  
 Every PM has been in this meeting. Leadership decides the organization needs to "get serious about project management." Someone says Jira. Someone else says Monday.com. A third person mentions they heard good things about Smartsheet. The decision gets made based on who spoke loudest, what the IT team already licenses, or what the last consultant recommended.
  
@@ -81,23 +83,19 @@ Then do the thing most organizations skip: **build a configuration playbook.** D
 ### Tool Selection Decision Flow
 
 ```mermaid
-%%{init: {'theme': 'dark', 'title': 'Tool Selection Decision Flow', 'themeVariables': {'primaryColor': '#2a2860', 'primaryTextColor': '#ffffff', 'primaryBorderColor': '#7B74E0', 'lineColor': '#aaaaaa', 'secondaryColor': '#1a1a2e', 'tertiaryColor': '#1a1a2e', 'edgeLabelBackground': '#1a1a2e', 'clusterBkg': '#1a1a2e', 'titleColor': '#ffffff', 'fontFamily': 'Georgia, serif'}}}%%
 flowchart LR
     A([Start: Tool selection needed]) --> B{Do you have a<br/>defined delivery process?}
     B -- No --> C[Define your process first.<br/>Tool selection comes second.]
     C --> B
     B -- Yes --> D{What is your<br/>delivery model?}
- 
     D -- Waterfall --> E[Microsoft Project<br/>Smartsheet]
     D -- Scrum/Kanban --> F[Jira<br/>Linear]
-    D -- Hybrid --> G[Jira + Smartsheet<br/>Monday.com]
+    D -- Hybrid --> G[Jira + Smartsheet<br/>or Monday.com]
     D -- SAFe --> H[Jira Align<br/>Rally]
- 
     E --> J[Run a time-boxed pilot<br/>with real work]
     F --> J
     G --> J
     H --> J
- 
     J --> I{Will the team<br/>actually use it?}
     I -- No --> D
     I -- Yes --> K{Does it integrate<br/>with existing workflow?}
