@@ -126,10 +126,12 @@ pre {
 article picture {
   display: block;
   width: 100%;
+  overflow: hidden;
 }
 
 article picture img {
   display: block;
   width: 100%;
-  position: relative;
+  height: auto;
+  position: static;
 }
