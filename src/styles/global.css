@@ -123,7 +123,13 @@ pre {
   @apply scale-90 transition-transform;
 }
 
-article img[src^="data:"] {
-  position: static;
-  z-index: auto;
+article picture {
+  display: block;
+  width: 100%;
+}
+
+article picture img {
+  display: block;
+  width: 100%;
+  position: relative;
 }
