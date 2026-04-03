@@ -24,8 +24,7 @@ export default defineConfig({
     shikiConfig: {
       theme: "css-variables",
     },
-    rehypePlugins: [[rehypeMermaid, { strategy: "img-svg" }]],
-  },
+    rehypePlugins: [[rehypeMermaid, { strategy: "img-svg", dark: true }]],  },
   vite: {
     optimizeDeps: {
       exclude: ["astro:content-layer-deferred-module"]
