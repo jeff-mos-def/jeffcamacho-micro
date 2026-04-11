@@ -1,0 +1,133 @@
+---
+title: "The ChopBox"
+description: "Building a desktop the slow, cheap, intentional way."
+date: "04/10/2026"
+tags: ["linux", "pc-building", "hardware", "gear", "personal"]
+draft: false
+---
+
+The [FrankenPlex](/projects/frankenplex) was a great project. A salvaged Dell Optiplex, a $24 motherboard off eBay, parts I had sitting in boxes — it came together in a way that surprised me. It did what I needed it to do. But it was always fighting itself a little. A server chassis pretending to be a desktop. A locked processor that had done its time. A GPU with a fan that needed babysitting.
+
+Eventually, it was time to build something on purpose.
+
+*Note: You won't find any pictures here. The FrankenPlex was a love project and the ChopBox was a tool project. I still need to freshen the case up. Some paint, patterns, stickers... you know... +5 gb RAM for all that.*
+
+---
+
+## How It Started
+
+Every month here in San Antonio, our local Goodwill stores will run a sale where all items are 50% off. A Cooler Master Elite RC-342 showed up at Goodwill for half off. Well, it was a fully built out PC, that I bought it with the intention of using the internals for a home server project.... but that project got shelved. The case didn't. When the FrankenPlex started feeling long in the tooth, I looked over at that Cooler Master sitting in the corner and thought — yeah, that'll work.
+
+That's how most of my builds start. Not with a plan, but with a part.
+
+---
+
+## The Build
+
+### Case
+
+**Cooler Master Elite RC-342**: Half off at Goodwill, originally slated for a home server. Good bones, compact form factor, room to work. It ended up being the right call.
+
+### Motherboard
+
+**MSI B760M Gaming Plus WiFi DDR4**: Picked this up through a Facebook Marketplace trade. Some cash, some spare hardware I had laying around, and I walked away with a legitimate consumer board. The DDR4 spec wasn't just a preference. It was a requirement, and I'll get to why in a second.
+
+### CPU
+
+**Intel Core i5-13600K (20 threads, unlocked)**: Found this on Facebook Marketplace, talked the seller down, paid cash. The 13600K is a legitimately fast processor. The fact that it has an unlocked multiplier after years of living with the locked i9-9900 felt like a win. Small thing, but it mattered.
+
+### RAM
+
+**64GB DDR4**: This carried straight over from the FrankenPlex, which had actually been upgraded to 64GB before the migration. *This is also why the motherboard had to be DDR4.* I wasn't going to spend money on memory I already had, and given where the market is right now, I'm glad I didn't have to. A 64GB DDR4 kit that ran around $150 in May 2025 was pushing $380 by December. AI demand has been soaking up DRAM supply across the board, and manufacturers have been phasing out DDR4 production to focus on DDR5 and HBM, which means the older stuff isn't getting cheaper anytime soon. Having this RAM already in hand wasn't just convenient. It was quietly one of the better calls of the whole build.
+
+### GPU
+
+**NVIDIA RTX 5060 Ti**: Bought used at a good price, and the timing mattered. I got this just before the current GPU market inflation hit. Watching prices climb after the fact was a good reminder that sometimes moving fast is the right call.
+
+### Storage
+
+All of it carried over. The Samsung 970 EVO Plus, the T-Force SSD, the WD Blue — these drives have followed me across multiple builds. Some of them go back to college. At this point they've earned their place.
+
+### CPU Cooler
+
+**Noctua NH-U9S Chromax Black**: Brought over from the FrankenPlex. It kept an i9-9900 in check. It'll handle a 13600K just fine.
+
+### PSU
+
+**Corsair SF600 600W Fully Modular**: This one came from a Goodwill Online Auction for $20. Twenty dollars. It's been running without issue ever since. Sometimes you just get lucky.
+
+---
+
+## Back to Linux
+
+The FrankenPlex ended up on Windows 11, which I didn't love but couldn't avoid. The GPU fan issue needed MSI Afterburner, and Afterburner meant Windows. That was the compromise.
+
+The ChopBox runs **Linux Mint 22.3** with Cinnamon, and I don't plan on changing that. The thing that finally freed me from Windows was discovering **Cooler Control** — a Linux-native fan management tool that gave me everything Afterburner did, without the OS bloat. Once that was off the table as a reason to stay on Windows, I was gone.
+
+I may move to Ubuntu 26.04 when it drops on 23Apr26. Still working through a few things on Mint — running Azerothcore has been giving me grief — but overall, this is exactly where I wanted to be.
+
+---
+
+## What This Build Actually Cost
+
+That's the part I like talking about. Here's the honest breakdown:
+
+| Component | Source | Approx. Cost |
+|-----------|--------|--------------|
+| Case | Goodwill (50% off) | Cheap |
+| Motherboard | Facebook Marketplace trade | Cash + spare hardware |
+| CPU (i5-13600K) | Facebook Marketplace | Negotiated, paid cash |
+| RAM (64GB DDR4) | Carried over from FrankenPlex | $0 |
+| GPU (RTX 5060 Ti) | Used, pre-inflation | Good timing |
+| Storage | Repurposed from old builds | $0 |
+| CPU Cooler | Carried over from FrankenPlex | $0 |
+| PSU | Goodwill Online Auction | $20 |
+
+There's no grand total here because that's not really how this kind of build works. Parts accumulate. Trades happen. Timing matters. The ChopBox isn't cheap because I cut corners — it's cheap because I paid attention over a long time.
+
+---
+
+## How It Actually Performs
+
+Numbers are one thing. Here's what the benchmarks back up and what I actually feel.
+
+### CPU: i9-9900 → i5-13600K
+
+On paper, the i9-9900 was a respectable chip in 2019. In practice, a locked multiplier and aging Coffee Lake architecture meant it was always running at its ceiling. The i5-13600K is a different animal. With 20 threads on a hybrid Raptor Lake design, and memory bandwidth roughly double what the 9900 could pull, in aggregate benchmarks, the 13600K outperforms the i9-9900 by over 130%. That's not a marginal upgrade. That's a generational leap dressed up in a lower model number.
+
+Day to day, that translates to applications opening faster, compile times dropping noticeably, and multitasking that doesn't feel like I'm negotiating with the system. It's the kind of difference where you stop thinking about the hardware and just work.
+
+### GPU: RTX 3060 Ti → RTX 5060 Ti
+
+The 3060 Ti had one fan that liked to stop spinning every 45 seconds. That alone was enough reason to move on. Read the [FrankenPlex](/projects/frankenplex) writeup if you want the full story on that. 
+ 
+The 3060 Ti was a solid card when it worked, the fan situation aside. The 5060 Ti is two full generations newer, built on NVIDIA's Blackwell architecture. At 1080p, real-world gaming benchmarks put the 5060 Ti roughly 21-40% ahead depending on the title, and it does it while drawing about 10% fewer watts. The 3060 Ti couldn't push past 100 FPS consistently at 1080p in demanding titles. The 5060 Ti clears it comfortably. It also brings DLSS 4 with Multi Frame Generation to the table, which the 3060 Ti doesn't support at all.
+ 
+But gaming isn't the whole story. I run local LLMs on this machine, and VRAM is the deciding factor there. The 3060 Ti had 8GB, which is workable for smaller models but starts to feel cramped fast. The 5060 Ti comes with 16GB of GDDR7, which opens up a meaningful step up in what's possible. Models in the 13B-14B range that would have required compromises before fit comfortably now. Benchmarks put it at roughly 60 tokens per second on Llama 3.1 8B and around 32 tokens per second on Qwen2.5 14B, which is fast enough to feel responsive in actual use. It's not a dedicated AI workstation, but it handles the workload without complaint.
+ 
+### The Linux Factor
+
+This one's harder to put a number on, but it's real. Windows 11 carries overhead. Background processes, telemetry, update cycles that happen when you'd rather they didn't. Linux Mint on Cinnamon is lean. Boot times are faster. The desktop is responsive in a way that Windows never quite managed on the same hardware. It's not that Windows was slow. It's that Linux just gets out of its own way.
+
+Going from Windows 11 to Linux Mint on better hardware is a compounding effect. The hardware upgrade bought speed. The OS change bought headroom. Together, the ChopBox feels noticeably snappier than the FrankenPlex ever did, even accounting for the spec jump on paper.
+
+| | FrankenPlex | ChopBox |
+|---|---|---|
+| CPU | i9-9900 (8c/16t, locked) | i5-13600K (14c/20t, unlocked) |
+| CPU Gen | Coffee Lake (2018) | Raptor Lake (2022) |
+| GPU | RTX 3060 Ti | RTX 5060 Ti |
+| GPU Architecture | Ampere | Blackwell |
+| RAM | 64GB DDR4 | 64GB DDR4 |
+| OS | Windows 11 | Linux Mint 22.3 |
+
+---
+
+## Where Things Stand
+
+Triple monitors. 64GB of RAM. A processor that can actually breathe. Linux, the way it should be.
+
+The FrankenPlex was about making something work out of nothing. The ChopBox is about making something that works *well*. Both are worth doing, but this one feels better to sit down at every morning.
+
+All the best.
+
+- Jeff
