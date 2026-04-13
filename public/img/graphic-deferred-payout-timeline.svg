@@ -1,0 +1,123 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 420" role="img" aria-label="Dodgers Deferred Payout Timeline 2028 through 2043 showing annual obligations peaking at over 100 million in 2038 to 2039">
+  <rect width="720" height="420" fill="#1a1a2e" rx="8"/>
+
+  <!-- Title -->
+  <text x="360" y="32" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="15" font-weight="700" fill="#ffffff">Dodgers Deferred Payout Obligations (2028-2043)</text>
+  <text x="360" y="52" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="11" fill="#aaaaaa">Annual deferred salary payments in millions. Ohtani highlighted.</text>
+
+  <!-- Y-axis labels -->
+  <text x="38" y="92" text-anchor="end" font-family="Inter, system-ui, sans-serif" font-size="10" fill="#aaaaaa">$100M</text>
+  <text x="38" y="152" text-anchor="end" font-family="Inter, system-ui, sans-serif" font-size="10" fill="#aaaaaa">$80M</text>
+  <text x="38" y="212" text-anchor="end" font-family="Inter, system-ui, sans-serif" font-size="10" fill="#aaaaaa">$60M</text>
+  <text x="38" y="272" text-anchor="end" font-family="Inter, system-ui, sans-serif" font-size="10" fill="#aaaaaa">$40M</text>
+  <text x="38" y="332" text-anchor="end" font-family="Inter, system-ui, sans-serif" font-size="10" fill="#aaaaaa">$20M</text>
+
+  <!-- Grid lines -->
+  <line x1="44" y1="88" x2="700" y2="88" stroke="#333355" stroke-width="0.5"/>
+  <line x1="44" y1="148" x2="700" y2="148" stroke="#333355" stroke-width="0.5"/>
+  <line x1="44" y1="208" x2="700" y2="208" stroke="#333355" stroke-width="0.5"/>
+  <line x1="44" y1="268" x2="700" y2="268" stroke="#333355" stroke-width="0.5"/>
+  <line x1="44" y1="328" x2="700" y2="328" stroke="#333355" stroke-width="0.5"/>
+  <!-- Baseline -->
+  <line x1="44" y1="368" x2="700" y2="368" stroke="#555577" stroke-width="1"/>
+
+  <!-- Bars: each bar is 36px wide with 5px gap. Start x=52. Height: $1M = 2.8px from baseline y=368 -->
+  <!-- 2028: $4M (Freeman only) -->
+  <rect x="52" y="356.8" width="36" height="11.2" rx="2" fill="#4a6fa5"/>
+  <text x="70" y="388" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="9" fill="#aaaaaa">2028</text>
+  <text x="70" y="352" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="9" fill="#cccccc">$4</text>
+
+  <!-- 2029: $4M -->
+  <rect x="93" y="356.8" width="36" height="11.2" rx="2" fill="#4a6fa5"/>
+  <text x="111" y="388" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="9" fill="#aaaaaa">2029</text>
+  <text x="111" y="352" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="9" fill="#cccccc">$4</text>
+
+  <!-- 2030: $14M (Freeman + Hernandez) -->
+  <rect x="134" y="328.8" width="36" height="39.2" rx="2" fill="#4a6fa5"/>
+  <text x="152" y="388" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="9" fill="#aaaaaa">2030</text>
+  <text x="152" y="324" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="9" fill="#cccccc">$14</text>
+
+  <!-- 2031: $14M -->
+  <rect x="175" y="328.8" width="36" height="39.2" rx="2" fill="#4a6fa5"/>
+  <text x="193" y="388" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="9" fill="#aaaaaa">2031</text>
+  <text x="193" y="324" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="9" fill="#cccccc">$14</text>
+
+  <!-- 2032: $14M -->
+  <rect x="216" y="328.8" width="36" height="39.2" rx="2" fill="#4a6fa5"/>
+  <text x="234" y="388" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="9" fill="#aaaaaa">2032</text>
+  <text x="234" y="324" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="9" fill="#cccccc">$14</text>
+
+  <!-- 2033: $26M (Freeman + Hernandez + Betts starts) -->
+  <rect x="257" y="295.2" width="36" height="72.8" rx="2" fill="#4a6fa5"/>
+  <text x="275" y="388" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="9" fill="#aaaaaa">2033</text>
+  <text x="275" y="290" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="9" fill="#cccccc">$26</text>
+
+  <!-- 2034: $94M (Ohtani $68M starts + others) - Ohtani segment highlighted -->
+  <rect x="298" y="104.8" width="36" height="263.2" rx="2" fill="#4a6fa5"/>
+  <rect x="298" y="104.8" width="36" height="190.4" rx="2" fill="#c0392b"/>
+  <text x="316" y="388" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="9" fill="#aaaaaa">2034</text>
+  <text x="316" y="100" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="9" fill="#ffffff">$94</text>
+
+  <!-- 2035: $100M -->
+  <rect x="339" y="88" width="36" height="280" rx="2" fill="#4a6fa5"/>
+  <rect x="339" y="88" width="36" height="190.4" rx="2" fill="#c0392b"/>
+  <text x="357" y="388" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="9" fill="#aaaaaa">2035</text>
+  <text x="357" y="83" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="9" fill="#ffffff">$100</text>
+
+  <!-- 2036: $102M (peak begins) -->
+  <rect x="380" y="82.4" width="36" height="285.6" rx="2" fill="#4a6fa5"/>
+  <rect x="380" y="82.4" width="36" height="190.4" rx="2" fill="#c0392b"/>
+  <text x="398" y="388" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="9" fill="#aaaaaa">2036</text>
+  <text x="398" y="77" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="9" fill="#ffffff">$102</text>
+
+  <!-- 2037: $102M -->
+  <rect x="421" y="82.4" width="36" height="285.6" rx="2" fill="#4a6fa5"/>
+  <rect x="421" y="82.4" width="36" height="190.4" rx="2" fill="#c0392b"/>
+  <text x="439" y="388" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="9" fill="#aaaaaa">2037</text>
+  <text x="439" y="77" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="9" fill="#ffffff">$102</text>
+
+  <!-- 2038: $102M (peak) -->
+  <rect x="462" y="82.4" width="36" height="285.6" rx="2" fill="#4a6fa5"/>
+  <rect x="462" y="82.4" width="36" height="190.4" rx="2" fill="#c0392b"/>
+  <text x="480" y="388" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="9" fill="#aaaaaa">2038</text>
+  <text x="480" y="77" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="9" fill="#ffffff">$102</text>
+
+  <!-- 2039: $102M (peak) -->
+  <rect x="503" y="82.4" width="36" height="285.6" rx="2" fill="#4a6fa5"/>
+  <rect x="503" y="82.4" width="36" height="190.4" rx="2" fill="#c0392b"/>
+  <text x="521" y="388" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="9" fill="#aaaaaa">2039</text>
+  <text x="521" y="77" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="9" fill="#ffffff">$102</text>
+
+  <!-- 2040: $88M (Freeman/Hernandez done) -->
+  <rect x="544" y="121.6" width="36" height="246.4" rx="2" fill="#4a6fa5"/>
+  <rect x="544" y="121.6" width="36" height="190.4" rx="2" fill="#c0392b"/>
+  <text x="562" y="388" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="9" fill="#aaaaaa">2040</text>
+  <text x="562" y="117" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="9" fill="#ffffff">$88</text>
+
+  <!-- 2041: $82M -->
+  <rect x="585" y="138.4" width="36" height="229.6" rx="2" fill="#4a6fa5"/>
+  <rect x="585" y="138.4" width="36" height="190.4" rx="2" fill="#c0392b"/>
+  <text x="603" y="388" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="9" fill="#aaaaaa">2041</text>
+  <text x="603" y="134" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="9" fill="#ffffff">$82</text>
+
+  <!-- 2042: $76M -->
+  <rect x="626" y="155.2" width="36" height="212.8" rx="2" fill="#4a6fa5"/>
+  <rect x="626" y="155.2" width="36" height="190.4" rx="2" fill="#c0392b"/>
+  <text x="644" y="388" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="9" fill="#aaaaaa">2042</text>
+  <text x="644" y="150" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="9" fill="#ffffff">$76</text>
+
+  <!-- 2043: $68M (Ohtani only) -->
+  <rect x="667" y="177.6" width="36" height="190.4" rx="2" fill="#c0392b"/>
+  <text x="685" y="388" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="9" fill="#aaaaaa">2043</text>
+  <text x="685" y="173" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="9" fill="#ffffff">$68</text>
+
+  <!-- Legend -->
+  <rect x="52" y="400" width="12" height="12" rx="2" fill="#c0392b"/>
+  <text x="70" y="410" font-family="Inter, system-ui, sans-serif" font-size="10" fill="#cccccc">Ohtani ($68M/yr)</text>
+  <rect x="180" y="400" width="12" height="12" rx="2" fill="#4a6fa5"/>
+  <text x="198" y="410" font-family="Inter, system-ui, sans-serif" font-size="10" fill="#cccccc">All other deferred players</text>
+
+  <!-- Peak annotation -->
+  <line x1="380" y1="72" x2="540" y2="72" stroke="#e74c3c" stroke-width="1" stroke-dasharray="4,3"/>
+  <text x="460" y="67" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="10" font-weight="600" fill="#e74c3c">Peak: ~$102M/yr</text>
+</svg>

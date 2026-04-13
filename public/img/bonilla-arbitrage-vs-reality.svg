@@ -1,0 +1,96 @@
+<svg width="100%" viewBox="0 0 700 440" xmlns="http://www.w3.org/2000/svg" font-family="Georgia, serif">
+  <rect width="700" height="440" fill="#1a1a2e" rx="12"/>
+
+  <!-- Title -->
+  <text x="350" y="32" text-anchor="middle" font-size="16" font-weight="bold" fill="#ffffff">The Arbitrage Logic vs. What Actually Happened</text>
+
+  <!-- EXPECTED PATH -->
+  <text x="40" y="72" font-size="13" font-weight="bold" fill="#5b9bd5">Expected Outcome (2000)</text>
+
+  <!-- Step 1 -->
+  <rect x="40" y="86" width="140" height="52" rx="8" fill="#1e2a4a" stroke="#5b9bd5" stroke-width="1"/>
+  <text x="110" y="107" text-anchor="middle" font-size="11" fill="#ffffff" font-weight="bold">Keep $5.9M</text>
+  <text x="110" y="123" text-anchor="middle" font-size="10" fill="#cccccc">Defer Bonilla's salary</text>
+
+  <!-- Arrow -->
+  <line x1="180" y1="112" x2="210" y2="112" stroke="#5b9bd5" stroke-width="1.5" marker-end="url(#arrowBlue)"/>
+
+  <!-- Step 2 -->
+  <rect x="212" y="86" width="140" height="52" rx="8" fill="#1e2a4a" stroke="#5b9bd5" stroke-width="1"/>
+  <text x="282" y="107" text-anchor="middle" font-size="11" fill="#ffffff" font-weight="bold">Invest with Madoff</text>
+  <text x="282" y="123" text-anchor="middle" font-size="10" fill="#cccccc">10-12% annual return</text>
+
+  <!-- Arrow -->
+  <line x1="352" y1="112" x2="382" y2="112" stroke="#5b9bd5" stroke-width="1.5" marker-end="url(#arrowBlue)"/>
+
+  <!-- Step 3 -->
+  <rect x="384" y="86" width="140" height="52" rx="8" fill="#1e2a4a" stroke="#5b9bd5" stroke-width="1"/>
+  <text x="454" y="107" text-anchor="middle" font-size="11" fill="#ffffff" font-weight="bold">Pay Bonilla 8%</text>
+  <text x="454" y="123" text-anchor="middle" font-size="10" fill="#cccccc">Pocket the 2-4% spread</text>
+
+  <!-- Arrow -->
+  <line x1="524" y1="112" x2="554" y2="112" stroke="#5b9bd5" stroke-width="1.5" marker-end="url(#arrowBlue)"/>
+
+  <!-- Result -->
+  <rect x="556" y="86" width="120" height="52" rx="8" fill="#1a3a2a" stroke="#4caf7a" stroke-width="1"/>
+  <text x="616" y="107" text-anchor="middle" font-size="11" fill="#4caf7a" font-weight="bold">Net profit</text>
+  <text x="616" y="123" text-anchor="middle" font-size="10" fill="#cccccc">Free money on paper</text>
+
+  <!-- Short-term wins box -->
+  <rect x="40" y="160" width="636" height="56" rx="8" fill="#1e2a4a" stroke="#5b9bd5" stroke-width="0.5"/>
+  <text x="358" y="180" text-anchor="middle" font-size="11" fill="#5b9bd5" font-weight="bold">Short-term wins were real</text>
+  <text x="358" y="198" text-anchor="middle" font-size="10" fill="#cccccc">$5.9M freed up payroll > signed Mike Hampton > 2000 World Series > drafted David Wright</text>
+
+  <!-- Divider -->
+  <line x1="40" y1="236" x2="660" y2="236" stroke="#444466" stroke-width="0.5" stroke-dasharray="4,4"/>
+
+  <!-- ACTUAL PATH -->
+  <text x="40" y="264" font-size="13" font-weight="bold" fill="#e07050">What Actually Happened (2008)</text>
+
+  <!-- Step 1 -->
+  <rect x="40" y="278" width="140" height="52" rx="8" fill="#3a1e1e" stroke="#e07050" stroke-width="1"/>
+  <text x="110" y="299" text-anchor="middle" font-size="11" fill="#ffffff" font-weight="bold">Madoff arrested</text>
+  <text x="110" y="315" text-anchor="middle" font-size="10" fill="#cccccc">Ponzi scheme exposed</text>
+
+  <!-- Arrow -->
+  <line x1="180" y1="304" x2="210" y2="304" stroke="#e07050" stroke-width="1.5" marker-end="url(#arrowRed)"/>
+
+  <!-- Step 2 -->
+  <rect x="212" y="278" width="140" height="52" rx="8" fill="#3a1e1e" stroke="#e07050" stroke-width="1"/>
+  <text x="282" y="299" text-anchor="middle" font-size="11" fill="#ffffff" font-weight="bold">Returns vanish</text>
+  <text x="282" y="315" text-anchor="middle" font-size="10" fill="#cccccc">No funding source</text>
+
+  <!-- Arrow -->
+  <line x1="352" y1="304" x2="382" y2="304" stroke="#e07050" stroke-width="1.5" marker-end="url(#arrowRed)"/>
+
+  <!-- Step 3 -->
+  <rect x="384" y="278" width="140" height="52" rx="8" fill="#3a1e1e" stroke="#e07050" stroke-width="1"/>
+  <text x="454" y="299" text-anchor="middle" font-size="11" fill="#ffffff" font-weight="bold">$29.8M liability</text>
+  <text x="454" y="315" text-anchor="middle" font-size="10" fill="#cccccc">Still compounding at 8%</text>
+
+  <!-- Arrow -->
+  <line x1="524" y1="304" x2="554" y2="304" stroke="#e07050" stroke-width="1.5" marker-end="url(#arrowRed)"/>
+
+  <!-- Result -->
+  <rect x="556" y="278" width="120" height="52" rx="8" fill="#3a1a1a" stroke="#cc3333" stroke-width="1"/>
+  <text x="616" y="299" text-anchor="middle" font-size="11" fill="#cc3333" font-weight="bold">Decade of</text>
+  <text x="616" y="315" text-anchor="middle" font-size="10" fill="#cccccc">financial austerity</text>
+
+  <!-- Bottom takeaway -->
+  <rect x="40" y="352" width="636" height="56" rx="8" fill="#2a1e2e" stroke="#9966aa" stroke-width="0.5"/>
+  <text x="358" y="374" text-anchor="middle" font-size="11" fill="#dddddd" font-weight="bold">PM takeaway</text>
+  <text x="358" y="392" text-anchor="middle" font-size="10" fill="#aaaaaa">Short-term wins are not evidence your strategy is sound. They are evidence it has not been tested yet.</text>
+
+  <!-- Footer -->
+  <text x="350" y="430" text-anchor="middle" font-size="10" fill="#666680" font-style="italic">The Mets looked brilliant for three years and spent the next fifteen paying for it.</text>
+
+  <!-- Arrow markers -->
+  <defs>
+    <marker id="arrowBlue" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M2 1L8 5L2 9" fill="none" stroke="#5b9bd5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </marker>
+    <marker id="arrowRed" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M2 1L8 5L2 9" fill="none" stroke="#e07050" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </marker>
+  </defs>
+</svg>

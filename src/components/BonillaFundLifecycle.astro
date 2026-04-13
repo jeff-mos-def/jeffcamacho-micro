@@ -1,0 +1,176 @@
+<div style="background: #1a1a2e; border-radius: 12px; padding: 24px 16px 16px 16px; max-width: 740px; margin: 2rem auto; font-family: Georgia, serif;">
+  <div style="text-align: center; margin-bottom: 4px;">
+    <span style="color: #ffffff; font-size: 18px; font-weight: bold;">The Bonilla Fund: $5.9M to $29.8M</span>
+  </div>
+  <div style="text-align: center; margin-bottom: 16px;">
+    <span style="color: #aaaaaa; font-size: 13px;">Outstanding balance by year (2000 to 2035)</span>
+  </div>
+  <div style="position: relative; height: 400px; width: 100%;">
+    <canvas id="bonillaChart"></canvas>
+  </div>
+  <div style="text-align: center; margin-top: 8px;">
+    <span style="color: #666680; font-size: 11px; font-style: italic;">Hover over the chart to see balance by year. Original obligation: $5.9M. Total paid: ~$29.8M.</span>
+  </div>
+</div>
+
+<script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+
+<script is:inline>
+(function () {
+  function renderBonillaChart() {
+    var canvas = document.getElementById('bonillaChart');
+    if (!canvas || !window.Chart) return;
+    if (canvas.dataset.rendered === 'true') return;
+    canvas.dataset.rendered = 'true';
+
+    var rate = 0.08;
+    var principal = 5900000;
+    var payment = 1193248.20;
+
+    var accLabels = [];
+    var accData = [];
+    var balance = principal;
+    for (var y = 2000; y <= 2011; y++) {
+      accLabels.push(y.toString());
+      accData.push(Math.round(balance));
+      if (y < 2011) balance = balance * (1 + rate);
+    }
+
+    var amortLabels = [];
+    var amortData = [];
+    balance = accData[accData.length - 1];
+    for (var y = 2011; y <= 2035; y++) {
+      amortLabels.push(y.toString());
+      amortData.push(Math.round(balance));
+      balance = (balance - payment) * (1 + rate);
+      if (balance < 0) balance = 0;
+    }
+
+    var allLabels = accLabels.concat(amortLabels.slice(1));
+    var accFull = accData.concat(new Array(amortLabels.length - 1).fill(null));
+    var amortFull = new Array(accLabels.length - 1).fill(null).concat(amortData);
+
+    new window.Chart(canvas, {
+      type: 'line',
+      data: {
+        labels: allLabels,
+        datasets: [
+          {
+            label: 'Accumulation (8% compounding)',
+            data: accFull,
+            borderColor: '#5b9bd5',
+            backgroundColor: 'rgba(91, 155, 213, 0.15)',
+            fill: true,
+            tension: 0.3,
+            pointRadius: 3,
+            pointHoverRadius: 6,
+            pointBackgroundColor: '#5b9bd5',
+            pointBorderColor: '#ffffff',
+            pointBorderWidth: 1,
+            spanGaps: false
+          },
+          {
+            label: 'Amortization ($1.19M/year payments)',
+            data: amortFull,
+            borderColor: '#e07050',
+            backgroundColor: 'rgba(224, 112, 80, 0.15)',
+            fill: true,
+            tension: 0.3,
+            pointRadius: 3,
+            pointHoverRadius: 6,
+            pointBackgroundColor: '#e07050',
+            pointBorderColor: '#ffffff',
+            pointBorderWidth: 1,
+            spanGaps: false
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        interaction: {
+          mode: 'index',
+          intersect: false
+        },
+        plugins: {
+          legend: {
+            labels: {
+              color: '#cccccc',
+              font: { family: 'Georgia, serif', size: 11 }
+            }
+          },
+          tooltip: {
+            backgroundColor: '#0d0d1a',
+            titleColor: '#ffffff',
+            bodyColor: '#cccccc',
+            borderColor: '#555555',
+            borderWidth: 1,
+            titleFont: { family: 'Georgia, serif', size: 12 },
+            bodyFont: { family: 'Georgia, serif', size: 11 },
+            callbacks: {
+              label: function(ctx) {
+                if (ctx.raw === null) return null;
+                var val = ctx.raw;
+                if (val >= 1000000) return ctx.dataset.label + ': $' + (val / 1000000).toFixed(1) + 'M';
+                if (val >= 1000) return ctx.dataset.label + ': $' + (val / 1000).toFixed(0) + 'K';
+                return ctx.dataset.label + ': $' + val;
+              }
+            }
+          },
+          annotation: {
+            annotations: {
+              divider: {
+                type: 'line',
+                xMin: '2011',
+                xMax: '2011',
+                borderColor: 'rgba(255, 255, 255, 0.3)',
+                borderWidth: 1,
+                borderDash: [4, 4],
+                label: {
+                  display: true,
+                  content: '2011: Payments begin',
+                  position: 'start',
+                  color: '#dddddd',
+                  font: { family: 'Georgia, serif', size: 10 },
+                  backgroundColor: 'transparent'
+                }
+              }
+            }
+          }
+        },
+        scales: {
+          x: {
+            ticks: {
+              color: '#aaaaaa',
+              font: { family: 'Georgia, serif', size: 10 },
+              maxRotation: 0,
+              autoSkip: false,
+              callback: function(val, idx) {
+                var label = this.getLabelForValue(val);
+                var show = ['2000', '2005', '2011', '2015', '2020', '2025', '2030', '2035'];
+                return show.indexOf(label) > -1 ? label : '';
+              }
+            },
+            grid: { color: 'rgba(255, 255, 255, 0.04)' }
+          },
+          y: {
+            ticks: {
+              color: '#aaaaaa',
+              font: { family: 'Georgia, serif', size: 10 },
+              callback: function(val) {
+                if (val >= 1000000) return '$' + (val / 1000000).toFixed(0) + 'M';
+                if (val >= 1000) return '$' + (val / 1000).toFixed(0) + 'K';
+                return '$' + val;
+              }
+            },
+            grid: { color: 'rgba(255, 255, 255, 0.04)' }
+          }
+        }
+      }
+    });
+  }
+
+  document.addEventListener('astro:page-load', renderBonillaChart);
+  if (document.readyState !== 'loading') renderBonillaChart();
+})();
+</script>

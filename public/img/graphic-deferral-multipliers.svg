@@ -1,0 +1,76 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 400" role="img" aria-label="Deferral Cost Multiplier comparison across nine real-world failures from 5x to 300x">
+  <rect width="720" height="400" fill="#1a1a2e" rx="8"/>
+
+  <!-- Title -->
+  <text x="360" y="32" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="15" font-weight="700" fill="#ffffff">What Deferral Actually Costs: Real-World Multipliers</text>
+  <text x="360" y="50" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="11" fill="#aaaaaa">Original cost vs. final cost after deferral. Sorted by multiplier.</text>
+
+  <!-- Baseline -->
+  <line x1="200" y1="66" x2="200" y2="370" stroke="#555577" stroke-width="1"/>
+
+  <!-- Scale markers -->
+  <line x1="296" y1="66" x2="296" y2="370" stroke="#333355" stroke-width="0.5" stroke-dasharray="3,4"/>
+  <text x="296" y="384" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="9" fill="#aaaaaa">10x</text>
+  <line x1="392" y1="66" x2="392" y2="370" stroke="#333355" stroke-width="0.5" stroke-dasharray="3,4"/>
+  <text x="392" y="384" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="9" fill="#aaaaaa">20x</text>
+  <line x1="488" y1="66" x2="488" y2="370" stroke="#333355" stroke-width="0.5" stroke-dasharray="3,4"/>
+  <text x="488" y="384" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="9" fill="#aaaaaa">30x</text>
+  <text x="200" y="384" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="9" fill="#aaaaaa">1x</text>
+
+  <!-- Row height: 32px, gap: 2px. Starting y=70 -->
+
+  <!-- Flint: 300x - bar would go way off chart, cap and annotate -->
+  <text x="195" y="88" text-anchor="end" font-family="Inter, system-ui, sans-serif" font-size="11" fill="#ffffff">Flint, MI</text>
+  <rect x="200" y="74" width="500" height="24" rx="3" fill="#c0392b"/>
+  <text x="695" y="90" text-anchor="end" font-family="Inter, system-ui, sans-serif" font-size="10" font-weight="600" fill="#ffffff">300x</text>
+  <text x="360" y="90" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="9" fill="#ffffff">$5M saved > $1.5B crisis</text>
+
+  <!-- Healthcare.gov: 20x -->
+  <text x="195" y="122" text-anchor="end" font-family="Inter, system-ui, sans-serif" font-size="11" fill="#ffffff">Healthcare.gov</text>
+  <rect x="200" y="108" width="384" height="24" rx="3" fill="#e67e22"/>
+  <text x="590" y="124" text-anchor="start" font-family="Inter, system-ui, sans-serif" font-size="10" font-weight="600" fill="#e67e22">20x</text>
+  <text x="300" y="124" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="9" fill="#ffffff">$94M > $2.1B</text>
+
+  <!-- Illinois Pensions: 20x -->
+  <text x="195" y="156" text-anchor="end" font-family="Inter, system-ui, sans-serif" font-size="11" fill="#ffffff">IL Pensions</text>
+  <rect x="200" y="142" width="384" height="24" rx="3" fill="#e67e22"/>
+  <text x="590" y="158" text-anchor="start" font-family="Inter, system-ui, sans-serif" font-size="10" font-weight="600" fill="#e67e22">20x</text>
+  <text x="310" y="158" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="9" fill="#ffffff">$614M/yr > $11.2B/yr</text>
+
+  <!-- Boeing 737 MAX: 10x -->
+  <text x="195" y="190" text-anchor="end" font-family="Inter, system-ui, sans-serif" font-size="11" fill="#ffffff">Boeing MAX</text>
+  <rect x="200" y="176" width="192" height="24" rx="3" fill="#f39c12"/>
+  <text x="398" y="192" text-anchor="start" font-family="Inter, system-ui, sans-serif" font-size="10" font-weight="600" fill="#f39c12">10x</text>
+  <text x="280" y="192" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="9" fill="#ffffff">$3B > $20B+</text>
+
+  <!-- Big Dig: 8.7x -->
+  <text x="195" y="224" text-anchor="end" font-family="Inter, system-ui, sans-serif" font-size="11" fill="#ffffff">Big Dig</text>
+  <rect x="200" y="210" width="167" height="24" rx="3" fill="#f39c12"/>
+  <text x="373" y="226" text-anchor="start" font-family="Inter, system-ui, sans-serif" font-size="10" font-weight="600" fill="#f39c12">8.7x</text>
+  <text x="275" y="226" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="9" fill="#ffffff">$2.8B > $24.3B</text>
+
+  <!-- Knight Capital: 7x (using implicit multiplier of old code cost vs loss) -->
+  <text x="195" y="258" text-anchor="end" font-family="Inter, system-ui, sans-serif" font-size="11" fill="#ffffff">Knight Capital</text>
+  <rect x="200" y="244" width="134" height="24" rx="3" fill="#f1c40f"/>
+  <text x="340" y="260" text-anchor="start" font-family="Inter, system-ui, sans-serif" font-size="10" font-weight="600" fill="#f1c40f">$440M lost</text>
+  <text x="265" y="260" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="9" fill="#1a1a2e">45 min</text>
+
+  <!-- Bobby Bonilla: 5x -->
+  <text x="195" y="292" text-anchor="end" font-family="Inter, system-ui, sans-serif" font-size="11" fill="#ffffff">Bonilla Day</text>
+  <rect x="200" y="278" width="96" height="24" rx="3" fill="#27ae60"/>
+  <text x="302" y="294" text-anchor="start" font-family="Inter, system-ui, sans-serif" font-size="10" font-weight="600" fill="#27ae60">5x</text>
+  <text x="248" y="294" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="9" fill="#ffffff">$5.9M > $29.8M</text>
+
+  <!-- Deferred Maintenance (general): 4-7x -->
+  <text x="195" y="326" text-anchor="end" font-family="Inter, system-ui, sans-serif" font-size="11" fill="#ffffff">Facilities (avg)</text>
+  <rect x="200" y="312" width="77" height="24" rx="3" fill="#4a6fa5"/>
+  <rect x="277" y="312" width="57" height="24" rx="3" fill="#4a6fa5" opacity="0.5"/>
+  <text x="340" y="328" text-anchor="start" font-family="Inter, system-ui, sans-serif" font-size="10" font-weight="600" fill="#4a6fa5">4-7x</text>
+  <text x="245" y="328" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="9" fill="#ffffff">$1 > $4-$7</text>
+
+  <!-- Dodgers (TBD): ? -->
+  <text x="195" y="360" text-anchor="end" font-family="Inter, system-ui, sans-serif" font-size="11" font-weight="600" fill="#e74c3c">Dodgers</text>
+  <rect x="200" y="346" width="20" height="24" rx="3" fill="#1a1a2e" stroke="#e74c3c" stroke-width="1.5" stroke-dasharray="4,3"/>
+  <text x="228" y="362" text-anchor="start" font-family="Inter, system-ui, sans-serif" font-size="10" font-weight="600" fill="#e74c3c">?</text>
+  <text x="260" y="362" text-anchor="start" font-family="Inter, system-ui, sans-serif" font-size="9" font-style="italic" fill="#aaaaaa">$1.09B deferred. TBD.</text>
+</svg>

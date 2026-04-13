@@ -1,0 +1,73 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 420" role="img" aria-label="Side by side comparison of CBA mechanisms and PM equivalents with PMBOK 8 domains">
+  <rect width="720" height="420" fill="#f8f9fa" rx="8"/>
+  <text x="360" y="32" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="15" font-weight="700" fill="#1a1a2e">CBA Mechanism &#x2192; PM Parallel &#x2192; PMBOK 8 Connection</text>
+
+  <rect x="20" y="50" width="220" height="40" rx="4" fill="#1a1a2e"/>
+  <text x="130" y="75" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="12" font-weight="700" fill="#ffffff">CBA Mechanism</text>
+
+  <rect x="250" y="50" width="220" height="40" rx="4" fill="#1a1a2e"/>
+  <text x="360" y="75" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="12" font-weight="700" fill="#ffffff">PM Equivalent</text>
+
+  <rect x="480" y="50" width="220" height="40" rx="4" fill="#1a1a2e"/>
+  <text x="590" y="75" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="12" font-weight="700" fill="#ffffff">PMBOK 8 Domain</text>
+
+  <rect x="20" y="96" width="220" height="56" rx="4" fill="#ffffff" stroke="#e5e7eb" stroke-width="1"/>
+  <text x="130" y="118" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="11" font-weight="600" fill="#1a1a2e">Service Time Rules</text>
+  <text x="130" y="134" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="10" fill="#6b7280">Rational gaming of promotion rules</text>
+
+  <rect x="250" y="96" width="220" height="56" rx="4" fill="#ffffff" stroke="#e5e7eb" stroke-width="1"/>
+  <text x="360" y="118" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="11" font-weight="600" fill="#1a1a2e">KPI / Velocity Gaming</text>
+  <text x="360" y="134" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="10" fill="#6b7280">Teams inflating metrics to hit targets</text>
+
+  <rect x="480" y="96" width="220" height="56" rx="4" fill="#e0f2fe" stroke="#bae6fd" stroke-width="1"/>
+  <text x="590" y="118" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="11" font-weight="600" fill="#0c4a6e">Governance</text>
+  <text x="590" y="134" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="10" fill="#6b7280">Decision frameworks shape behavior</text>
+
+  <rect x="20" y="158" width="220" height="56" rx="4" fill="#ffffff" stroke="#e5e7eb" stroke-width="1"/>
+  <text x="130" y="180" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="11" font-weight="600" fill="#1a1a2e">Draft Lottery</text>
+  <text x="130" y="196" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="10" fill="#6b7280">Probabilistic vs. guaranteed reward</text>
+
+  <rect x="250" y="158" width="220" height="56" rx="4" fill="#ffffff" stroke="#e5e7eb" stroke-width="1"/>
+  <text x="360" y="180" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="11" font-weight="600" fill="#1a1a2e">Resource Allocation Redesign</text>
+  <text x="360" y="196" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="10" fill="#6b7280">Breaking the link between gaming and reward</text>
+
+  <rect x="480" y="158" width="220" height="56" rx="4" fill="#fef3c7" stroke="#fde68a" stroke-width="1"/>
+  <text x="590" y="180" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="11" font-weight="600" fill="#78350f">Risk</text>
+  <text x="590" y="196" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="10" fill="#6b7280">Structural risk in reward systems</text>
+
+  <rect x="20" y="220" width="220" height="56" rx="4" fill="#ffffff" stroke="#e5e7eb" stroke-width="1"/>
+  <text x="130" y="242" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="11" font-weight="600" fill="#1a1a2e">Pre-Arb Bonus Pool ($50M)</text>
+  <text x="130" y="258" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="10" fill="#6b7280">Performance-based incentive layer</text>
+
+  <rect x="250" y="220" width="220" height="56" rx="4" fill="#ffffff" stroke="#e5e7eb" stroke-width="1"/>
+  <text x="360" y="242" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="11" font-weight="600" fill="#1a1a2e">Recognition for Contributors</text>
+  <text x="360" y="258" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="10" fill="#6b7280">Rewarding outcomes, not tenure</text>
+
+  <rect x="480" y="220" width="220" height="56" rx="4" fill="#d1fae5" stroke="#a7f3d0" stroke-width="1"/>
+  <text x="590" y="242" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="11" font-weight="600" fill="#065f46">Resources</text>
+  <text x="590" y="258" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="10" fill="#6b7280">Aligning compensation with value</text>
+
+  <rect x="20" y="282" width="220" height="56" rx="4" fill="#ffffff" stroke="#e5e7eb" stroke-width="1"/>
+  <text x="130" y="304" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="11" font-weight="600" fill="#1a1a2e">Joint Competition Committee</text>
+  <text x="130" y="320" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="10" fill="#6b7280">Cross-functional, fast authority</text>
+
+  <rect x="250" y="282" width="220" height="56" rx="4" fill="#ffffff" stroke="#e5e7eb" stroke-width="1"/>
+  <text x="360" y="304" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="11" font-weight="600" fill="#1a1a2e">Empowered Change Board</text>
+  <text x="360" y="320" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="10" fill="#6b7280">Standing body with decision authority</text>
+
+  <rect x="480" y="282" width="220" height="56" rx="4" fill="#ede9fe" stroke="#ddd6fe" stroke-width="1"/>
+  <text x="590" y="304" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="11" font-weight="600" fill="#4c1d95">Stakeholders</text>
+  <text x="590" y="320" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="10" fill="#6b7280">Affected parties in decision roles</text>
+
+  <rect x="20" y="344" width="220" height="56" rx="4" fill="#ffffff" stroke="#e5e7eb" stroke-width="1"/>
+  <text x="130" y="366" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="11" font-weight="600" fill="#1a1a2e">4-Tier Luxury Tax</text>
+  <text x="130" y="382" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="10" fill="#6b7280">Graduated, transparent penalties</text>
+
+  <rect x="250" y="344" width="220" height="56" rx="4" fill="#ffffff" stroke="#e5e7eb" stroke-width="1"/>
+  <text x="360" y="366" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="11" font-weight="600" fill="#1a1a2e">Tiered Budget Escalation</text>
+  <text x="360" y="382" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="10" fill="#6b7280">Proportional consequences, not binary</text>
+
+  <rect x="480" y="344" width="220" height="56" rx="4" fill="#fce7f3" stroke="#fbcfe8" stroke-width="1"/>
+  <text x="590" y="366" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="11" font-weight="600" fill="#831843">Finance</text>
+  <text x="590" y="382" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="10" fill="#6b7280">Visible tradeoffs at every level</text>
+</svg>

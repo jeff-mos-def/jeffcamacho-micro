@@ -1,0 +1,122 @@
+<canvas id="deferredPayoutChart" height="280" style="margin: 2rem 0; width: 100%;"></canvas>
+
+<script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+
+<script is:inline>
+(function () {
+  function renderDeferredChart() {
+    var canvas = document.getElementById('deferredPayoutChart');
+    if (!canvas || !window.Chart) return;
+    if (canvas.dataset.rendered) return;
+    canvas.dataset.rendered = 'true';
+    var dark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    var gridColor = dark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.07)';
+    var labelColor = dark ? '#9c9a92' : '#5f5e5a';
+    new Chart(canvas.getContext('2d'), {
+      type: 'bar',
+      data: {
+        labels: ['2028','2029','2030','2031','2032','2033','2034','2035','2036','2037','2038','2039','2040','2041','2042','2043'],
+        datasets: [
+          {
+            label: 'Ohtani ($68M/yr)',
+            data: [0, 0, 0, 0, 0, 0, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68],
+            backgroundColor: '#c0392b',
+            borderColor: '#e74c3c',
+            borderWidth: 1,
+            borderRadius: 2,
+          },
+          {
+            label: 'All other deferred players',
+            data: [4, 4, 14, 14, 14, 26, 26, 32, 34, 34, 34, 34, 20, 14, 8, 0],
+            backgroundColor: '#4a6fa5',
+            borderColor: '#6a8fc5',
+            borderWidth: 1,
+            borderRadius: 2,
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        interaction: { mode: 'index', intersect: false },
+        plugins: {
+          title: {
+            display: true,
+            text: 'Dodgers Deferred Payout Obligations (2028-2043)',
+            color: dark ? '#ffffff' : '#1a1a2e',
+            font: { size: 15, weight: 'bold' },
+            padding: { bottom: 4 },
+          },
+          subtitle: {
+            display: true,
+            text: 'Annual deferred salary payments in millions. Ohtani highlighted.',
+            color: dark ? '#aaaaaa' : '#666666',
+            font: { size: 11 },
+            padding: { bottom: 12 },
+          },
+          legend: {
+            labels: { color: labelColor, font: { size: 12 }, boxWidth: 12 },
+          },
+          tooltip: {
+            backgroundColor: dark ? '#2c2c2a' : '#fff',
+            titleColor: labelColor,
+            bodyColor: labelColor,
+            borderColor: gridColor,
+            borderWidth: 1,
+            callbacks: {
+              label: function (ctx) {
+                return ctx.dataset.label + ': $' + ctx.raw + 'M';
+              },
+              afterBody: function (items) {
+                var total = 0;
+                items.forEach(function (item) { total += item.raw; });
+                return 'Total: $' + total + 'M';
+              },
+            },
+          },
+          annotation: {
+            annotations: {
+              peakLine: {
+                type: 'line',
+                yMin: 102,
+                yMax: 102,
+                borderColor: '#e74c3c',
+                borderWidth: 1,
+                borderDash: [4, 3],
+                label: {
+                  display: true,
+                  content: 'Peak: ~$102M/yr',
+                  color: '#e74c3c',
+                  font: { size: 10, weight: 'bold' },
+                  position: 'start',
+                  backgroundColor: 'transparent',
+                },
+              },
+            },
+          },
+        },
+        scales: {
+          x: {
+            stacked: true,
+            ticks: { color: labelColor, font: { size: 11 } },
+            grid: { color: gridColor },
+          },
+          y: {
+            stacked: true,
+            title: { display: true, text: 'Deferred payments ($M)', color: labelColor, font: { size: 11 } },
+            ticks: {
+              color: labelColor,
+              font: { size: 11 },
+              callback: function (v) { return '$' + v + 'M'; },
+            },
+            grid: { color: gridColor },
+            max: 120,
+          },
+        },
+      },
+    });
+  }
+
+  document.addEventListener('astro:page-load', renderDeferredChart);
+  if (document.readyState !== 'loading') renderDeferredChart();
+})();
+</script>
