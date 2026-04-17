@@ -1,0 +1,70 @@
+<svg viewBox="0 0 900 480" xmlns="http://www.w3.org/2000/svg" font-family="Georgia, serif">
+
+  <!-- Background -->
+  <rect width="900" height="480" fill="#0f1923" rx="12"/>
+
+  <!-- Title block -->
+  <rect x="0" y="0" width="900" height="64" rx="12" fill="#1a2e42"/>
+  <rect x="0" y="52" width="900" height="12" fill="#1a2e42"/>
+  <text x="450" y="30" text-anchor="middle" font-size="19" font-weight="bold" fill="#ffffff" letter-spacing="1">THE PM-TO-FAR TRANSLATION</text>
+  <text x="450" y="52" text-anchor="middle" font-size="12" fill="#7ab3d4">You already know this work. Here is what the FAR calls it.</text>
+
+  <!-- Column headers -->
+  <rect x="40" y="80" width="380" height="36" rx="6" fill="#1e3a52"/>
+  <rect x="440" y="80" width="420" height="36" rx="6" fill="#1e3a52"/>
+  <text x="230" y="103" text-anchor="middle" font-size="13" font-weight="bold" fill="#7ab3d4" letter-spacing="1">PM CONCEPT</text>
+  <text x="650" y="103" text-anchor="middle" font-size="13" font-weight="bold" fill="#e8943a" letter-spacing="1">FAR EQUIVALENT</text>
+
+  <!-- Row data -->
+  <!-- Row 1 -->
+  <rect x="40" y="126" width="380" height="44" rx="4" fill="#111e2b"/>
+  <rect x="440" y="126" width="420" height="44" rx="4" fill="#111e2b"/>
+  <text x="60" y="144" font-size="11" fill="#aaaaaa">SCOPE</text>
+  <text x="60" y="161" font-size="13" fill="#ffffff" font-weight="bold">Scope Definition</text>
+  <text x="460" y="144" font-size="11" fill="#aaaaaa">FAR / CONTRACT DOCUMENT</text>
+  <text x="460" y="161" font-size="13" fill="#e8943a" font-weight="bold">Statement of Work / PWS</text>
+
+  <!-- Row 2 -->
+  <rect x="40" y="178" width="380" height="44" rx="4" fill="#151f2e"/>
+  <rect x="440" y="178" width="420" height="44" rx="4" fill="#151f2e"/>
+  <text x="60" y="196" font-size="11" fill="#aaaaaa">CHANGE MANAGEMENT</text>
+  <text x="60" y="213" font-size="13" fill="#ffffff" font-weight="bold">Change Control Process</text>
+  <text x="460" y="196" font-size="11" fill="#aaaaaa">FAR CLAUSE</text>
+  <text x="460" y="213" font-size="13" fill="#e8943a" font-weight="bold">Changes Clause (FAR 52.243)</text>
+
+  <!-- Row 3 -->
+  <rect x="40" y="230" width="380" height="44" rx="4" fill="#111e2b"/>
+  <rect x="440" y="230" width="420" height="44" rx="4" fill="#111e2b"/>
+  <text x="60" y="248" font-size="11" fill="#aaaaaa">COST / SCHEDULE</text>
+  <text x="60" y="265" font-size="13" fill="#ffffff" font-weight="bold">Budget Variance</text>
+  <text x="460" y="248" font-size="11" fill="#aaaaaa">CONTRACTUAL REMEDY</text>
+  <text x="460" y="265" font-size="13" fill="#e8943a" font-weight="bold">Equitable Adjustment Claim</text>
+
+  <!-- Row 4 -->
+  <rect x="40" y="282" width="380" height="44" rx="4" fill="#151f2e"/>
+  <rect x="440" y="282" width="420" height="44" rx="4" fill="#151f2e"/>
+  <text x="60" y="300" font-size="11" fill="#aaaaaa">FINANCIAL CONTROLS</text>
+  <text x="60" y="317" font-size="13" fill="#ffffff" font-weight="bold">Cost Tracking</text>
+  <text x="460" y="300" font-size="11" fill="#aaaaaa">FAR PART 31</text>
+  <text x="460" y="317" font-size="13" fill="#e8943a" font-weight="bold">Allowable / Allocable Cost Docs</text>
+
+  <!-- Row 5 -->
+  <rect x="40" y="334" width="380" height="44" rx="4" fill="#111e2b"/>
+  <rect x="440" y="334" width="420" height="44" rx="4" fill="#111e2b"/>
+  <text x="60" y="352" font-size="11" fill="#aaaaaa">RISK MANAGEMENT</text>
+  <text x="60" y="369" font-size="13" fill="#ffffff" font-weight="bold">Risk Register</text>
+  <text x="460" y="352" font-size="11" fill="#aaaaaa">ACQUISITION DOCUMENT</text>
+  <text x="460" y="369" font-size="13" fill="#e8943a" font-weight="bold">Risk in the Acquisition Plan</text>
+
+  <!-- Row 6 -->
+  <rect x="40" y="386" width="380" height="44" rx="4" fill="#151f2e"/>
+  <rect x="440" y="386" width="420" height="44" rx="4" fill="#151f2e"/>
+  <text x="60" y="404" font-size="11" fill="#aaaaaa">LESSONS LEARNED</text>
+  <text x="60" y="421" font-size="13" fill="#ffffff" font-weight="bold">Lessons Learned</text>
+  <text x="460" y="404" font-size="11" fill="#aaaaaa">REPORTING SYSTEM</text>
+  <text x="460" y="421" font-size="13" fill="#e8943a" font-weight="bold">Past Performance (CPARS)</text>
+
+  <!-- Footer -->
+  <text x="450" y="468" text-anchor="middle" font-size="10" fill="#444444">jeffcamacho.com | FAR Crash Course for Project Managers</text>
+
+</svg>

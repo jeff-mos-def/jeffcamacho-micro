@@ -1,0 +1,324 @@
+---
+// ColorsOfMoney.astro
+// Drop into src/components/ and reference in your MDX/Astro post
+// Usage: <ColorsOfMoney />
+---
+
+<div class="com-wrapper">
+  <div class="com-header">
+    <h3 class="com-title">The Colors of Money</h3>
+    <p class="com-subtitle">Federal appropriation types and what they mean for your project</p>
+  </div>
+
+  <div class="com-grid">
+
+    <button class="com-card" data-color="om" aria-expanded="false">
+      <div class="com-card-top om">
+        <span class="com-swatch"></span>
+        <span class="com-label">O&amp;M</span>
+        <span class="com-duration">1-Year Funds</span>
+        <span class="com-chevron">&#x25BC;</span>
+      </div>
+      <div class="com-card-body" hidden>
+        <p class="com-fullname">Operations &amp; Maintenance</p>
+        <div class="com-row">
+          <span class="com-key">Funds:</span>
+          <span class="com-val">Day-to-day operations, sustaining existing systems, labor-heavy service contracts</span>
+        </div>
+        <div class="com-row">
+          <span class="com-key">Expires:</span>
+          <span class="com-val">End of fiscal year. Unobligated funds disappear.</span>
+        </div>
+        <div class="com-row">
+          <span class="com-key">Common use:</span>
+          <span class="com-val">IT service contracts, helpdesk, maintenance support</span>
+        </div>
+        <div class="com-warning">
+          <span class="com-warn-icon">&#9888;</span>
+          PM Warning: Using O&amp;M to buy capital equipment is an Antideficiency Act violation. Know the difference between sustaining and acquiring.
+        </div>
+      </div>
+    </button>
+
+    <button class="com-card" data-color="proc" aria-expanded="false">
+      <div class="com-card-top proc">
+        <span class="com-swatch"></span>
+        <span class="com-label">Procurement</span>
+        <span class="com-duration">3-Year Funds</span>
+        <span class="com-chevron">&#x25BC;</span>
+      </div>
+      <div class="com-card-body" hidden>
+        <p class="com-fullname">Procurement Appropriations</p>
+        <div class="com-row">
+          <span class="com-key">Funds:</span>
+          <span class="com-val">Acquisition of end items: hardware, equipment, systems, platforms</span>
+        </div>
+        <div class="com-row">
+          <span class="com-key">Expires:</span>
+          <span class="com-val">3 years from appropriation. Longer runway than O&amp;M.</span>
+        </div>
+        <div class="com-row">
+          <span class="com-key">Common use:</span>
+          <span class="com-val">Vehicles, weapons systems, major IT hardware purchases</span>
+        </div>
+        <div class="com-warning">
+          <span class="com-warn-icon">&#9888;</span>
+          PM Warning: Mixing Procurement funds with O&amp;M obligations is a common audit finding. Your program office's budget shop must classify correctly before you obligate.
+        </div>
+      </div>
+    </button>
+
+    <button class="com-card" data-color="rdte" aria-expanded="false">
+      <div class="com-card-top rdte">
+        <span class="com-swatch"></span>
+        <span class="com-label">RDT&amp;E</span>
+        <span class="com-duration">2-Year Funds</span>
+        <span class="com-chevron">&#x25BC;</span>
+      </div>
+      <div class="com-card-body" hidden>
+        <p class="com-fullname">Research, Development, Test &amp; Evaluation</p>
+        <div class="com-row">
+          <span class="com-key">Funds:</span>
+          <span class="com-val">Developing new capabilities, prototyping, testing, evaluating systems</span>
+        </div>
+        <div class="com-row">
+          <span class="com-key">Expires:</span>
+          <span class="com-val">2 years. Straddles fiscal years, but still time-limited.</span>
+        </div>
+        <div class="com-row">
+          <span class="com-key">Common use:</span>
+          <span class="com-val">Defense R&amp;D programs, prototype development, tech demonstrations</span>
+        </div>
+        <div class="com-warning">
+          <span class="com-warn-icon">&#9888;</span>
+          PM Warning: Once a system transitions from development to production, the correct fund type changes. Continuing to use RDT&amp;E past that threshold is a violation.
+        </div>
+      </div>
+    </button>
+
+    <button class="com-card" data-color="milcon" aria-expanded="false">
+      <div class="com-card-top milcon">
+        <span class="com-swatch"></span>
+        <span class="com-label">MILCON</span>
+        <span class="com-duration">5-Year Funds</span>
+        <span class="com-chevron">&#x25BC;</span>
+      </div>
+      <div class="com-card-body" hidden>
+        <p class="com-fullname">Military Construction</p>
+        <div class="com-row">
+          <span class="com-key">Funds:</span>
+          <span class="com-val">Construction, renovation, and real property improvements at military installations</span>
+        </div>
+        <div class="com-row">
+          <span class="com-key">Expires:</span>
+          <span class="com-val">5 years. Longest availability of the common fund types.</span>
+        </div>
+        <div class="com-row">
+          <span class="com-key">Common use:</span>
+          <span class="com-val">Barracks, hangars, facilities, base infrastructure</span>
+        </div>
+        <div class="com-warning">
+          <span class="com-warn-icon">&#9888;</span>
+          PM Warning: MILCON is a separate appropriation with its own congressional approval. Scope changes on construction projects can require re-authorization. Changes are not cheap or fast.
+        </div>
+      </div>
+    </button>
+
+  </div>
+
+  <div class="com-footer">
+    The Antideficiency Act prohibits obligating funds beyond what is appropriated, for purposes other than intended, or in advance of appropriation. Violations carry civil and criminal penalties.
+  </div>
+</div>
+
+<style>
+  .com-wrapper {
+    font-family: Georgia, serif;
+    background: #0f1923;
+    border: 1px solid #1e3a52;
+    border-radius: 10px;
+    padding: 1.5rem;
+    margin: 2rem 0;
+    color: #dddddd;
+  }
+
+  .com-header {
+    margin-bottom: 1.25rem;
+    border-bottom: 1px solid #1e3a52;
+    padding-bottom: 1rem;
+  }
+
+  .com-title {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #ffffff;
+    margin: 0 0 0.25rem 0;
+  }
+
+  .com-subtitle {
+    font-size: 0.85rem;
+    color: #7ab3d4;
+    margin: 0;
+  }
+
+  .com-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+  }
+
+  .com-card {
+    background: #111e2b;
+    border-radius: 8px;
+    border: 1px solid #1e3a52;
+    cursor: pointer;
+    text-align: left;
+    padding: 0;
+    transition: border-color 0.2s ease;
+    width: 100%;
+    font-family: Georgia, serif;
+  }
+
+  .com-card:hover {
+    border-color: #4a8fba;
+  }
+
+  .com-card[aria-expanded="true"] {
+    border-color: #7ab3d4;
+  }
+
+  .com-card-top {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.75rem 1rem;
+    border-radius: 7px 7px 0 0;
+  }
+
+  .com-card[aria-expanded="false"] .com-card-top {
+    border-radius: 7px;
+  }
+
+  .com-swatch {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .om { background: #1a3d1a; }
+  .om .com-swatch { background: #2ecc71; }
+  .om .com-label { color: #2ecc71; }
+
+  .proc { background: #1a2a3d; }
+  .proc .com-swatch { background: #4a90d9; }
+  .proc .com-label { color: #4a90d9; }
+
+  .rdte { background: #2b1a3d; }
+  .rdte .com-swatch { background: #b060e0; }
+  .rdte .com-label { color: #b060e0; }
+
+  .milcon { background: #3d2a0a; }
+  .milcon .com-swatch { background: #e8943a; }
+  .milcon .com-label { color: #e8943a; }
+
+  .com-label {
+    font-weight: bold;
+    font-size: 0.95rem;
+    flex: 1;
+  }
+
+  .com-duration {
+    font-size: 0.78rem;
+    color: #aaaaaa;
+    white-space: nowrap;
+  }
+
+  .com-chevron {
+    font-size: 0.65rem;
+    color: #aaaaaa;
+    transition: transform 0.2s ease;
+  }
+
+  .com-card[aria-expanded="true"] .com-chevron {
+    transform: rotate(180deg);
+  }
+
+  .com-card-body {
+    padding: 0.9rem 1rem 1rem;
+    border-top: 1px solid #1e3a52;
+  }
+
+  .com-fullname {
+    font-size: 0.82rem;
+    color: #aaaaaa;
+    font-style: italic;
+    margin: 0 0 0.75rem 0;
+  }
+
+  .com-row {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+    font-size: 0.88rem;
+  }
+
+  .com-key {
+    color: #7ab3d4;
+    font-weight: bold;
+    white-space: nowrap;
+    min-width: 80px;
+  }
+
+  .com-val {
+    color: #dddddd;
+  }
+
+  .com-warning {
+    margin-top: 0.85rem;
+    background: #2b1a00;
+    border-left: 3px solid #e8943a;
+    border-radius: 0 4px 4px 0;
+    padding: 0.6rem 0.75rem;
+    font-size: 0.83rem;
+    color: #f0c070;
+    display: flex;
+    gap: 0.5rem;
+    align-items: flex-start;
+  }
+
+  .com-warn-icon {
+    flex-shrink: 0;
+    color: #e8943a;
+  }
+
+  .com-footer {
+    font-size: 0.78rem;
+    color: #555555;
+    border-top: 1px solid #1e3a52;
+    padding-top: 0.75rem;
+    line-height: 1.5;
+  }
+</style>
+
+<script>
+  // 1. Find all cards
+  const cards = document.querySelectorAll('.com-card');
+
+  cards.forEach(card => {
+    card.addEventListener('click', () => {
+      // 2. Find the body inside THIS card
+      const body = card.querySelector('.com-card-body');
+
+      // 3. Check if body exists AND is an HTMLElement (fixes both errors)
+      if (body instanceof HTMLElement) {
+        const isExpanded = card.getAttribute('aria-expanded') === 'true';
+        
+        // 4. Toggle the attributes
+        card.setAttribute('aria-expanded', String(!isExpanded));
+        body.hidden = isExpanded; // If it was expanded, hide it. If not, show it.
+      }
+    });
+  });
+</script>
