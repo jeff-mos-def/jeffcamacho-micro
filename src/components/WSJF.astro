@@ -1,0 +1,1093 @@
+---
+// WSJF.astro — Weighted Shortest Job First prioritization widget
+//
+// Usage:
+//   ---
+//   import WSJF from "../components/WSJF.astro";
+//   const items = [
+//     { id: "AUTH-1", title: "SSO via SAML", team: "Platform",
+//       businessValue: 8, timeCriticality: 5, riskOpp: 3, jobSize: 5 },
+//     // ...
+//   ];
+//   ---
+//   <WSJF items={items} title="Q2 Priorities" />
+//
+// WSJF formula (SAFe): (BusinessValue + TimeCriticality + RiskOpp) / JobSize
+// Scoring scale: Fibonacci {1, 2, 3, 5, 8, 13, 20}
+// Tie-break: smaller JobSize wins.
+
+export interface WSJFItem {
+  id?: string;
+  title: string;
+  team: string;
+  businessValue: number;
+  timeCriticality: number;
+  riskOpp: number;
+  jobSize: number;
+  notes?: string;
+}
+
+export interface Props {
+  items?: WSJFItem[];
+  title?: string;
+  /** Show a global "All teams" ranked list in addition to per-team sections. */
+  showGlobal?: boolean;
+  /** Storage key for persisting edits in localStorage. Pass null to disable. */
+  storageKey?: string | null;
+}
+
+const {
+  items = [],
+  title = "WSJF Prioritization",
+  showGlobal = true,
+  storageKey = "wsjf:default",
+} = Astro.props as Props;
+
+// Stamp stable ids so inline edits can map back to rows
+const seed = items.map((it, i) => ({
+  id: it.id ?? `ITEM-${String(i + 1).padStart(3, "0")}`,
+  ...it,
+}));
+
+const instanceId = "wsjf-" + Math.random().toString(36).slice(2, 9);
+---
+
+<section class="wsjf" id={instanceId} data-storage-key={storageKey ?? ""} data-show-global={showGlobal ? "1" : "0"}>
+  <header class="wsjf__header">
+    <div>
+      <h2 class="wsjf__title" contenteditable="plaintext-only" spellcheck="false" data-persist-key={storageKey ? `${storageKey}:title` : ""}>{title}</h2>
+      <p class="wsjf__sub" contenteditable="plaintext-only" spellcheck="false" data-persist-key={storageKey ? `${storageKey}:sub` : ""}>Weighted Shortest Job First · Fibonacci scale {`{1, 2, 3, 5, 8, 13, 20}`}</p>
+    </div>
+    <div class="wsjf__actions">
+      <label class="wsjf__filter">
+        <span>Team</span>
+        <select data-role="filter-team">
+          <option value="__all">All teams</option>
+        </select>
+      </label>
+      <label class="wsjf__filter">
+        <span>View</span>
+        <select data-role="view-mode">
+          <option value="by-team">By team</option>
+          <option value="global">Global ranking</option>
+        </select>
+      </label>
+      <button type="button" data-role="add">+ Add item</button>
+      <button type="button" data-role="add-team">+ Add team</button>
+      <div class="wsjf__export">
+        <button type="button" data-role="export-csv">Export CSV</button>
+        <button type="button" data-role="export-json">Export JSON</button>
+      </div>
+    </div>
+  </header>
+
+  <aside class="wsjf__formula" aria-label="WSJF formula">
+    <div class="wsjf__formula-eq">
+      <span class="eq-label">WSJF =</span>
+      <span class="eq-frac">
+        <span class="eq-num">Business Value + Time Criticality + Risk / Opportunity Enablement</span>
+        <span class="eq-bar"></span>
+        <span class="eq-den">Job Size</span>
+      </span>
+    </div>
+    <p class="wsjf__formula-note">
+      Higher score = do sooner. Ties break by smaller Job Size. Estimate each dimension on the Fibonacci scale relative to the other items in scope.
+    </p>
+  </aside>
+
+  <div class="wsjf__chart-wrap">
+    <div class="wsjf__chart-head">
+      <h3>Value vs. Effort</h3>
+      <div class="wsjf__legend">
+        <span class="legend-swatch sw-do-first"></span><span>Do first</span>
+        <span class="legend-swatch sw-big-bets"></span><span>Big bets</span>
+        <span class="legend-swatch sw-fill-ins"></span><span>Fill-ins</span>
+        <span class="legend-swatch sw-reconsider"></span><span>Reconsider</span>
+      </div>
+    </div>
+    <div class="wsjf__chart" data-role="chart" aria-label="WSJF value vs effort matrix"></div>
+  </div>
+
+  <div data-role="sections" class="wsjf__sections"></div>
+
+  <template data-role="row-template">
+    <tr class="row">
+      <td class="c-rank"></td>
+      <td class="c-id"><input data-field="id" type="text" spellcheck="false" /></td>
+      <td class="c-title"><input data-field="title" type="text" /></td>
+      <td class="c-team"><input data-field="team" type="text" /></td>
+      <td class="c-num"><input data-field="businessValue" type="number" min="0" step="1" /></td>
+      <td class="c-num"><input data-field="timeCriticality" type="number" min="0" step="1" /></td>
+      <td class="c-num"><input data-field="riskOpp" type="number" min="0" step="1" /></td>
+      <td class="c-num"><input data-field="jobSize" type="number" min="1" step="1" /></td>
+      <td class="c-score"><span data-field="score"></span></td>
+      <td class="c-actions">
+        <button type="button" data-role="remove" aria-label="Remove">×</button>
+      </td>
+    </tr>
+  </template>
+
+  <script type="application/json" data-role="seed" set:html={JSON.stringify(seed)} />
+</section>
+
+<style>
+  .wsjf {
+    --wsjf-bg: #0b0d10;
+    --wsjf-panel: #11151a;
+    --wsjf-panel-2: #161b22;
+    --wsjf-line: #1f2630;
+    --wsjf-line-2: #2a323e;
+    --wsjf-ink: #e6edf3;
+    --wsjf-ink-dim: #9aa7b4;
+    --wsjf-ink-faint: #6b7684;
+    --wsjf-accent: oklch(0.78 0.14 200);
+    --wsjf-accent-2: oklch(0.78 0.14 140);
+    --wsjf-warn: oklch(0.78 0.14 70);
+    --wsjf-danger: oklch(0.72 0.14 25);
+    --wsjf-radius: 10px;
+    --wsjf-mono: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, Consolas, monospace;
+    --wsjf-sans: ui-sans-serif, system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
+
+    color: var(--wsjf-ink);
+    background: var(--wsjf-bg);
+    font-family: var(--wsjf-sans);
+    font-size: 14px;
+    line-height: 1.45;
+    padding: 24px;
+    border-radius: 14px;
+    border: 1px solid var(--wsjf-line);
+    container-type: inline-size;
+  }
+
+  .wsjf * { box-sizing: border-box; }
+
+  .wsjf__header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+  }
+  .wsjf__title {
+    font-size: 20px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    margin: 0;
+    border: 1px solid transparent;
+    padding: 2px 6px;
+    border-radius: 6px;
+  }
+  .wsjf__title:hover { border-color: var(--wsjf-line-2); }
+  .wsjf__title:focus { outline: none; border-color: var(--wsjf-accent); background: rgba(255,255,255,0.03); }
+  .wsjf__sub {
+    margin: 4px 0 0;
+    color: var(--wsjf-ink-dim);
+    font-family: var(--wsjf-mono);
+    font-size: 12px;
+    border: 1px solid transparent;
+    padding: 2px 6px;
+    border-radius: 6px;
+  }
+  .wsjf__sub:hover { border-color: var(--wsjf-line-2); }
+  .wsjf__sub:focus { outline: none; border-color: var(--wsjf-accent); background: rgba(255,255,255,0.03); }
+  .wsjf__actions {
+    display: flex;
+    gap: 8px;
+    align-items: flex-end;
+    flex-wrap: wrap;
+  }
+  .wsjf__filter {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font-size: 11px;
+    color: var(--wsjf-ink-faint);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+  .wsjf__filter select,
+  .wsjf button {
+    background: var(--wsjf-panel);
+    color: var(--wsjf-ink);
+    border: 1px solid var(--wsjf-line-2);
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-family: inherit;
+    font-size: 13px;
+    cursor: pointer;
+    transition: border-color 120ms ease, background 120ms ease;
+  }
+  .wsjf button:hover { border-color: var(--wsjf-accent); }
+  .wsjf__export { display: flex; gap: 6px; }
+
+  .wsjf__formula {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    padding: 14px 16px;
+    background: var(--wsjf-panel);
+    border: 1px solid var(--wsjf-line);
+    border-radius: var(--wsjf-radius);
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+  }
+  .wsjf__formula-eq {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-family: var(--wsjf-mono);
+    font-size: 13px;
+  }
+  .eq-label { color: var(--wsjf-accent); }
+  .eq-frac {
+    display: inline-grid;
+    grid-template-rows: auto 1px auto;
+    row-gap: 4px;
+    text-align: center;
+  }
+  .eq-num { color: var(--wsjf-ink); }
+  .eq-bar { height: 1px; background: var(--wsjf-line-2); }
+  .eq-den { color: var(--wsjf-ink-dim); }
+  .wsjf__formula-note {
+    color: var(--wsjf-ink-dim);
+    font-size: 12px;
+    max-width: 46ch;
+    margin: 0;
+  }
+
+  .wsjf__chart-wrap {
+    background: var(--wsjf-panel);
+    border: 1px solid var(--wsjf-line);
+    border-radius: var(--wsjf-radius);
+    padding: 16px 16px 20px;
+    margin-bottom: 24px;
+  }
+  .wsjf__chart-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .wsjf__chart-head h3 {
+    font-size: 13px;
+    font-weight: 600;
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--wsjf-ink-dim);
+  }
+  .wsjf__legend {
+    display: flex;
+    gap: 14px;
+    flex-wrap: wrap;
+    align-items: center;
+    font-size: 11px;
+    color: var(--wsjf-ink-dim);
+  }
+  .legend-swatch {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 2px;
+    margin-right: 4px;
+    vertical-align: -1px;
+  }
+  .sw-do-first   { background: oklch(0.78 0.14 140); }
+  .sw-big-bets   { background: oklch(0.78 0.14 200); }
+  .sw-fill-ins   { background: oklch(0.78 0.14 70);  }
+  .sw-reconsider { background: oklch(0.72 0.14 25);  }
+
+  .wsjf__chart {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    min-height: 320px;
+    background:
+      linear-gradient(to right,  transparent 49.5%, var(--wsjf-line-2) 49.5%, var(--wsjf-line-2) 50.5%, transparent 50.5%),
+      linear-gradient(to bottom, transparent 49.5%, var(--wsjf-line-2) 49.5%, var(--wsjf-line-2) 50.5%, transparent 50.5%),
+      repeating-linear-gradient(to right,  transparent 0 calc(10% - 1px), rgba(255,255,255,0.03) calc(10% - 1px) 10%),
+      repeating-linear-gradient(to bottom, transparent 0 calc(10% - 1px), rgba(255,255,255,0.03) calc(10% - 1px) 10%),
+      var(--wsjf-panel-2);
+    border: 1px solid var(--wsjf-line-2);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  .wsjf__chart::before,
+  .wsjf__chart::after {
+    position: absolute;
+    font-family: var(--wsjf-mono);
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--wsjf-ink-faint);
+    pointer-events: none;
+  }
+  .wsjf__chart::before {
+    content: "Job size →";
+    bottom: 6px; right: 10px;
+  }
+  .wsjf__chart::after {
+    content: "↑ Value + Urgency + Risk";
+    top: 8px; left: 10px;
+  }
+
+  .wsjf__chart .quad-label {
+    position: absolute;
+    font-family: var(--wsjf-mono);
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--wsjf-ink-faint);
+    pointer-events: none;
+  }
+  .wsjf__chart .q-tl { top: 8px; left: 50%; transform: translateX(-50%); }
+  .wsjf__chart .q-tr { top: 8px; right: 50%; transform: translateX(50%); }
+
+  .wsjf__chart .dot {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    transform: translate(-50%, 50%);
+    box-shadow: 0 0 0 3px rgba(0,0,0,0.4), 0 0 0 4px currentColor inset;
+    background: color-mix(in oklch, currentColor 55%, var(--wsjf-panel-2));
+    cursor: pointer;
+    transition: transform 150ms ease, box-shadow 150ms ease;
+  }
+  .wsjf__chart .dot:hover,
+  .wsjf__chart .dot:focus-visible {
+    transform: translate(-50%, 50%) scale(1.6);
+    outline: none;
+    z-index: 2;
+  }
+  .wsjf__chart .dot[data-q="do-first"]   { color: oklch(0.78 0.14 140); }
+  .wsjf__chart .dot[data-q="big-bets"]   { color: oklch(0.78 0.14 200); }
+  .wsjf__chart .dot[data-q="fill-ins"]   { color: oklch(0.78 0.14 70);  }
+  .wsjf__chart .dot[data-q="reconsider"] { color: oklch(0.72 0.14 25);  }
+  .wsjf__chart .dot .tip {
+    position: absolute;
+    left: 14px;
+    top: -4px;
+    white-space: nowrap;
+    background: #000;
+    border: 1px solid var(--wsjf-line-2);
+    padding: 6px 8px;
+    border-radius: 6px;
+    font-family: var(--wsjf-mono);
+    font-size: 11px;
+    color: var(--wsjf-ink);
+    opacity: 0;
+    pointer-events: none;
+    transform: scale(0.9);
+    transition: opacity 120ms ease, transform 120ms ease;
+  }
+  .wsjf__chart .dot:hover .tip,
+  .wsjf__chart .dot:focus-visible .tip {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  .wsjf__team {
+    margin-bottom: 28px;
+  }
+  .wsjf__team-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--wsjf-line);
+    margin-bottom: 10px;
+  }
+  .wsjf__team-name-wrap { display: flex; align-items: center; gap: 8px; flex: 1; min-width: 0; }
+  .wsjf__team-name {
+    font-size: 15px;
+    font-weight: 600;
+    margin: 0;
+    background: transparent;
+    border: 1px solid transparent;
+    color: var(--wsjf-ink);
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-family: inherit;
+    min-width: 0;
+    max-width: 360px;
+  }
+  .wsjf__team-name:hover { border-color: var(--wsjf-line-2); }
+  .wsjf__team-name:focus { outline: none; border-color: var(--wsjf-accent); background: rgba(255,255,255,0.03); }
+  .wsjf__team-name.is-invalid { border-color: var(--wsjf-danger); }
+  .wsjf__team-actions { display: flex; align-items: center; gap: 8px; }
+  .wsjf__team-actions button {
+    padding: 4px 8px;
+    font-size: 11px;
+    background: transparent;
+    border: 1px solid var(--wsjf-line-2);
+    color: var(--wsjf-ink-faint);
+    border-radius: 6px;
+    font-family: var(--wsjf-mono);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+  .wsjf__team-actions button:hover { color: var(--wsjf-ink); border-color: var(--wsjf-accent); }
+  .wsjf__team-actions button.danger:hover { color: var(--wsjf-danger); border-color: var(--wsjf-danger); }
+  .wsjf__team-meta {
+    font-family: var(--wsjf-mono);
+    font-size: 11px;
+    color: var(--wsjf-ink-faint);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .wsjf table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    table-layout: fixed;
+  }
+  .wsjf thead th {
+    text-align: left;
+    font-weight: 500;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--wsjf-ink-faint);
+    padding: 8px 8px;
+    border-bottom: 1px solid var(--wsjf-line);
+    background: transparent;
+  }
+  .wsjf thead th.sortable { cursor: pointer; user-select: none; }
+  .wsjf thead th.sortable:hover { color: var(--wsjf-ink); }
+  .wsjf thead th .arrow { opacity: 0.4; margin-left: 4px; }
+  .wsjf thead th[aria-sort="ascending"]  .arrow { opacity: 1; }
+  .wsjf thead th[aria-sort="descending"] .arrow { opacity: 1; }
+
+  .wsjf tbody tr {
+    border-bottom: 1px solid var(--wsjf-line);
+  }
+  .wsjf tbody tr:hover { background: rgba(255,255,255,0.02); }
+  .wsjf td { padding: 6px 8px; vertical-align: middle; }
+
+  .wsjf .c-rank {
+    width: 40px;
+    font-family: var(--wsjf-mono);
+    color: var(--wsjf-ink-dim);
+    font-variant-numeric: tabular-nums;
+  }
+  .wsjf .c-id {
+    width: 100px;
+    font-family: var(--wsjf-mono);
+    font-size: 11px;
+    color: var(--wsjf-ink-faint);
+  }
+  .wsjf td.c-id input {
+    font-family: var(--wsjf-mono);
+    font-size: 11px;
+    color: var(--wsjf-ink-faint);
+    text-transform: uppercase;
+  }
+  .wsjf .c-title { width: auto; }
+  .wsjf .c-team  { width: 140px; }
+  .wsjf .c-num   { width: 72px; }
+  .wsjf .c-score {
+    width: 80px;
+    font-family: var(--wsjf-mono);
+    font-variant-numeric: tabular-nums;
+    text-align: right;
+    padding-right: 12px;
+  }
+  .wsjf .c-actions { width: 40px; text-align: right; }
+
+  .wsjf td input {
+    width: 100%;
+    background: transparent;
+    border: 1px solid transparent;
+    color: var(--wsjf-ink);
+    padding: 6px 8px;
+    border-radius: 6px;
+    font-family: inherit;
+    font-size: 13px;
+  }
+  .wsjf td.c-num input {
+    font-family: var(--wsjf-mono);
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+  }
+  .wsjf td input:hover { border-color: var(--wsjf-line-2); }
+  .wsjf td input:focus {
+    outline: none;
+    border-color: var(--wsjf-accent);
+    background: rgba(255,255,255,0.03);
+  }
+  .wsjf td input.is-invalid {
+    border-color: var(--wsjf-danger);
+  }
+
+  .wsjf .c-actions button {
+    padding: 2px 8px;
+    background: transparent;
+    border: 1px solid transparent;
+    color: var(--wsjf-ink-faint);
+    border-radius: 6px;
+    font-size: 16px;
+    line-height: 1;
+  }
+  .wsjf .c-actions button:hover {
+    color: var(--wsjf-danger);
+    border-color: var(--wsjf-line-2);
+  }
+
+  .wsjf .row .c-score span {
+    padding: 2px 8px;
+    border-radius: 999px;
+    background: rgba(255,255,255,0.04);
+  }
+  .wsjf .row .c-score span { font-weight: 600; }
+  .wsjf .row[data-q="do-first"]   .c-score span { background: color-mix(in oklch, oklch(0.78 0.14 140) 22%, transparent); color: oklch(0.92 0.08 140); }
+  .wsjf .row[data-q="big-bets"]   .c-score span { background: color-mix(in oklch, oklch(0.78 0.14 200) 22%, transparent); color: oklch(0.92 0.08 200); }
+  .wsjf .row[data-q="fill-ins"]   .c-score span { background: color-mix(in oklch, oklch(0.78 0.14 70)  22%, transparent); color: oklch(0.92 0.08 70);  }
+  .wsjf .row[data-q="reconsider"] .c-score span { background: color-mix(in oklch, oklch(0.72 0.14 25)  22%, transparent); color: oklch(0.9  0.09 25);  }
+
+  .wsjf .empty {
+    padding: 24px;
+    text-align: center;
+    color: var(--wsjf-ink-faint);
+    font-family: var(--wsjf-mono);
+    font-size: 12px;
+    border: 1px dashed var(--wsjf-line-2);
+    border-radius: 8px;
+  }
+
+  @container (max-width: 720px) {
+    .wsjf .c-id { display: none; }
+    .wsjf thead th:nth-child(2) { display: none; }
+    .wsjf .c-team { width: 100px; }
+    .wsjf .c-num  { width: 58px; }
+  }
+</style>
+
+<script>
+  type Item = {
+    id: string;
+    title: string;
+    team: string;
+    businessValue: number;
+    timeCriticality: number;
+    riskOpp: number;
+    jobSize: number;
+    notes?: string;
+  };
+
+  const FIB = [1, 2, 3, 5, 8, 13, 20];
+
+  function snap(n: number): number {
+    if (!isFinite(n) || n <= 0) return 1;
+    let best = FIB[0];
+    let bestD = Math.abs(n - best);
+    for (const f of FIB) {
+      const d = Math.abs(n - f);
+      if (d < bestD) { best = f; bestD = d; }
+    }
+    return best;
+  }
+
+  function wsjfScore(it: Item): number {
+    const num = (it.businessValue || 0) + (it.timeCriticality || 0) + (it.riskOpp || 0);
+    const den = Math.max(1, it.jobSize || 1);
+    return num / den;
+  }
+
+  function quadrantOf(it: Item, maxNum: number, maxSize: number): string {
+    const num = (it.businessValue || 0) + (it.timeCriticality || 0) + (it.riskOpp || 0);
+    const size = it.jobSize || 1;
+    const hiValue = num >= maxNum / 2;
+    const hiSize  = size > maxSize / 2;
+    if (hiValue && !hiSize) return "do-first";
+    if (hiValue &&  hiSize) return "big-bets";
+    if (!hiValue && !hiSize) return "fill-ins";
+    return "reconsider";
+  }
+
+  function sortItems(items: Item[]): Item[] {
+    return items.slice().sort((a, b) => {
+      const sa = wsjfScore(a), sb = wsjfScore(b);
+      if (sb !== sa) return sb - sa;
+      if ((a.jobSize || 1) !== (b.jobSize || 1)) return (a.jobSize || 1) - (b.jobSize || 1);
+      return (a.title || "").localeCompare(b.title || "");
+    });
+  }
+
+  function uid(prefix = "ITEM") {
+    return `${prefix}-${Math.random().toString(36).slice(2, 7).toUpperCase()}`;
+  }
+
+  function escapeCsv(v: unknown): string {
+    const s = String(v ?? "");
+    return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
+  }
+
+  function download(filename: string, content: string, mime: string) {
+    const blob = new Blob([content], { type: mime });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 100);
+  }
+
+  function initWSJF(root: HTMLElement) {
+    const seedEl = root.querySelector<HTMLScriptElement>('script[data-role="seed"]');
+    const tpl = root.querySelector<HTMLTemplateElement>('template[data-role="row-template"]');
+    const sectionsEl = root.querySelector<HTMLElement>('[data-role="sections"]');
+    const chartEl = root.querySelector<HTMLElement>('[data-role="chart"]');
+    const filterTeamEl = root.querySelector<HTMLSelectElement>('[data-role="filter-team"]');
+    const viewModeEl = root.querySelector<HTMLSelectElement>('[data-role="view-mode"]');
+    const addBtn = root.querySelector<HTMLButtonElement>('[data-role="add"]');
+    const addTeamBtn = root.querySelector<HTMLButtonElement>('[data-role="add-team"]');
+    const expCsvBtn = root.querySelector<HTMLButtonElement>('[data-role="export-csv"]');
+    const expJsonBtn = root.querySelector<HTMLButtonElement>('[data-role="export-json"]');
+    if (!seedEl || !tpl || !sectionsEl || !chartEl || !filterTeamEl || !viewModeEl) return;
+
+    const storageKey = root.dataset.storageKey || "";
+    let items: Item[] = [];
+    try {
+      if (storageKey && localStorage.getItem(storageKey)) {
+        items = JSON.parse(localStorage.getItem(storageKey)!);
+      } else {
+        items = JSON.parse(seedEl.textContent || "[]");
+      }
+    } catch {
+      items = [];
+    }
+
+    function persist() {
+      if (!storageKey) return;
+      try { localStorage.setItem(storageKey, JSON.stringify(items)); } catch {}
+    }
+
+    // Teams with no items yet — kept alongside item-derived teams
+    let extraTeams: string[] = [];
+
+    function teams(): string[] {
+      const s = new Set<string>();
+      items.forEach(it => s.add(it.team || "Unassigned"));
+      extraTeams.forEach(t => s.add(t));
+      return Array.from(s).sort((a, b) => a.localeCompare(b));
+    }
+
+    function renameTeam(oldName: string, newName: string): boolean {
+      newName = (newName || "").trim();
+      if (!newName || newName === oldName) return false;
+      items.forEach(it => { if (it.team === oldName) it.team = newName; });
+      extraTeams = extraTeams
+        .map(t => (t === oldName ? newName : t))
+        .filter((t, i, arr) => arr.indexOf(t) === i);
+      return true;
+    }
+
+    function deleteTeam(name: string) {
+      items = items.filter(it => it.team !== name);
+      extraTeams = extraTeams.filter(t => t !== name);
+    }
+
+    function renderTeamFilter() {
+      const current = filterTeamEl!.value || "__all";
+      filterTeamEl!.innerHTML = "";
+      const optAll = document.createElement("option");
+      optAll.value = "__all"; optAll.textContent = "All teams";
+      filterTeamEl!.appendChild(optAll);
+      teams().forEach(t => {
+        const o = document.createElement("option");
+        o.value = t; o.textContent = t;
+        filterTeamEl!.appendChild(o);
+      });
+      filterTeamEl!.value = teams().includes(current) || current === "__all" ? current : "__all";
+    }
+
+    function renderChart() {
+      chartEl!.innerHTML = "";
+
+      const quads = document.createElement("div");
+      const qtl = document.createElement("span"); qtl.className = "quad-label q-tl"; qtl.textContent = "do first  ·  big bets";
+      chartEl!.appendChild(qtl);
+
+      const scope = filterTeamEl!.value === "__all" ? items : items.filter(i => i.team === filterTeamEl!.value);
+      if (scope.length === 0) return;
+
+      const maxNum = Math.max(3, ...scope.map(i => (i.businessValue || 0) + (i.timeCriticality || 0) + (i.riskOpp || 0)));
+      const maxSize = Math.max(1, ...scope.map(i => i.jobSize || 1));
+
+      for (const it of scope) {
+        const num = (it.businessValue || 0) + (it.timeCriticality || 0) + (it.riskOpp || 0);
+        const size = it.jobSize || 1;
+        const x = (size / maxSize) * 92 + 4;      // 4..96 %
+        const y = (num / maxNum) * 92 + 4;        // 4..96 %
+        const dot = document.createElement("button");
+        dot.type = "button";
+        dot.className = "dot";
+        dot.setAttribute("data-q", quadrantOf(it, maxNum, maxSize));
+        dot.style.left = `${x}%`;
+        dot.style.bottom = `${y}%`;
+        const tip = document.createElement("span");
+        tip.className = "tip";
+        tip.textContent = `${it.id} · ${it.title} — WSJF ${wsjfScore(it).toFixed(2)}`;
+        dot.appendChild(tip);
+        dot.addEventListener("click", () => {
+          const input = root.querySelector<HTMLInputElement>(
+            `tr[data-id="${CSS.escape(it.id)}"] input[data-field="title"]`
+          );
+          input?.focus();
+          input?.scrollIntoView({ block: "center", behavior: "smooth" });
+        });
+        chartEl!.appendChild(dot);
+      }
+    }
+
+    function buildRow(it: Item, rank: number, maxNum: number, maxSize: number): HTMLTableRowElement {
+      const frag = tpl!.content.cloneNode(true) as DocumentFragment;
+      const tr = frag.querySelector("tr")!;
+      tr.setAttribute("data-id", it.id);
+      tr.setAttribute("data-q", quadrantOf(it, maxNum, maxSize));
+      (tr.querySelector(".c-rank") as HTMLElement).textContent = String(rank);
+      (tr.querySelector('[data-field="id"]') as HTMLInputElement).value = it.id;
+      (tr.querySelector('[data-field="title"]') as HTMLInputElement).value = it.title;
+      (tr.querySelector('[data-field="team"]') as HTMLInputElement).value = it.team;
+      (tr.querySelector('[data-field="businessValue"]') as HTMLInputElement).value = String(it.businessValue);
+      (tr.querySelector('[data-field="timeCriticality"]') as HTMLInputElement).value = String(it.timeCriticality);
+      (tr.querySelector('[data-field="riskOpp"]') as HTMLInputElement).value = String(it.riskOpp);
+      (tr.querySelector('[data-field="jobSize"]') as HTMLInputElement).value = String(it.jobSize);
+      (tr.querySelector('[data-field="score"]') as HTMLElement).textContent = wsjfScore(it).toFixed(2);
+      return tr;
+    }
+
+    function buildTable(list: Item[], title: string, meta: string, opts?: { editable?: boolean }): HTMLElement {
+      const editable = !!opts?.editable;
+      const wrap = document.createElement("div");
+      wrap.className = "wsjf__team";
+      wrap.setAttribute("data-team", title);
+      const head = document.createElement("div");
+      head.className = "wsjf__team-head";
+      if (editable) {
+        head.innerHTML = `
+          <div class="wsjf__team-name-wrap">
+            <input class="wsjf__team-name" data-role="team-rename" spellcheck="false" />
+          </div>
+          <div class="wsjf__team-actions">
+            <span class="wsjf__team-meta"></span>
+            <button type="button" data-role="add-to-team">+ Item</button>
+            <button type="button" class="danger" data-role="delete-team">Delete</button>
+          </div>
+        `;
+        (head.querySelector(".wsjf__team-name") as HTMLInputElement).value = title;
+      } else {
+        head.innerHTML = `
+          <h3 class="wsjf__team-name" style="border:0;padding:4px 0;"></h3>
+          <span class="wsjf__team-meta"></span>
+        `;
+        (head.querySelector(".wsjf__team-name") as HTMLElement).textContent = title;
+      }
+      (head.querySelector(".wsjf__team-meta") as HTMLElement).textContent = meta;
+      wrap.appendChild(head);
+
+      if (list.length === 0) {
+        const e = document.createElement("div");
+        e.className = "empty";
+        e.textContent = "No items yet — use + Item to add one.";
+        wrap.appendChild(e);
+        return wrap;
+      }
+
+      const table = document.createElement("table");
+      table.innerHTML = `
+        <thead>
+          <tr>
+            <th class="c-rank">#</th>
+            <th class="c-id">ID</th>
+            <th class="c-title">Item</th>
+            <th class="c-team">Team</th>
+            <th class="c-num" title="Business Value">BV</th>
+            <th class="c-num" title="Time Criticality">TC</th>
+            <th class="c-num" title="Risk / Opportunity Enablement">RR</th>
+            <th class="c-num" title="Job Size">JS</th>
+            <th class="c-score">WSJF</th>
+            <th class="c-actions" aria-label="Actions"></th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      `;
+      const tbody = table.querySelector("tbody")!;
+      const sorted = sortItems(list);
+      // Quadrant thresholds use the full item set so a row's color matches its chart dot
+      const maxNum  = Math.max(3, ...items.map(i => (i.businessValue || 0) + (i.timeCriticality || 0) + (i.riskOpp || 0)));
+      const maxSize = Math.max(1, ...items.map(i => i.jobSize || 1));
+      sorted.forEach((it, i) => tbody.appendChild(buildRow(it, i + 1, maxNum, maxSize)));
+      wrap.appendChild(table);
+      return wrap;
+    }
+
+    function renderSections() {
+      sectionsEl!.innerHTML = "";
+      const filter = filterTeamEl!.value;
+      const view = viewModeEl!.value;
+      const scoped = filter === "__all" ? items : items.filter(i => i.team === filter);
+
+      if (view === "global" || filter !== "__all") {
+        const label = filter === "__all" ? "Global ranking" : filter;
+        const meta = `${scoped.length} item${scoped.length === 1 ? "" : "s"}`;
+        sectionsEl!.appendChild(buildTable(scoped, label, meta));
+        return;
+      }
+
+      const byTeam = new Map<string, Item[]>();
+      scoped.forEach(it => {
+        const k = it.team || "Unassigned";
+        if (!byTeam.has(k)) byTeam.set(k, []);
+        byTeam.get(k)!.push(it);
+      });
+      const ordered = Array.from(byTeam.entries()).sort((a, b) => {
+        const topA = sortItems(a[1])[0];
+        const topB = sortItems(b[1])[0];
+        return (topB ? wsjfScore(topB) : 0) - (topA ? wsjfScore(topA) : 0);
+      });
+      for (const [team, list] of ordered) {
+        sectionsEl!.appendChild(buildTable(list, team, `${list.length} item${list.length === 1 ? "" : "s"}`));
+      }
+    }
+
+    function renderAll() {
+      renderTeamFilter();
+      renderChart();
+      renderSections();
+      persist();
+    }
+
+    sectionsEl!.addEventListener("input", (e) => {
+      const t = e.target as HTMLInputElement;
+      if (!(t instanceof HTMLInputElement)) return;
+      if (t.dataset.role === "team-rename") return;
+      const tr = t.closest("tr[data-id]") as HTMLTableRowElement | null;
+      if (!tr) return;
+      const id = tr.getAttribute("data-id")!;
+      const item = items.find(i => i.id === id);
+      if (!item) return;
+      const field = t.dataset.field as keyof Item | undefined;
+      if (!field) return;
+
+      if (field === "id") {
+        const val = t.value.trim();
+        const dupe = !!val && items.some(i => i !== item && i.id === val);
+        if (!val || dupe) { t.classList.add("is-invalid"); return; }
+        t.classList.remove("is-invalid");
+        item.id = val;
+        tr.setAttribute("data-id", val);
+      } else if (field === "title" || field === "team") {
+        (item as any)[field] = t.value;
+      } else {
+        const n = Number(t.value);
+        if (!isFinite(n) || n < 0 || (field === "jobSize" && n < 1)) {
+          t.classList.add("is-invalid");
+          return;
+        }
+        t.classList.remove("is-invalid");
+        (item as any)[field] = n;
+        const scoreEl = tr.querySelector('[data-field="score"]') as HTMLElement;
+        scoreEl.textContent = wsjfScore(item).toFixed(2);
+      }
+      persist();
+    });
+
+    sectionsEl!.addEventListener("change", (e) => {
+      const t = e.target as HTMLInputElement;
+      if (!(t instanceof HTMLInputElement)) return;
+      if (t.dataset.role === "team-rename") return;
+      const field = t.dataset.field;
+      if (field === "id") {
+        const tr = t.closest("tr[data-id]") as HTMLTableRowElement | null;
+        const id = tr?.getAttribute("data-id");
+        const item = items.find(i => i.id === id);
+        if (item && t.value.trim() !== item.id) { t.value = item.id; t.classList.remove("is-invalid"); }
+        return;
+      }
+      if (field === "team") {
+        renderAll();
+      } else if (["businessValue","timeCriticality","riskOpp","jobSize"].includes(field || "")) {
+        const n = Number(t.value);
+        if (isFinite(n) && n > 0) {
+          const snapped = snap(n);
+          if (snapped !== n) {
+            t.value = String(snapped);
+            const tr = t.closest("tr[data-id]") as HTMLTableRowElement;
+            const id = tr.getAttribute("data-id")!;
+            const item = items.find(i => i.id === id);
+            if (item) (item as any)[field!] = snapped;
+          }
+        }
+        renderAll();
+      }
+    });
+
+    sectionsEl!.addEventListener("click", (e) => {
+      const target = e.target as HTMLElement;
+
+      const removeBtn = target.closest('[data-role="remove"]') as HTMLButtonElement | null;
+      if (removeBtn) {
+        const tr = removeBtn.closest("tr[data-id]") as HTMLTableRowElement | null;
+        if (!tr) return;
+        items = items.filter(i => i.id !== tr.getAttribute("data-id"));
+        renderAll();
+        return;
+      }
+
+      const addToTeamBtn = target.closest('[data-role="add-to-team"]') as HTMLButtonElement | null;
+      if (addToTeamBtn) {
+        const teamEl = addToTeamBtn.closest("[data-team]") as HTMLElement | null;
+        const team = teamEl?.getAttribute("data-team") || teams()[0] || "New team";
+        items.push({ id: uid(), title: "New work item", team, businessValue: 3, timeCriticality: 3, riskOpp: 2, jobSize: 5 });
+        extraTeams = extraTeams.filter(t => t !== team);
+        renderAll();
+        requestAnimationFrame(() => {
+          const last = root.querySelector<HTMLInputElement>(
+            `tr[data-id="${CSS.escape(items[items.length - 1].id)}"] input[data-field="title"]`
+          );
+          last?.focus(); last?.select();
+        });
+        return;
+      }
+
+      const delTeamBtn = target.closest('[data-role="delete-team"]') as HTMLButtonElement | null;
+      if (delTeamBtn) {
+        const teamEl = delTeamBtn.closest("[data-team]") as HTMLElement | null;
+        const team = teamEl?.getAttribute("data-team");
+        if (!team) return;
+        const count = items.filter(i => i.team === team).length;
+        const ok = count === 0 ? true : confirm(`Delete team "${team}" and its ${count} item${count === 1 ? "" : "s"}?`);
+        if (!ok) return;
+        deleteTeam(team);
+        renderAll();
+      }
+    });
+
+    // Inline team rename: live validation on input, commit on change, Enter/Escape handled
+    sectionsEl!.addEventListener("input", (e) => {
+      const t = e.target as HTMLInputElement;
+      if (!(t instanceof HTMLInputElement)) return;
+      if (t.dataset.role !== "team-rename") return;
+      t.classList.toggle("is-invalid", !t.value.trim());
+    });
+    sectionsEl!.addEventListener("change", (e) => {
+      const t = e.target as HTMLInputElement;
+      if (!(t instanceof HTMLInputElement)) return;
+      if (t.dataset.role !== "team-rename") return;
+      const teamEl = t.closest("[data-team]") as HTMLElement | null;
+      const oldName = teamEl?.getAttribute("data-team");
+      const newName = (t.value || "").trim();
+      if (!oldName) return;
+      if (!newName) { t.value = oldName; t.classList.remove("is-invalid"); return; }
+      if (newName === oldName) return;
+      const existing = teams().filter(x => x !== oldName);
+      if (existing.includes(newName)) {
+        const ok = confirm(`Team "${newName}" already exists. Merge "${oldName}" into it?`);
+        if (!ok) { t.value = oldName; return; }
+      }
+      renameTeam(oldName, newName);
+      renderAll();
+    });
+    sectionsEl!.addEventListener("keydown", (e) => {
+      const t = e.target as HTMLInputElement;
+      if (!(t instanceof HTMLInputElement)) return;
+      if (t.dataset.role !== "team-rename") return;
+      if (e.key === "Enter") { e.preventDefault(); t.blur(); }
+      if (e.key === "Escape") {
+        const teamEl = t.closest("[data-team]") as HTMLElement | null;
+        t.value = teamEl?.getAttribute("data-team") || t.value;
+        t.blur();
+      }
+    });
+
+    filterTeamEl.addEventListener("change", renderAll);
+    viewModeEl.addEventListener("change", renderAll);
+
+    addBtn?.addEventListener("click", () => {
+      const team = filterTeamEl.value && filterTeamEl.value !== "__all" ? filterTeamEl.value : (teams()[0] || "New team");
+      items.push({
+        id: uid(),
+        title: "New work item",
+        team,
+        businessValue: 3,
+        timeCriticality: 3,
+        riskOpp: 2,
+        jobSize: 5,
+      });
+      extraTeams = extraTeams.filter(t => t !== team);
+      renderAll();
+      requestAnimationFrame(() => {
+        const last = root.querySelector<HTMLInputElement>(`tr[data-id="${CSS.escape(items[items.length - 1].id)}"] input[data-field="title"]`);
+        last?.focus();
+        last?.select();
+      });
+    });
+
+    addTeamBtn?.addEventListener("click", () => {
+      const existing = new Set(teams());
+      let n = 1;
+      let name = "New team";
+      while (existing.has(name)) { n++; name = `New team ${n}`; }
+      extraTeams.push(name);
+      // Force By-team view so the new empty team is visible
+      viewModeEl.value = "by-team";
+      filterTeamEl.value = "__all";
+      renderAll();
+      requestAnimationFrame(() => {
+        const input = root.querySelector<HTMLInputElement>(
+          `[data-team="${CSS.escape(name)}"] [data-role="team-rename"]`
+        );
+        input?.focus(); input?.select();
+      });
+    });
+
+    expCsvBtn?.addEventListener("click", () => {
+      const headers = ["id","title","team","businessValue","timeCriticality","riskOpp","jobSize","wsjf"];
+      const rows = sortItems(items).map(it => [
+        it.id, it.title, it.team, it.businessValue, it.timeCriticality, it.riskOpp, it.jobSize, wsjfScore(it).toFixed(4),
+      ].map(escapeCsv).join(","));
+      download("wsjf.csv", [headers.join(","), ...rows].join("\n"), "text/csv");
+    });
+
+    expJsonBtn?.addEventListener("click", () => {
+      const out = sortItems(items).map(it => ({ ...it, wsjf: +wsjfScore(it).toFixed(4) }));
+      download("wsjf.json", JSON.stringify(out, null, 2), "application/json");
+    });
+
+    renderAll();
+  }
+
+  document.querySelectorAll<HTMLElement>(".wsjf").forEach(initWSJF);
+
+  // Generic editable-heading persistence
+  document.querySelectorAll<HTMLElement>("[data-persist-key]").forEach((el) => {
+    const key = el.getAttribute("data-persist-key");
+    if (!key) return;
+    try {
+      const saved = localStorage.getItem(key);
+      if (saved !== null) el.textContent = saved;
+    } catch {}
+    el.addEventListener("input", () => {
+      try { localStorage.setItem(key, el.textContent || ""); } catch {}
+    });
+    el.addEventListener("keydown", (e) => {
+      if ((e as KeyboardEvent).key === "Enter") { e.preventDefault(); (el as HTMLElement).blur(); }
+    });
+    el.addEventListener("blur", () => {
+      if (!(el.textContent || "").trim()) {
+        el.textContent = (el.dataset.placeholder || "Untitled");
+        try { localStorage.setItem(key, el.textContent); } catch {}
+      }
+    });
+  });
+</script>

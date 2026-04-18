@@ -1,1 +1,98 @@
-<svg xmlns="http://www.w3.org/2000/svg" aria-label="Side by side comparison of CBA mechanisms and PM equivalents with PMBOK 8 domains" role="img" viewBox="0 0 720 420"><rect width="720" height="420" fill="#f8f9fa" rx="8"/><text x="360" y="32" fill="#1a1a2e" font-family="Inter, system-ui, sans-serif" font-size="15" font-weight="700" text-anchor="middle">CBA Mechanism → PM Parallel → PMBOK 8 Connection</text><rect width="220" height="40" x="20" y="50" fill="#1a1a2e" rx="4"/><text x="130" y="75" fill="#fff" font-family="Inter, system-ui, sans-serif" font-size="12" font-weight="700" text-anchor="middle">CBA Mechanism</text><rect width="220" height="40" x="250" y="50" fill="#1a1a2e" rx="4"/><text x="360" y="75" fill="#fff" font-family="Inter, system-ui, sans-serif" font-size="12" font-weight="700" text-anchor="middle">PM Equivalent</text><rect width="220" height="40" x="480" y="50" fill="#1a1a2e" rx="4"/><text x="590" y="75" fill="#fff" font-family="Inter, system-ui, sans-serif" font-size="12" font-weight="700" text-anchor="middle">PMBOK 8 Domain</text><rect width="220" height="56" x="20" y="96" fill="#fff" stroke="#e5e7eb" stroke-width="1" rx="4"/><text x="130" y="118" fill="#1a1a2e" font-family="Inter, system-ui, sans-serif" font-size="11" font-weight="600" text-anchor="middle">Service Time Rules</text><text x="130" y="134" fill="#6b7280" font-family="Inter, system-ui, sans-serif" font-size="10" text-anchor="middle">Rational gaming of promotion rules</text><rect width="220" height="56" x="250" y="96" fill="#fff" stroke="#e5e7eb" stroke-width="1" rx="4"/><text x="360" y="118" fill="#1a1a2e" font-family="Inter, system-ui, sans-serif" font-size="11" font-weight="600" text-anchor="middle">KPI / Velocity Gaming</text><text x="360" y="134" fill="#6b7280" font-family="Inter, system-ui, sans-serif" font-size="10" text-anchor="middle">Teams inflating metrics to hit targets</text><rect width="220" height="56" x="480" y="96" fill="#e0f2fe" stroke="#bae6fd" stroke-width="1" rx="4"/><text x="590" y="118" fill="#0c4a6e" font-family="Inter, system-ui, sans-serif" font-size="11" font-weight="600" text-anchor="middle">Governance</text><text x="590" y="134" fill="#6b7280" font-family="Inter, system-ui, sans-serif" font-size="10" text-anchor="middle">Decision frameworks shape behavior</text><rect width="220" height="56" x="20" y="158" fill="#fff" stroke="#e5e7eb" stroke-width="1" rx="4"/><text x="130" y="180" fill="#1a1a2e" font-family="Inter, system-ui, sans-serif" font-size="11" font-weight="600" text-anchor="middle">Draft Lottery</text><text x="130" y="196" fill="#6b7280" font-family="Inter, system-ui, sans-serif" font-size="10" text-anchor="middle">Probabilistic vs. guaranteed reward</text><rect width="220" height="56" x="250" y="158" fill="#fff" stroke="#e5e7eb" stroke-width="1" rx="4"/><text x="360" y="180" fill="#1a1a2e" font-family="Inter, system-ui, sans-serif" font-size="11" font-weight="600" text-anchor="middle">Resource Allocation Redesign</text><text x="360" y="196" fill="#6b7280" font-family="Inter, system-ui, sans-serif" font-size="10" text-anchor="middle">Breaking the link between gaming and reward</text><rect width="220" height="56" x="480" y="158" fill="#fef3c7" stroke="#fde68a" stroke-width="1" rx="4"/><text x="590" y="180" fill="#78350f" font-family="Inter, system-ui, sans-serif" font-size="11" font-weight="600" text-anchor="middle">Risk</text><text x="590" y="196" fill="#6b7280" font-family="Inter, system-ui, sans-serif" font-size="10" text-anchor="middle">Structural risk in reward systems</text><rect width="220" height="56" x="20" y="220" fill="#fff" stroke="#e5e7eb" stroke-width="1" rx="4"/><text x="130" y="242" fill="#1a1a2e" font-family="Inter, system-ui, sans-serif" font-size="11" font-weight="600" text-anchor="middle">Pre-Arb Bonus Pool ($50M)</text><text x="130" y="258" fill="#6b7280" font-family="Inter, system-ui, sans-serif" font-size="10" text-anchor="middle">Performance-based incentive layer</text><rect width="220" height="56" x="250" y="220" fill="#fff" stroke="#e5e7eb" stroke-width="1" rx="4"/><text x="360" y="242" fill="#1a1a2e" font-family="Inter, system-ui, sans-serif" font-size="11" font-weight="600" text-anchor="middle">Recognition for Contributors</text><text x="360" y="258" fill="#6b7280" font-family="Inter, system-ui, sans-serif" font-size="10" text-anchor="middle">Rewarding outcomes, not tenure</text><rect width="220" height="56" x="480" y="220" fill="#d1fae5" stroke="#a7f3d0" stroke-width="1" rx="4"/><text x="590" y="242" fill="#065f46" font-family="Inter, system-ui, sans-serif" font-size="11" font-weight="600" text-anchor="middle">Resources</text><text x="590" y="258" fill="#6b7280" font-family="Inter, system-ui, sans-serif" font-size="10" text-anchor="middle">Aligning compensation with value</text><rect width="220" height="56" x="20" y="282" fill="#fff" stroke="#e5e7eb" stroke-width="1" rx="4"/><text x="130" y="304" fill="#1a1a2e" font-family="Inter, system-ui, sans-serif" font-size="11" font-weight="600" text-anchor="middle">Joint Competition Committee</text><text x="130" y="320" fill="#6b7280" font-family="Inter, system-ui, sans-serif" font-size="10" text-anchor="middle">Cross-functional, fast authority</text><rect width="220" height="56" x="250" y="282" fill="#fff" stroke="#e5e7eb" stroke-width="1" rx="4"/><text x="360" y="304" fill="#1a1a2e" font-family="Inter, system-ui, sans-serif" font-size="11" font-weight="600" text-anchor="middle">Empowered Change Board</text><text x="360" y="320" fill="#6b7280" font-family="Inter, system-ui, sans-serif" font-size="10" text-anchor="middle">Standing body with decision authority</text><rect width="220" height="56" x="480" y="282" fill="#ede9fe" stroke="#ddd6fe" stroke-width="1" rx="4"/><text x="590" y="304" fill="#4c1d95" font-family="Inter, system-ui, sans-serif" font-size="11" font-weight="600" text-anchor="middle">Stakeholders</text><text x="590" y="320" fill="#6b7280" font-family="Inter, system-ui, sans-serif" font-size="10" text-anchor="middle">Affected parties in decision roles</text><rect width="220" height="56" x="20" y="344" fill="#fff" stroke="#e5e7eb" stroke-width="1" rx="4"/><text x="130" y="366" fill="#1a1a2e" font-family="Inter, system-ui, sans-serif" font-size="11" font-weight="600" text-anchor="middle">4-Tier Luxury Tax</text><text x="130" y="382" fill="#6b7280" font-family="Inter, system-ui, sans-serif" font-size="10" text-anchor="middle">Graduated, transparent penalties</text><rect width="220" height="56" x="250" y="344" fill="#fff" stroke="#e5e7eb" stroke-width="1" rx="4"/><text x="360" y="366" fill="#1a1a2e" font-family="Inter, system-ui, sans-serif" font-size="11" font-weight="600" text-anchor="middle">Tiered Budget Escalation</text><text x="360" y="382" fill="#6b7280" font-family="Inter, system-ui, sans-serif" font-size="10" text-anchor="middle">Proportional consequences, not binary</text><rect width="220" height="56" x="480" y="344" fill="#fce7f3" stroke="#fbcfe8" stroke-width="1" rx="4"/><text x="590" y="366" fill="#831843" font-family="Inter, system-ui, sans-serif" font-size="11" font-weight="600" text-anchor="middle">Finance</text><text x="590" y="382" fill="#6b7280" font-family="Inter, system-ui, sans-serif" font-size="10" text-anchor="middle">Visible tradeoffs at every level</text></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 600" width="100%" height="100%">
+  <text x="500" y="30" font-family="sans-serif" font-size="22" fill="#ffffff" text-anchor="middle">CBA Mechanism → PM Parallel → PMBOK 8 Connection</text>
+  
+  <g transform="translate(50, 60)">
+    <rect width="280" height="40" rx="4" fill="#1a1a24" stroke="#333" stroke-width="1"/>
+    <text x="140" y="26" font-family="sans-serif" font-size="16" fill="#ffffff" text-anchor="middle">CBA Mechanism</text>
+  </g>
+  
+  <g transform="translate(360, 60)">
+    <rect width="280" height="40" rx="4" fill="#1a1a24" stroke="#333" stroke-width="1"/>
+    <text x="140" y="26" font-family="sans-serif" font-size="16" fill="#ffffff" text-anchor="middle">PM Equivalent</text>
+  </g>
+
+  <g transform="translate(670, 60)">
+    <rect width="280" height="40" rx="4" fill="#1a1a24" stroke="#333" stroke-width="1"/>
+    <text x="140" y="26" font-family="sans-serif" font-size="16" fill="#ffffff" text-anchor="middle">PMBOK 8 Domain</text>
+  </g>
+
+  <g transform="translate(50, 120)">
+    <rect width="280" height="70" rx="4" fill="#222222" stroke="#444" stroke-width="1"/>
+    <text x="140" y="30" font-family="sans-serif" font-size="14" fill="#ffffff" text-anchor="middle">Service Time Rules</text>
+    <text x="140" y="50" font-family="sans-serif" font-size="12" fill="#aaaaaa" text-anchor="middle">Rational gaming of promotion rules</text>
+  </g>
+  <g transform="translate(360, 120)">
+    <rect width="280" height="70" rx="4" fill="#222222" stroke="#444" stroke-width="1"/>
+    <text x="140" y="30" font-family="sans-serif" font-size="14" fill="#ffffff" text-anchor="middle">KPI / Velocity Gaming</text>
+    <text x="140" y="50" font-family="sans-serif" font-size="12" fill="#aaaaaa" text-anchor="middle">Teams inflating metrics to hit targets</text>
+  </g>
+  <g transform="translate(670, 120)">
+    <rect width="280" height="70" rx="4" fill="#0d1b2a" stroke="#1d4ed8" stroke-width="1"/>
+    <text x="140" y="30" font-family="sans-serif" font-size="14" fill="#60a5fa" text-anchor="middle">Governance</text>
+    <text x="140" y="50" font-family="sans-serif" font-size="12" fill="#aaaaaa" text-anchor="middle">Decision frameworks shape behavior</text>
+  </g>
+
+  <g transform="translate(50, 210)">
+    <rect width="280" height="70" rx="4" fill="#222222" stroke="#444" stroke-width="1"/>
+    <text x="140" y="30" font-family="sans-serif" font-size="14" fill="#ffffff" text-anchor="middle">Draft Lottery</text>
+    <text x="140" y="50" font-family="sans-serif" font-size="12" fill="#aaaaaa" text-anchor="middle">Probabilistic vs. guaranteed reward</text>
+  </g>
+  <g transform="translate(360, 210)">
+    <rect width="280" height="70" rx="4" fill="#222222" stroke="#444" stroke-width="1"/>
+    <text x="140" y="30" font-family="sans-serif" font-size="14" fill="#ffffff" text-anchor="middle">Resource Allocation Redesign</text>
+    <text x="140" y="50" font-family="sans-serif" font-size="12" fill="#aaaaaa" text-anchor="middle">Breaking the link between gaming and reward</text>
+  </g>
+  <g transform="translate(670, 210)">
+    <rect width="280" height="70" rx="4" fill="#2a2411" stroke="#ca8a04" stroke-width="1"/>
+    <text x="140" y="30" font-family="sans-serif" font-size="14" fill="#facc15" text-anchor="middle">Risk</text>
+    <text x="140" y="50" font-family="sans-serif" font-size="12" fill="#aaaaaa" text-anchor="middle">Structural risk in reward systems</text>
+  </g>
+
+  <g transform="translate(50, 300)">
+    <rect width="280" height="70" rx="4" fill="#222222" stroke="#444" stroke-width="1"/>
+    <text x="140" y="30" font-family="sans-serif" font-size="14" fill="#ffffff" text-anchor="middle">Pre-Arb Bonus Pool ($50M)</text>
+    <text x="140" y="50" font-family="sans-serif" font-size="12" fill="#aaaaaa" text-anchor="middle">Performance-based incentive layer</text>
+  </g>
+  <g transform="translate(360, 300)">
+    <rect width="280" height="70" rx="4" fill="#222222" stroke="#444" stroke-width="1"/>
+    <text x="140" y="30" font-family="sans-serif" font-size="14" fill="#ffffff" text-anchor="middle">Recognition for Contributors</text>
+    <text x="140" y="50" font-family="sans-serif" font-size="12" fill="#aaaaaa" text-anchor="middle">Rewarding outcomes, not tenure</text>
+  </g>
+  <g transform="translate(670, 300)">
+    <rect width="280" height="70" rx="4" fill="#112a1c" stroke="#16a34a" stroke-width="1"/>
+    <text x="140" y="30" font-family="sans-serif" font-size="14" fill="#4ade80" text-anchor="middle">Resources</text>
+    <text x="140" y="50" font-family="sans-serif" font-size="12" fill="#aaaaaa" text-anchor="middle">Aligning compensation with value</text>
+  </g>
+
+  <g transform="translate(50, 390)">
+    <rect width="280" height="70" rx="4" fill="#222222" stroke="#444" stroke-width="1"/>
+    <text x="140" y="30" font-family="sans-serif" font-size="14" fill="#ffffff" text-anchor="middle">Joint Competition Committee</text>
+    <text x="140" y="50" font-family="sans-serif" font-size="12" fill="#aaaaaa" text-anchor="middle">Cross-functional, fast authority</text>
+  </g>
+  <g transform="translate(360, 390)">
+    <rect width="280" height="70" rx="4" fill="#222222" stroke="#444" stroke-width="1"/>
+    <text x="140" y="30" font-family="sans-serif" font-size="14" fill="#ffffff" text-anchor="middle">Empowered Change Board</text>
+    <text x="140" y="50" font-family="sans-serif" font-size="12" fill="#aaaaaa" text-anchor="middle">Standing body with decision authority</text>
+  </g>
+  <g transform="translate(670, 390)">
+    <rect width="280" height="70" rx="4" fill="#231533" stroke="#9333ea" stroke-width="1"/>
+    <text x="140" y="30" font-family="sans-serif" font-size="14" fill="#c084fc" text-anchor="middle">Stakeholders</text>
+    <text x="140" y="50" font-family="sans-serif" font-size="12" fill="#aaaaaa" text-anchor="middle">Affected parties in decision roles</text>
+  </g>
+
+  <g transform="translate(50, 480)">
+    <rect width="280" height="70" rx="4" fill="#222222" stroke="#444" stroke-width="1"/>
+    <text x="140" y="30" font-family="sans-serif" font-size="14" fill="#ffffff" text-anchor="middle">4-Tier Luxury Tax</text>
+    <text x="140" y="50" font-family="sans-serif" font-size="12" fill="#aaaaaa" text-anchor="middle">Graduated, transparent penalties</text>
+  </g>
+  <g transform="translate(360, 480)">
+    <rect width="280" height="70" rx="4" fill="#222222" stroke="#444" stroke-width="1"/>
+    <text x="140" y="30" font-family="sans-serif" font-size="14" fill="#ffffff" text-anchor="middle">Tiered Budget Escalation</text>
+    <text x="140" y="50" font-family="sans-serif" font-size="12" fill="#aaaaaa" text-anchor="middle">Proportional consequences, not binary</text>
+  </g>
+  <g transform="translate(670, 480)">
+    <rect width="280" height="70" rx="4" fill="#2e151e" stroke="#e11d48" stroke-width="1"/>
+    <text x="140" y="30" font-family="sans-serif" font-size="14" fill="#fb7185" text-anchor="middle">Finance</text>
+    <text x="140" y="50" font-family="sans-serif" font-size="12" fill="#aaaaaa" text-anchor="middle">Visible tradeoffs at every level</text>
+  </g>
+</svg>
