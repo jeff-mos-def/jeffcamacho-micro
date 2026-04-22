@@ -1,0 +1,377 @@
+---
+// WSJFComparatorCompact.astro
+// Tight two-card ratio comparator with Value vs Effort quadrant
+// Drop into src/components/ and import into the post with:
+// import WSJFComparatorCompact from '../../components/WSJFComparatorCompact.astro'
+---
+
+<div class="wsjfc">
+  <div class="wsjfc-grid">
+    <div class="wsjfc-cards">
+      <div class="wsjfc-card" data-card="a">
+        <div class="wsjfc-card-head">
+          <span class="wsjfc-dot wsjfc-dot-a" aria-hidden="true"></span>
+          <span class="wsjfc-card-label">Feature A</span>
+        </div>
+
+        <div class="wsjfc-input-row">
+          <label>Value</label>
+          <input type="number" class="wsjfc-input" data-field="value" data-card="a" min="0" max="20" step="1" value="8" />
+        </div>
+
+        <div class="wsjfc-input-row">
+          <label>Effort</label>
+          <input type="number" class="wsjfc-input" data-field="effort" data-card="a" min="1" max="20" step="1" value="13" />
+        </div>
+
+        <div class="wsjfc-ratio-row">
+          <span class="wsjfc-ratio-label">V ÷ E</span>
+          <span class="wsjfc-ratio" data-ratio="a">0.62</span>
+        </div>
+      </div>
+
+      <div class="wsjfc-card" data-card="b">
+        <div class="wsjfc-card-head">
+          <span class="wsjfc-dot wsjfc-dot-b" aria-hidden="true"></span>
+          <span class="wsjfc-card-label">Feature B</span>
+        </div>
+
+        <div class="wsjfc-input-row">
+          <label>Value</label>
+          <input type="number" class="wsjfc-input" data-field="value" data-card="b" min="0" max="20" step="1" value="5" />
+        </div>
+
+        <div class="wsjfc-input-row">
+          <label>Effort</label>
+          <input type="number" class="wsjfc-input" data-field="effort" data-card="b" min="1" max="20" step="1" value="3" />
+        </div>
+
+        <div class="wsjfc-ratio-row">
+          <span class="wsjfc-ratio-label">V ÷ E</span>
+          <span class="wsjfc-ratio" data-ratio="b">1.67</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="wsjfc-chart-wrap">
+      <svg class="wsjfc-chart" viewBox="0 0 200 200" preserveAspectRatio="xMidYMid meet" aria-label="Value vs Effort quadrant">
+        <rect x="0" y="0" width="100" height="100" class="q q-do-first" />
+        <rect x="100" y="0" width="100" height="100" class="q q-big-bets" />
+        <rect x="0" y="100" width="100" height="100" class="q q-fill-ins" />
+        <rect x="100" y="100" width="100" height="100" class="q q-reconsider" />
+
+        <line x1="100" y1="0" x2="100" y2="200" class="q-axis" />
+        <line x1="0" y1="100" x2="200" y2="100" class="q-axis" />
+
+        <text x="50" y="14" class="q-label">Do first</text>
+        <text x="150" y="14" class="q-label">Big bets</text>
+        <text x="50" y="194" class="q-label">Fill-ins</text>
+        <text x="150" y="194" class="q-label">Reconsider</text>
+
+        <text x="4" y="104" class="q-axis-label q-axis-y">Value →</text>
+        <text x="196" y="115" class="q-axis-label q-axis-x" text-anchor="end">Effort →</text>
+
+        <circle data-point="a" cx="104" cy="35" r="5" class="wsjfc-point wsjfc-point-a" />
+        <circle data-point="b" cx="15" cy="75" r="5" class="wsjfc-point wsjfc-point-b" />
+      </svg>
+    </div>
+  </div>
+
+  <div class="wsjfc-verdict">
+    <span class="wsjfc-verdict-label">Ship first:</span>
+    <span class="wsjfc-verdict-winner" data-winner>Feature B</span>
+    <span class="wsjfc-verdict-reason" data-reason>Higher value per unit of effort</span>
+  </div>
+</div>
+
+<style>
+  .wsjfc {
+    font-family: inherit;
+    margin: 2rem 0;
+    padding: 1.25rem;
+    border: 1px solid rgba(128, 128, 128, 0.2);
+    border-radius: 8px;
+    background: rgba(128, 128, 128, 0.03);
+  }
+
+  .wsjfc-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 1.25rem;
+    align-items: stretch;
+  }
+
+  .wsjfc-cards {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+  }
+
+  .wsjfc-card {
+    padding: 0.75rem;
+    border: 1px solid rgba(128, 128, 128, 0.25);
+    border-radius: 6px;
+    background: rgba(255, 255, 255, 0.02);
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    transition: border-color 0.2s ease;
+  }
+
+  .wsjfc-card.wsjfc-winner {
+    border-color: #3fa66a;
+    box-shadow: 0 0 0 1px #3fa66a inset;
+  }
+
+  .wsjfc-card-head {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  .wsjfc-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    display: inline-block;
+  }
+
+  .wsjfc-dot-a { background: #4a9eff; }
+  .wsjfc-dot-b { background: #f0a030; }
+
+  .wsjfc-card-label {
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    opacity: 0.85;
+  }
+
+  .wsjfc-input-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    font-size: 0.8rem;
+  }
+
+  .wsjfc-input-row label {
+    font-weight: 500;
+  }
+
+  .wsjfc-input {
+    width: 56px;
+    padding: 0.25rem 0.4rem;
+    font-size: 0.85rem;
+    font-family: inherit;
+    text-align: right;
+    border: 1px solid rgba(128, 128, 128, 0.35);
+    border-radius: 4px;
+    background: transparent;
+    color: inherit;
+  }
+
+  .wsjfc-input:focus {
+    outline: none;
+    border-color: #3fa66a;
+    box-shadow: 0 0 0 2px rgba(63, 166, 106, 0.2);
+  }
+
+  .wsjfc-ratio-row {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-top: 0.25rem;
+    padding-top: 0.4rem;
+    border-top: 1px dashed rgba(128, 128, 128, 0.25);
+  }
+
+  .wsjfc-ratio-label {
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    opacity: 0.6;
+  }
+
+  .wsjfc-ratio {
+    font-size: 1.1rem;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .wsjfc-chart-wrap {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .wsjfc-chart {
+    width: 100%;
+    max-width: 220px;
+    height: auto;
+    aspect-ratio: 1 / 1;
+  }
+
+  .q { opacity: 0.85; }
+  .q-do-first    { fill: rgba(63, 166, 106, 0.18); }
+  .q-big-bets    { fill: rgba(74, 158, 255, 0.15); }
+  .q-fill-ins    { fill: rgba(240, 160, 48, 0.15); }
+  .q-reconsider  { fill: rgba(220, 80, 80, 0.15); }
+
+  .q-axis {
+    stroke: rgba(128, 128, 128, 0.45);
+    stroke-width: 0.75;
+  }
+
+  .q-label {
+    font-size: 8px;
+    font-weight: 600;
+    fill: currentColor;
+    opacity: 0.75;
+    text-anchor: middle;
+    font-family: inherit;
+  }
+
+  .q-axis-label {
+    font-size: 7px;
+    fill: currentColor;
+    opacity: 0.55;
+    font-family: inherit;
+  }
+
+  .wsjfc-point {
+    stroke: #0b0d10;
+    stroke-width: 1.5;
+    transition: cx 0.25s ease, cy 0.25s ease;
+  }
+
+  .wsjfc-point-a { fill: #4a9eff; }
+  .wsjfc-point-b { fill: #f0a030; }
+
+  .wsjfc-verdict {
+    margin-top: 1rem;
+    padding: 0.6rem 0.85rem;
+    background: rgba(63, 166, 106, 0.08);
+    border-left: 3px solid #3fa66a;
+    border-radius: 4px;
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    font-size: 0.85rem;
+  }
+
+  .wsjfc-verdict-label {
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-size: 0.7rem;
+    opacity: 0.75;
+  }
+
+  .wsjfc-verdict-winner {
+    font-weight: 700;
+    color: #3fa66a;
+  }
+
+  .wsjfc-verdict-reason {
+    opacity: 0.7;
+    font-size: 0.8rem;
+  }
+
+  @media (max-width: 640px) {
+    .wsjfc-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .wsjfc-chart {
+      max-width: 260px;
+    }
+  }
+</style>
+
+<script>
+  (function () {
+    const roots = document.querySelectorAll('.wsjfc');
+
+    roots.forEach((root) => {
+      const inputs = root.querySelectorAll<HTMLInputElement>('.wsjfc-input');
+      const ratioA = root.querySelector<HTMLElement>('[data-ratio="a"]');
+      const ratioB = root.querySelector<HTMLElement>('[data-ratio="b"]');
+      const cardA = root.querySelector<HTMLElement>('[data-card="a"]');
+      const cardB = root.querySelector<HTMLElement>('[data-card="b"]');
+      const pointA = root.querySelector<SVGCircleElement>('[data-point="a"]');
+      const pointB = root.querySelector<SVGCircleElement>('[data-point="b"]');
+      const winnerEl = root.querySelector<HTMLElement>('[data-winner]');
+      const reasonEl = root.querySelector<HTMLElement>('[data-reason]');
+
+      const AXIS_MAX = 20;
+      const CHART_PAD = 10;
+      const CHART_SIZE = 200;
+      const PLOT_RANGE = CHART_SIZE - CHART_PAD * 2;
+
+      function getVal(card: string, field: string): number {
+        const el = root.querySelector<HTMLInputElement>(
+          `.wsjfc-input[data-card="${card}"][data-field="${field}"]`
+        );
+        return el ? Number(el.value) || 0 : 0;
+      }
+
+      function plotX(effort: number): number {
+        const clamped = Math.max(0, Math.min(AXIS_MAX, effort));
+        return CHART_PAD + (clamped / AXIS_MAX) * PLOT_RANGE;
+      }
+
+      function plotY(value: number): number {
+        const clamped = Math.max(0, Math.min(AXIS_MAX, value));
+        return CHART_SIZE - CHART_PAD - (clamped / AXIS_MAX) * PLOT_RANGE;
+      }
+
+      function update() {
+        const va = getVal('a', 'value');
+        const ea = getVal('a', 'effort');
+        const vb = getVal('b', 'value');
+        const eb = getVal('b', 'effort');
+
+        const ra = ea > 0 ? va / ea : 0;
+        const rb = eb > 0 ? vb / eb : 0;
+
+        if (ratioA) ratioA.textContent = ra.toFixed(2);
+        if (ratioB) ratioB.textContent = rb.toFixed(2);
+
+        if (pointA) {
+          pointA.setAttribute('cx', String(plotX(ea)));
+          pointA.setAttribute('cy', String(plotY(va)));
+        }
+        if (pointB) {
+          pointB.setAttribute('cx', String(plotX(eb)));
+          pointB.setAttribute('cy', String(plotY(vb)));
+        }
+
+        cardA?.classList.remove('wsjfc-winner');
+        cardB?.classList.remove('wsjfc-winner');
+
+        if (!winnerEl || !reasonEl) return;
+
+        if (ra === rb) {
+          winnerEl.textContent = 'Tie';
+          reasonEl.textContent = 'Equal value per unit of effort';
+        } else if (ra > rb) {
+          cardA?.classList.add('wsjfc-winner');
+          winnerEl.textContent = 'Feature A';
+          reasonEl.textContent = 'Higher value per unit of effort';
+        } else {
+          cardB?.classList.add('wsjfc-winner');
+          winnerEl.textContent = 'Feature B';
+          reasonEl.textContent = 'Higher value per unit of effort';
+        }
+      }
+
+      inputs.forEach((input) => {
+        input.addEventListener('input', update);
+      });
+
+      update();
+    });
+  })();
+</script>
