@@ -68,7 +68,7 @@ Teams running data feeds do not need sprints. They need dashboards, runbooks, an
 
 **A hybrid model with capacity allocation.** This is the hardest one, and the one that matters most. The team explicitly splits their capacity. For example, 60% toward planned sprint work and 40% reserved for operational interrupts. The sprint backlog only accounts for the planned portion. The operational portion runs on a Kanban board alongside the sprint board.
 
-[Capacity split diagram](/img/capacity-split-diagram.svg)
+![Capacity split diagram](/img/capacity-split-diagram.svg)
  
 This is not a compromise. It is an honest acknowledgment that the team serves two masters and the delivery model needs to reflect that reality. Without the split, the sprint commitment is a fiction and the team knows it.
  
@@ -83,6 +83,8 @@ You do not need a consultant for this. Track three things for two weeks.
 **What is the team's planning horizon?** Can they predict what they will work on two weeks from now? If not, sprint planning is guesswork dressed up as a ceremony. Kanban or a flow-based model will serve them better.
  
 **What does "done" mean?** If done means "feature shipped," Scrum fits. If done means "system is healthy" or "ticket resolved within SLA," you are measuring the wrong things with the wrong framework.
+
+{/*
 
 ```mermaid
 %%{init: {'theme': 'dark', 'themeVariables': {'primaryColor': '#2a2860', 'primaryTextColor': '#ffffff', 'primaryBorderColor': '#7B74E0', 'lineColor': '#aaaaaa', 'secondaryColor': '#1a1a2e', 'tertiaryColor': '#1a1a2e', 'edgeLabelBackground': '#1a1a2e', 'clusterBkg': '#1a1a2e', 'titleColor': '#ffffff', 'fontFamily': 'Georgia, serif'}}}%%
@@ -99,7 +101,9 @@ flowchart LR
 ```
 
 *Start with how work arrives. The answer points you to the right model.*
- 
+
+*/}
+
 ---
  
 ## 5. The PM's Role: Matching the Model to the Work

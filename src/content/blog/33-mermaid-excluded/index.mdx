@@ -1,0 +1,17 @@
+---
+title: "Mermaid Diagrams Temporarily Excluded"
+description: "Playwright currently unsupported in Ubuntu 26.04."
+date: "2026-05-02"
+tags: ["site-update", "astro", "linux", "homelab"]
+draft: false
+---
+
+Following my recent OS migration from Linux Mint 22.3 to Ubuntu 26.04 LTS, mermaid diagrams are temporarily excluded from new posts and from local builds.
+
+The site uses rehype-mermaid, which depends on Playwright to render diagrams to SVG at build time. Playwright 1.59.1 does not currently recognize Ubuntu 26.04 as a supported platform and refuses to install its Chromium binary or system dependencies on this OS, even with the documented bypass flags. This is tracked upstream and is expected to resolve once Playwright ships a release that allowlists 26.04.
+
+In the meantime, any mermaid blocks in draft posts will be left as fenced code rather than rendered diagrams. Existing posts with already-rendered diagrams are unaffected. New diagram-heavy mermaid content is on hold until Playwright support lands or I switch to a client-side rendering approach.
+
+No action needed from readers, just flagging the gap.
+
+- Jeff

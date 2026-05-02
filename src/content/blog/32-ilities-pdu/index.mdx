@@ -1,0 +1,131 @@
+---
+title: "The 'ilities' Will Eat Your Budget If You Let Them"
+description: "Surface the ilities before production does it for you."
+date: "2026-05-01"
+tags: ["nfr", "requirements", "risk", "delivery", "PMP", "PDUs"]
+draft: false
+---
+
+Every PM has lived this story. The team ships the feature. Demo goes great. Stakeholders sign off. Then production hits real users, real load, real conditions, and suddenly the project that was "done" is now a six-month firefight. Latency is unacceptable. The system can't recover from a bad deploy. Compliance flags it. The on-call rotation is in revolt.
+
+Nobody scoped any of that. Nobody owned any of that. And now the budget you thought you closed is open again, this time with executive attention.
+
+Welcome to the world of non-functional requirements. The "ilities." The quality attributes that decide whether your product survives contact with reality.
+
+---
+
+## The Trap: Functional Requirements Get All the Oxygen
+
+Walk into any backlog refinement and count the user stories. Almost all of them describe what the system *does*. Login. Search. Checkout. Generate report. These are functional requirements, and they get the lion's share of attention because they're easy to demo and easy to estimate.
+
+Non-functional requirements describe how the system *behaves*. Reliability. Performance. Security. Scalability. Maintainability. They're harder to demo, harder to estimate, and almost impossible to "see" until they fail.
+
+That asymmetry is the trap. When scope tightens, the ilities get cut first because they look like overhead. When timelines slip, the ilities get deferred because they're not blocking the demo. When the team is heads-down on delivery, the ilities are invisible until they're catastrophic.
+
+Picture an **ilities iceberg**. The functional requirements sit above the waterline, visible to stakeholders, easy to demo, easy to celebrate. The ilities sit below it, larger than what's showing, silently determining whether the whole thing stays afloat. Stakeholders don't see them until something goes wrong, and by then the damage is done.
+
+![Ilities Iceberg](/img/ilities-iceberg.svg)
+
+This is how technically successful projects become business failures.
+
+---
+
+## The Core "ilities" Every PM Should Recognize
+
+You don't need to be an architect to track these. You need to know they exist and ask who owns each one.
+
+- **Reliability** is whether the system performs its function consistently without failure. Measured in uptime, error rates, mean time between failures.
+
+- **Availability** is the percentage of time the system is operational. The classic "five nines" conversation lives here.
+
+- **Scalability** is whether the system handles growth in users, data, or transactions without degrading.
+
+- **Performance** is speed and responsiveness under load. Latency, throughput, response time.
+
+- **Security** is protection against unauthorized access, data exposure, and threats.
+
+- **Maintainability** is how easily the system can be modified, fixed, or improved after release.
+
+- **Usability** is how easy the system is to learn and operate for end users.
+
+- **Accessibility** is usability specifically for people with disabilities. WCAG compliance lives here.
+
+- **Observability** is how well you can understand system behavior through logs, metrics, and traces.
+
+- **Recoverability** is how fast the system bounces back from failure. RTO and RPO are the metrics.
+
+- **Interoperability** is how well the system plays with other systems, APIs, and standards.
+
+- **Compliance** is conformance to laws, regulations, and contractual obligations. SOX, HIPAA, GDPR, PCI-DSS.
+
+There are more. Portability, testability, configurability, extensibility, compatibility. The list is long because the failure modes are many.
+
+---
+
+## Why This Becomes a Budget Sink
+
+Ilities don't fail quietly. They fail expensively.
+
+A scalability gap discovered at launch means an architecture rewrite under pressure. A security gap discovered in production means breach notifications, legal exposure, and a compliance audit you didn't budget for. A maintainability gap means every future change costs three times what it should because the codebase fights back. A recoverability gap means an outage that should have lasted an hour lasts a week.
+
+The pattern is consistent. Ilities ignored during delivery come back as unplanned work, almost always at the worst possible time, almost always with stakeholder visibility you don't want. The cost of fixing an ility in production is exponentially higher than the cost of designing for it during delivery. Anyone who has lived through a post-launch performance crisis or a surprise compliance finding knows exactly what this looks like.
+
+![Ilities Iceberg](/img/ilities-cost-curve.svg)
+
+This is why the ilities are a project risk, not a technical detail.
+
+---
+
+## The PM's Job Isn't to Define Them. It's to Surface Them.
+
+You don't need to write the performance test plan. You don't need to architect the failover strategy. You don't need to specify the encryption algorithm.
+
+You do need to make sure those things have an owner, a target, and a place in the plan.
+
+Ask the questions early. What's the expected load? What's the uptime requirement? What regulations apply? What happens when a node goes down? Who is the system supposed to be accessible to? What does "secure enough" mean for this product?
+
+If the answers are vague, that's the finding. Vague NFRs are deferred costs. Pin them down before delivery starts, not after the demo.
+
+---
+
+## How to Bake the "ilities" Into Delivery
+
+A few practical moves that work in both Agile and hybrid environments.
+
+**Add NFRs to the definition of done.** Not all of them, but the ones that matter for the work in flight. If a feature touches user data, security and compliance criteria join the DoD. If a feature changes a high-traffic path, performance criteria join the DoD.
+
+**Create NFR acceptance criteria, not just functional ones.** "The search returns results" is a functional criterion. "The search returns results in under 500ms at 1,000 concurrent users" is an NFR criterion. Both belong in the story.
+
+**Track ilities in the risk register.** Each major NFR gap is a project risk with likelihood, impact, and mitigation. This forces visibility and creates a paper trail when stakeholders want to defer them.
+
+**Run NFR-focused reviews.** Once a release, get the team in a room and walk the ilities. What's our current performance baseline? Are we drifting? What's our incident recovery time looking like? This is the NFR equivalent of a retro, and it surfaces problems early.
+
+**Push back on "we'll handle it later."** Later is a budget line item. Make it explicit. If reliability work is being deferred, log it, scope it, and put it on a future increment with an owner.
+
+---
+
+## The Talent Triangle Mapping
+
+This isn't an abstract architecture concern. It maps cleanly to the competencies PMI already expects from modern PMs.
+
+| Talent Triangle Domain | Connection to Non-Functional Requirements |
+|---|---|
+| **Ways of Working** | Embedding NFRs into definition of done, acceptance criteria, and risk registers across Agile, hybrid, and traditional delivery |
+| **Business Acumen** | Translating ility gaps into cost, compliance exposure, and value-at-risk for stakeholders and sponsors |
+| **Power Skills** | Facilitating cross-functional conversations between engineering, security, compliance, and product to surface and prioritize NFRs early |
+
+The PMs who consistently deliver products that survive in production are doing this work whether they call it NFR management or not.
+
+---
+
+## Final Thought
+
+Functional requirements get the product launched. Non-functional requirements decide whether it stays launched.
+
+The "ilities" are not someone else's problem. They are a delivery risk, a budget risk, and a reputation risk all at once. Every PM has been on the wrong side of one. The ones who learn to surface them early stop getting blindsided.
+
+You don't need to own the answers. You need to make sure the questions get asked, the answers get committed to, and the work gets scoped before the production incident scopes it for you.
+
+---
+
+**PDU Note:** *This post was written as part of my ongoing PMP continuing education. Content creation in a professional domain qualifies under PMI's <a href="https://www.pmi.org/certifications/certification-resources/maintain/earn-pdus" target="_blank" rel="noopener noreferrer">PMI's Giving Back</a>, Create Content category, and maps to all three Talent Triangle domains: Ways of Working (delivery practices for NFRs), Business Acumen (value-at-risk and cost implications), and Power Skills (cross-functional facilitation).*
