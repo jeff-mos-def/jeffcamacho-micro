@@ -2,8 +2,8 @@
 institution: "Purdue University Global"
 degree: "Master of Science"
 field: "Information Technology, Data Analytics Concentration"
-dateStart: 2027
-dateEnd: 2028
+dateStart: 2026
+dateEnd: 2027
 type: "education"
 ---
 
