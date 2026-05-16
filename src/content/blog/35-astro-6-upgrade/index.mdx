@@ -1,0 +1,157 @@
+---
+title: "Upgrading jeffcamacho.com from Astro 5 to Astro 6"
+description: "The breaking changes from Astro 5 to 6, and what the upgrade tool misses."
+date: 2026-05-16
+tags: ["astro", "tailwind", "vite", "devlog", "maintenance"]
+draft: false
+---
+
+I run my personal site on the [astro-micro](https://github.com/trevortylerlee/astro-micro) theme, which is a minimal, MDX-friendly Astro starter. When Astro 6 dropped, the upgrade pulled in a coordinated bundle of major version bumps, Astro itself, MDX, the React integration, and indirectly Vite and Tailwind.
+
+I will be honest, I sat on this one for a while. Every time I opened the release notes I closed the tab. The changelog was long, the breaking changes list was longer, and three of my core dependencies were jumping major versions in lockstep. Content collections were getting rewritten. Tailwind was switching from a JS config to a CSS-first config. Vite was making a generational leap that I had already heard horror stories about. Nothing about this looked like a one-evening project, and the site was working fine on v5, so the upgrade kept getting bumped down the list behind things that felt more urgent.
+
+That avoidance has a half-life though. The longer I stayed on v5, the more the ecosystem drifted out from under me. Eventually I committed to a Saturday morning and a branch I was willing to throw away, and worked through it one error at a time. The [official Astro v6 upgrade guide](https://docs.astro.build/en/guides/upgrade-to/v6/) was open in another tab the whole time, and it is genuinely good, every breaking change in this post is documented there with the implementation PR linked. This post is the field report on what changed for my specific stack, what broke, and the order I had to fix things in to get the site building again on Netlify.
+
+## What the upgrade tool actually does
+
+Running `npx @astrojs/upgrade` told me the version jumps before I committed to anything:
+
+```
+astro          5.18.1 → 6.3.3
+@astrojs/mdx   4.3.13 → 5.0.6
+@astrojs/react 4.4.2  → 5.0.5
+@astrojs/check 0.9.8  → 0.9.9
+```
+
+The patch bump on check is noise. The other three are real. Astro 6 is the centerpiece, MDX 5 and React 5 are coordinated releases that carry the Vite 7 plumbing changes through to those integrations.
+
+The upgrade tool will happily run all four bumps at once. That is the right call, you do not want to be partway between major versions on integrations and core. What it will not do is fix any of your code that the new versions reject.
+
+## The first wall, legacy content collections
+
+The very first error after the upgrade was the legacy content config error. Astro 5 had two ways to define content collections, the older `type: "content"` style and the newer loader-based style. Astro 6 only supports loaders. My `src/content/config.ts` looked like this:
+
+```ts
+import { defineCollection, z } from "astro:content";
+
+const blog = defineCollection({
+  type: "content",
+  schema: z.object({
+    title: z.string(),
+    description: z.string(),
+    date: z.coerce.date(),
+    // ...
+  }),
+});
+```
+
+The migration has three moving parts. First, the file moves from `src/content/config.ts` to `src/content.config.ts` (note the dot, the directory becomes a filename prefix). Second, each collection needs a `loader` instead of a `type`. Third, the `z` import moves from `astro:content` to `astro/zod`, because Astro 6 ships Zod 4 and wants you using the version pinned to Astro.
+
+The fixed shape:
+
+```ts
+import { defineCollection } from "astro:content";
+import { z } from "astro/zod";
+import { glob } from "astro/loaders";
+
+const blog = defineCollection({
+  loader: glob({ pattern: "**/[^_]*.{md,mdx}", base: "./src/content/blog" }),
+  schema: z.object({
+    title: z.string(),
+    description: z.string(),
+    date: z.coerce.date(),
+    // ...
+  }),
+});
+```
+
+The `[^_]*` pattern is a bonus, files starting with underscore get skipped, which is handy for drafts.
+
+## ViewTransitions became ClientRouter
+
+`ViewTransitions` was deprecated in Astro 5 and removed in Astro 6. The replacement is `ClientRouter`, same import path, same behavior. In my `Head.astro` component, two lines changed, the import and the tag itself. The `astro:after-swap` event name did not change, so my Giscus comments integration that listens for it kept working without edits.
+
+## entry.slug is now entry.id
+
+This is the change with the most footprint across a content-heavy site. In Astro 5, content collection entries had a `slug` property. In Astro 6, that property is `id`. Every dynamic route, every link generator, every filter that compares a slug, all of it needs updating.
+
+`grep -rn "\.slug" src/components src/layouts src/pages` turned up fourteen lines across seven files. Most needed swapping, a few had to stay alone because they referenced different `slug` concepts, a markdown heading anchor, a URL parameter name, an object property that happened to be called `slug`. The blast radius is wide enough that I would not recommend doing it without grep, you will miss something.
+
+## entry.render() became render(entry)
+
+Where you used to write `await entry.render()`, you now write `await render(entry)`, importing `render` from `astro:content`. Same return shape, different call style. Four files needed both the import added and the call rewritten.
+
+## Tailwind 3 to Tailwind 4
+
+Here is where the upgrade got chunky. `@astrojs/tailwind` is in maintenance mode and only supports Astro up to v5. There is no v6-compatible release, npm refused to install. Two options, force the install with `--legacy-peer-deps` and live on borrowed time, or migrate to the official Tailwind v4 Vite plugin that the Tailwind and Astro teams now recommend.
+
+I went with the migration. The actual changes were smaller than I expected:
+
+1. Uninstall `@astrojs/tailwind` and `tailwindcss` (the v3 one).
+2. Install `tailwindcss@4`, `@tailwindcss/vite`, and `@tailwindcss/typography`.
+3. Remove the `tailwind()` integration from `astro.config.mjs`, add `tailwindcss()` to the `vite.plugins` array instead.
+4. Replace the top of `src/styles/global.css`, the old `@tailwind base/components/utilities` directives become a single `@import "tailwindcss"`.
+5. Port the old JS config into CSS. v4 reads its config from a `@theme` block in your CSS, no more `tailwind.config.js`. Custom fonts go into `--font-sans` and `--font-mono` CSS variables.
+6. Recreate `darkMode: "class"` behavior with a `@custom-variant dark (&:where(.dark, .dark *))` line. Without it, v4 defaults to `prefers-color-scheme` and breaks every dark mode toggle.
+7. Delete the old `tailwind.config.mjs`.
+
+There is one subtle thing v4 changes that bit me. In Astro components with scoped `<style>` blocks that use `@apply`, the v4 compiler does not automatically know which utilities exist. You have to tell it where the design tokens live by adding `@reference "/src/styles/global.css"` at the top of each such style block. Two components in my codebase needed this. The error message is clear once you know what to look for, "Cannot apply unknown utility class `rounded-t-lg`. Are you using CSS modules or similar and missing `@reference`?" but if you do not know what `@reference` is, you waste time.
+
+## Vite version split-brain
+
+After the Tailwind migration I had a recurring `Failed to resolve import "@vite/env"` error in dev. The path in the stack trace was the smoking gun, it pointed at `node_modules/astro/node_modules/vite/`, a nested Vite install. My top-level `vite` was pinned to v6, but Astro 6 needs v7, so npm installed Astro's required v7 inside Astro's own subtree rather than upgrading the top-level dependency.
+
+Fix was two `package.json` edits, bump the `vite` dependency to `^7.0.0`, and add an `overrides` entry forcing the entire tree onto v7:
+
+```json
+"overrides": {
+  "yaml": "2.8.3",
+  "vite": "^7.0.0"
+}
+```
+
+Astro 6.1 actually made this a documented quirk and the `astro add cloudflare` command now writes the override for you automatically. The Astro team is aware that the `@tailwindcss/vite` plugin trips this exact wire when combined with Astro 6's rolldown-bundled Vite.
+
+After a `rm -rf node_modules package-lock.json .astro` and a fresh install, only one Vite remained in the tree, and the build started passing.
+
+## The Netlify build error TypeScript caught and dev did not
+
+Local dev was green, pages rendering, no errors. Pushed to Netlify and the production build failed on two TypeScript errors:
+
+```
+src/pages/blog/[...slug].astro:82:24 - error ts(2345)
+  Argument of type 'string | undefined' is not assignable to type 'string'.
+```
+
+In Astro 6, content collection entry `body` can be `undefined`, because content can now come from loaders that do not have a `body` (think CMS-backed collections). My `readingTime(post.body)` call passed that potentially-undefined value into a function that expected a string. Dev did not flag it because dev does not run `astro check`. The production build does, and TypeScript refused.
+
+The fix was a null coalesce on each call, `readingTime(post.body ?? "")`. Two files, one line each.
+
+## What the upgrade tool will not tell you
+
+The most useful thing I learned doing this is that `@astrojs/upgrade` is necessary but not sufficient. It updates packages. It does not migrate your code, it does not catch peer dependency conflicts that npm only surfaces at install time, it does not warn you about Tailwind being unmaintained, and it does not run your build to verify the result. If I were doing this again, I would, in order:
+
+1. Branch off main, never run the upgrade against your working branch.
+2. Run `npx @astrojs/upgrade`.
+3. Run `npm install` and read every error npm produces, those are usually the integrations that have not caught up.
+4. Run `npm run dev` and fix errors in the order they appear.
+5. Run `npm run build` locally and fix whatever TypeScript catches.
+6. Only then push.
+
+The browser pages rendering is not the bar. The build passing locally is the bar. Save yourself the round trip through Netlify.
+
+## Things I deferred
+
+One known issue is still open in my repo, the `rehype-mermaid` plugin needs Playwright's Chromium binary, which gets cleared on every clean install. In production, my `netlify.toml` already runs `npx playwright install chromium` before the build, so prod renders Mermaid diagrams fine. Local dev throws a noisy stack trace on any post with a mermaid code block. That is a tomorrow problem.
+
+The `@vite/env` error also still appears in dev terminal output, even after the override. It is cosmetic, the dev server keeps serving pages, HMR keeps working, and the production build is clean. The Astro team is tracking it on GitHub. Living with it until upstream fixes the resolver interaction.
+
+## The diff at a glance
+
+Astro 5.18.1 to 6.3.3. MDX 4 to 5. React integration 4 to 5. Tailwind 3 via `@astrojs/tailwind` to Tailwind 4 via `@tailwindcss/vite`. Vite 6 to 7. Content config moved and rewritten. Every `entry.slug` to `entry.id`. Every `entry.render()` to `render(entry)`. ViewTransitions to ClientRouter. Two `@reference` lines in component style blocks. Two `?? ""` fallbacks for the new optional body typing.
+
+Site builds, deploys, renders.
+
+Super cool.
+
+- Jeff
