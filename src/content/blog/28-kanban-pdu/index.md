@@ -84,8 +84,6 @@ You do not need a consultant for this. Track three things for two weeks.
  
 **What does "done" mean?** If done means "feature shipped," Scrum fits. If done means "system is healthy" or "ticket resolved within SLA," you are measuring the wrong things with the wrong framework.
 
-{/*
-
 ```mermaid
 %%{init: {'theme': 'dark', 'themeVariables': {'primaryColor': '#2a2860', 'primaryTextColor': '#ffffff', 'primaryBorderColor': '#7B74E0', 'lineColor': '#aaaaaa', 'secondaryColor': '#1a1a2e', 'tertiaryColor': '#1a1a2e', 'edgeLabelBackground': '#1a1a2e', 'clusterBkg': '#1a1a2e', 'titleColor': '#ffffff', 'fontFamily': 'Georgia, serif'}}}%%
 flowchart LR
@@ -101,8 +99,6 @@ flowchart LR
 ```
 
 *Start with how work arrives. The answer points you to the right model.*
-
-*/}
 
 ---
  

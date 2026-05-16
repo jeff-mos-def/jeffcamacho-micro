@@ -1,0 +1,79 @@
+---
+title: "WSJF Is a Prioritization Tool. The Math Is How It Gets You There."
+description: "Prioritized efficiency."
+date: "2026-05-15"
+tags: ["WSJF", "SAFe", "Agile", "Prioritization", "Estimation", "PMP", "PDUs"]
+draft: false
+---
+
+import WSJFComparatorCompact from '../../../components/WSJFComparatorCompact.astro';
+
+Ask a traditional PM what they think of story points and you'll get a polite version of "priorities." Ask them about WSJF and you'll get something less polite. The skepticism is understandable. If you've spent a career estimating in dollars and hours, relative estimation looks like a workaround for teams that don't want to do the real work of costing things out.
+
+Weighted Shortest Job First, or WSJF, exists to decide what ships first. Prioritize correctly and cost of delay goes down. Cost of delay going down is what maximizes efficiency. The ratio is how it gets there.
+
+---
+
+## The Job WSJF Is Actually Doing
+
+A SAFe portfolio or program team has more work than capacity. Always. The decision in front of them is not "is this feature worth doing." It's "which of these features goes first." That sequencing decision is the job. WSJF exists to answer it.
+
+Every item sitting in the backlog is accruing cost of delay. The value it would have delivered is going undelivered for as long as it waits. Sequence the backlog wrong and the high cost-of-delay items sit while low cost-of-delay items ship. Sequence it right and the most expensive delays get resolved first. That is the entire point of the tool. Correct prioritization is how cost of delay gets minimized, and minimizing cost of delay is what maximizes efficiency.
+
+Strip away the Agile vocabulary and you're left with a sequencing tool that uses a ratio to drive cost of delay down as fast as the available capacity allows.
+
+---
+
+## Why a Ratio, Not a Score
+
+Most backlogs rank by value alone. Someone shouts "this is important," the number goes up, the item moves to the top. That's advocacy dressed up as prioritization.
+
+Ranking by value alone breaks down the moment two items have similar value scores. A feature worth 8 points of value but costing 13 points of effort has a WSJF of 0.62. A feature worth 5 points of value but costing 3 points of effort has a WSJF of 1.67. The second feature is worth less in absolute terms. Ship it first anyway. You retire more cost of delay in the same window of capacity, which means the capacity you have produces more value than it otherwise would.
+
+<WSJFComparatorCompact />
+
+The denominator is what makes WSJF a sequencing tool instead of a popularity contest. Without it, the highest-value item always wins, even when it ties up capacity that would have cleared more total cost of delay across smaller items.
+
+---
+
+## The Same Ratio You Already Use in Dollars
+
+This isn't unique to Agile. The WSJF ratio is a cost of delay ratio. Cost of delay over the time it takes to deliver. You already calculate the same thing in financial terms, you just denominate it in dollars and hours instead of value and job size.
+
+In financial terms the ratio reads as dollars per hour. Cost of delay divided by time. A delay that costs the project $5,000 and takes 40 hours to resolve carries a different ratio than a delay that costs $5,000 and takes 8 hours to resolve. You clear the second one first because it retires the same cost of delay in less time. That is efficiency: the most cost of delay removed per unit of time spent.
+
+![WSJF Ratio](/img/wsjf-ratio-parallel.svg)
+
+WSJF runs the identical ratio in relative units. The numerator is value. The denominator is job size, the relative duration of the work. Value over job size is the same shape as dollars over hours. Different unit system, same ratio, same purpose. Sequence by the ratio and cost of delay falls as fast as it can given what you can actually deliver.
+
+---
+
+## Why Relative Estimation Is Enough for the Job
+
+Here's the part that usually closes the gap for traditional PMs. Relative estimation works because the decision is ordering, not pricing.
+
+To pick which item goes first, you don't need to know the absolute dollar value of each one. You need to know which item retires more cost of delay per unit of time. A ratio survives that comparison even when the individual numbers are fuzzy. As long as the team estimates value and job size consistently across items, the ordering holds, and the ordering is the only thing that determines how fast cost of delay comes down.
+
+WSJF accepts that tradeoff on purpose. Lower precision, faster decision, a sequence that minimizes cost of delay with the capacity available.
+
+---
+
+## The Talent Triangle Connection
+
+| Talent Triangle Domain | WSJF Connection |
+|---|---|
+| **Ways of Working** | Frames WSJF as a sequencing tool that minimizes cost of delay, giving practitioners a cleaner mental model for backlog prioritization |
+| **Business Acumen** | Connects backlog sequencing to the cost of delay ratio PMs already calculate in dollars and hours when deciding what to resolve first |
+| **Power Skills** | Equips PMs to defend relative estimation to skeptical stakeholders by reframing WSJF as the cost of delay prioritization they already do in dollars |
+
+---
+
+## Final Thought
+
+WSJF is a prioritization tool. Prioritize correctly and cost of delay drops. Cost of delay dropping is what maximizes efficiency. The ratio is how the tool gets you to the right sequence: cost of delay over time, whether you denominate it in dollars and hours or in value and job size.
+
+Once you see it that way, the question stops being "is this rigorous enough" and starts being "does this sequence retire cost of delay as fast as our capacity allows." That's a much better question. And it leads directly to the next problem worth writing about: what happens when the default equal-weighted WSJF formula doesn't match what the business actually cares about.
+
+---
+
+**PDU Note:** *This post was created as part of my ongoing recertification under <a href="https://www.pmi.org/certifications/certification-resources/maintain/earn-pdus" target="_blank" rel="noopener noreferrer">PMI's Giving Back, Create Content</a> category. Writing and publishing original content in your area of professional practice is a qualifying PDU activity. This post addresses all three domains of the PMI Talent Triangle: Ways of Working (framing WSJF as a sequencing tool that minimizes cost of delay), Business Acumen (connecting backlog sequencing to the cost of delay ratio PMs already calculate in dollars and hours), and Power Skills (equipping PMs to defend relative estimation by reframing WSJF as the cost of delay prioritization they already do in dollars). If you are a PMP building your PDU pipeline, content creation is one of the most underutilized and most scalable paths to recertification.*

@@ -16,12 +16,32 @@
 
         <div class="wsjfc-input-row">
           <label>Value</label>
-          <input type="number" class="wsjfc-input" data-field="value" data-card="a" min="0" max="20" step="1" value="8" />
+          <select class="wsjfc-input" data-field="value" data-card="a">
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="5">5</option>
+            <option value="8" selected>8</option>
+            <option value="13">13</option>
+            <option value="20">20</option>
+            <option value="40">40</option>
+            <option value="100">100</option>
+          </select>
         </div>
 
         <div class="wsjfc-input-row">
           <label>Effort</label>
-          <input type="number" class="wsjfc-input" data-field="effort" data-card="a" min="1" max="20" step="1" value="13" />
+          <select class="wsjfc-input" data-field="effort" data-card="a">
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="5">5</option>
+            <option value="8">8</option>
+            <option value="13" selected>13</option>
+            <option value="20">20</option>
+            <option value="40">40</option>
+            <option value="100">100</option>
+          </select>
         </div>
 
         <div class="wsjfc-ratio-row">
@@ -38,12 +58,32 @@
 
         <div class="wsjfc-input-row">
           <label>Value</label>
-          <input type="number" class="wsjfc-input" data-field="value" data-card="b" min="0" max="20" step="1" value="5" />
+          <select class="wsjfc-input" data-field="value" data-card="b">
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="5" selected>5</option>
+            <option value="8">8</option>
+            <option value="13">13</option>
+            <option value="20">20</option>
+            <option value="40">40</option>
+            <option value="100">100</option>
+          </select>
         </div>
 
         <div class="wsjfc-input-row">
           <label>Effort</label>
-          <input type="number" class="wsjfc-input" data-field="effort" data-card="b" min="1" max="20" step="1" value="3" />
+          <select class="wsjfc-input" data-field="effort" data-card="b">
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3" selected>3</option>
+            <option value="5">5</option>
+            <option value="8">8</option>
+            <option value="13">13</option>
+            <option value="20">20</option>
+            <option value="40">40</option>
+            <option value="100">100</option>
+          </select>
         </div>
 
         <div class="wsjfc-ratio-row">
@@ -65,11 +105,11 @@
 
         <text x="50" y="14" class="q-label">Do first</text>
         <text x="150" y="14" class="q-label">Big bets</text>
-        <text x="50" y="194" class="q-label">Fill-ins</text>
-        <text x="150" y="194" class="q-label">Reconsider</text>
+        <text x="50" y="180" class="q-label">Fill-ins</text>
+        <text x="150" y="180" class="q-label">Reconsider</text>
 
-        <text x="4" y="104" class="q-axis-label q-axis-y">Value →</text>
-        <text x="196" y="115" class="q-axis-label q-axis-x" text-anchor="end">Effort →</text>
+        <text x="10" y="100" class="q-axis-label q-axis-y" text-anchor="middle" transform="rotate(-90 10 100)">Value →</text>
+        <text x="100" y="198" class="q-axis-label q-axis-x" text-anchor="middle">Effort →</text>
 
         <circle data-point="a" cx="104" cy="35" r="5" class="wsjfc-point wsjfc-point-a" />
         <circle data-point="b" cx="15" cy="75" r="5" class="wsjfc-point wsjfc-point-b" />
@@ -160,7 +200,7 @@
   }
 
   .wsjfc-input {
-    width: 56px;
+    width: 72px;
     padding: 0.25rem 0.4rem;
     font-size: 0.85rem;
     font-family: inherit;
@@ -169,6 +209,12 @@
     border-radius: 4px;
     background: transparent;
     color: inherit;
+    appearance: auto;
+  }
+
+  .wsjfc-input option {
+    background: #ffffff;
+    color: #1a1a1a;
   }
 
   .wsjfc-input:focus {
@@ -295,7 +341,7 @@
     const roots = document.querySelectorAll('.wsjfc');
 
     roots.forEach((root) => {
-      const inputs = root.querySelectorAll<HTMLInputElement>('.wsjfc-input');
+      const inputs = root.querySelectorAll<HTMLSelectElement>('.wsjfc-input');
       const ratioA = root.querySelector<HTMLElement>('[data-ratio="a"]');
       const ratioB = root.querySelector<HTMLElement>('[data-ratio="b"]');
       const cardA = root.querySelector<HTMLElement>('[data-card="a"]');
@@ -305,13 +351,13 @@
       const winnerEl = root.querySelector<HTMLElement>('[data-winner]');
       const reasonEl = root.querySelector<HTMLElement>('[data-reason]');
 
-      const AXIS_MAX = 20;
+      const AXIS_MAX = 100;
       const CHART_PAD = 10;
       const CHART_SIZE = 200;
       const PLOT_RANGE = CHART_SIZE - CHART_PAD * 2;
 
       function getVal(card: string, field: string): number {
-        const el = root.querySelector<HTMLInputElement>(
+        const el = root.querySelector<HTMLSelectElement>(
           `.wsjfc-input[data-card="${card}"][data-field="${field}"]`
         );
         return el ? Number(el.value) || 0 : 0;
@@ -368,7 +414,7 @@
       }
 
       inputs.forEach((input) => {
-        input.addEventListener('input', update);
+        input.addEventListener('change', update);
       });
 
       update();

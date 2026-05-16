@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 520" role="img" aria-label="Cost of delay over time in dollars compared to the relative WSJF formula over job size">
+  <rect width="860" height="520" fill="#0b0d10"/>
+
+  <text x="430" y="40" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif" font-size="20" font-weight="700" fill="#ffffff">Same ratio. Two unit systems.</text>
+  <text x="430" y="65" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif" font-size="13" fill="#aaaaaa">Cost of delay over time. Denominated in dollars or in relative points.</text>
+
+  <line x1="430" y1="100" x2="430" y2="470" stroke="#444444" stroke-width="1" stroke-dasharray="4 6"/>
+
+  <g>
+    <text x="215" y="126" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif" font-size="13" font-weight="700" fill="#4a9eff" letter-spacing="2">FINANCIAL UNITS</text>
+
+    <rect x="40" y="150" width="350" height="120" rx="6" fill="#1a2030" stroke="#4a9eff" stroke-width="1.5"/>
+    <text x="215" y="186" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif" font-size="15" font-weight="600" fill="#ffffff">Cost of delay</text>
+    <text x="215" y="205" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif" font-size="11" fill="#dddddd">dollars lost per week of delay</text>
+    <line x1="70" y1="218" x2="360" y2="218" stroke="#4a9eff" stroke-width="2"/>
+    <text x="215" y="244" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif" font-size="15" font-weight="600" fill="#ffffff">Delivery time</text>
+
+    <text x="215" y="306" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif" font-size="12" fill="#cccccc">Item A: $40,000/wk ÷ 8 wks</text>
+    <text x="215" y="330" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif" font-size="18" font-weight="700" fill="#666666">$5,000 / wk</text>
+
+    <text x="215" y="372" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif" font-size="12" fill="#cccccc">Item B: $30,000/wk ÷ 3 wks</text>
+    <text x="215" y="396" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif" font-size="18" font-weight="700" fill="#4a9eff">$10,000 / wk</text>
+
+    <text x="215" y="442" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif" font-size="11" fill="#aaaaaa">Item B retires more cost of delay per week</text>
+  </g>
+
+  <g>
+    <text x="645" y="126" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif" font-size="13" font-weight="700" fill="#3fa66a" letter-spacing="2">RELATIVE UNITS</text>
+
+    <rect x="470" y="150" width="350" height="120" rx="6" fill="#1a2a1f" stroke="#3fa66a" stroke-width="1.5"/>
+
+    <text x="645" y="180" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="600" fill="#ffffff">User-Business Value + Time Criticality</text>
+    <text x="645" y="200" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="600" fill="#ffffff">+ (Risk Reduction and/or Opportunity Enablement)</text>
+
+    <line x1="500" y1="228" x2="790" y2="228" stroke="#3fa66a" stroke-width="2"/>
+    <text x="645" y="254" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif" font-size="14" font-weight="600" fill="#ffffff">Job Size</text>
+
+    <text x="645" y="306" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif" font-size="12" fill="#cccccc">Item A: (3 + 2 + 3) ÷ 13</text>
+    <text x="645" y="330" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif" font-size="18" font-weight="700" fill="#666666">0.62 WSJF</text>
+
+    <text x="645" y="372" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif" font-size="12" fill="#cccccc">Item B: (2 + 1 + 2) ÷ 3</text>
+    <text x="645" y="396" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif" font-size="18" font-weight="700" fill="#3fa66a">1.67 WSJF</text>
+
+    <text x="645" y="442" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif" font-size="11" fill="#aaaaaa">Item B scores higher cost of delay per unit of job size</text>
+  </g>
+
+  <text x="430" y="494" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif" font-size="12" fill="#aaaaaa">Same sequencing decision. The relative numerator is the sum of three Fibonacci-scored parameters.</text>
+</svg>
