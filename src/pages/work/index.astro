@@ -1,5 +1,5 @@
 ---
-import { getCollection } from "astro:content";
+import { getCollection, render } from "astro:content";
 import Layout from "@layouts/Layout.astro";
 import Container from "@components/Container.astro";
 import TableOfContents from "@components/TableOfContents.astro";
@@ -11,7 +11,7 @@ const workEntries = await getCollection("work");
 
 const renderedEntries = await Promise.all(
   workEntries.map(async (entry) => {
-    const rendered = await entry.render();
+    const rendered = await render(entry);
     return { ...entry, Content: rendered.Content };
   })
 );

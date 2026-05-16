@@ -84,10 +84,10 @@ const tableOfContents = [
               {/* Render linked blog posts */}
               <ul class="space-y-2 mt-2">
                 {blogs
-                  .filter((blog) => blog.data.linkedProject === project.slug)
+                  .filter((blog) => blog.data.linkedProject === project.id)
                   .map((blog) => (
                     <li>
-                      <a href={`/blog/${blog.slug}`} class="text-blue-500 underline">
+                      <a href={`/blog/${blog.id}`} class="text-blue-500 underline">
                         {blog.data.title}
                       </a>
                       <div class="text-sm text-zinc-500 dark:text-zinc-400">

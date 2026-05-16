@@ -1,16 +1,15 @@
-import tailwind from "@astrojs/tailwind";
 import { defineConfig } from "astro/config";
 import mdx from "@astrojs/mdx";
 import sitemap from "@astrojs/sitemap";
 import pagefind from "astro-pagefind";
 import react from "@astrojs/react";
 import rehypeMermaid from "rehype-mermaid";
+import tailwindcss from "@tailwindcss/vite";
 
 // https://astro.build/config
 export default defineConfig({
   site: "https://www.jeffcamacho.com",
   integrations: [
-    tailwind(),
     sitemap(),
     mdx(),
     pagefind(),
@@ -24,8 +23,15 @@ export default defineConfig({
     shikiConfig: {
       theme: "css-variables",
     },
-    rehypePlugins: [[rehypeMermaid, { strategy: "img-svg", dark: true }]],  },
+    rehypePlugins: [[rehypeMermaid, { strategy: "img-svg", dark: true }]],
+  },
   vite: {
+    plugins: [tailwindcss()],
+    resolve: {
+      alias: {
+        "@vite/env": "/node_modules/vite/dist/client/env.mjs"
+      }
+    },
     optimizeDeps: {
       exclude: ["astro:content-layer-deferred-module"]
     }

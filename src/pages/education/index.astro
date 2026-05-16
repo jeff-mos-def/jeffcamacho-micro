@@ -1,5 +1,5 @@
 ---
-import { getCollection } from "astro:content";
+import { getCollection, render } from "astro:content";
 import Layout from "@layouts/Layout.astro";
 import Container from "@components/Container.astro";
 import { EDUCATION } from "@consts";
@@ -24,7 +24,7 @@ const renderedEntries = await Promise.all(
       return a.data.type === 'certification' ? -1 : 1;
     })
     .map(async (entry) => {
-      const { Content } = await entry.render();
+      const { Content } = await render(entry);
       return { ...entry, Content };
     })
 );
