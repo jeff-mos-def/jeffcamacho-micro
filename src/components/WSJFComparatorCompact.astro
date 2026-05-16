@@ -1,8 +1,8 @@
 ---
 // WSJFComparatorCompact.astro
-// Tight two-card ratio comparator with Value vs Effort quadrant
-// Drop into src/components/ and import into the post with:
-// import WSJFComparatorCompact from '../../components/WSJFComparatorCompact.astro'
+// Two-card ratio comparator with Value vs Effort quadrant
+// Axes use index position on SAFe modified Fibonacci scale (1,2,3,5,8,13,20,40,100)
+// so step-to-step movement is visually uniform.
 ---
 
 <div class="wsjfc">
@@ -94,25 +94,42 @@
     </div>
 
     <div class="wsjfc-chart-wrap">
-      <svg class="wsjfc-chart" viewBox="0 0 200 200" preserveAspectRatio="xMidYMid meet" aria-label="Value vs Effort quadrant">
-        <rect x="0" y="0" width="100" height="100" class="q q-do-first" />
-        <rect x="100" y="0" width="100" height="100" class="q q-big-bets" />
-        <rect x="0" y="100" width="100" height="100" class="q q-fill-ins" />
-        <rect x="100" y="100" width="100" height="100" class="q q-reconsider" />
+      <svg class="wsjfc-chart" viewBox="0 0 240 240" preserveAspectRatio="xMidYMid meet" aria-label="Value vs Effort quadrant">
+        <!-- Plot area: 30,10 to 230,210 (200x200).
+             Axes are normalized 0-10 scales. Quadrant split at 5 (midpoint = 130, 110).
+             Fibonacci inputs (1-100) are mapped logarithmically to the 0-10 scale
+             so visual spacing is uniform and no input value lands on the divider. -->
+        <rect x="30"  y="10"  width="100" height="100" class="q q-do-first" />
+        <rect x="130" y="10"  width="100" height="100" class="q q-big-bets" />
+        <rect x="30"  y="110" width="100" height="100" class="q q-fill-ins" />
+        <rect x="130" y="110" width="100" height="100" class="q q-reconsider" />
 
-        <line x1="100" y1="0" x2="100" y2="200" class="q-axis" />
-        <line x1="0" y1="100" x2="200" y2="100" class="q-axis" />
+        <!-- Quadrant dividers -->
+        <line x1="130" y1="10"  x2="130" y2="210" class="q-axis" />
+        <line x1="30"  y1="110" x2="230" y2="110" class="q-axis" />
 
-        <text x="50" y="14" class="q-label">Do first</text>
-        <text x="150" y="14" class="q-label">Big bets</text>
-        <text x="50" y="180" class="q-label">Fill-ins</text>
-        <text x="150" y="180" class="q-label">Reconsider</text>
+        <!-- Plot area border -->
+        <rect x="30" y="10" width="200" height="200" class="q-border" />
 
-        <text x="10" y="100" class="q-axis-label q-axis-y" text-anchor="middle" transform="rotate(-90 10 100)">Value →</text>
-        <text x="100" y="198" class="q-axis-label q-axis-x" text-anchor="middle">Effort →</text>
+        <!-- Quadrant labels -->
+        <text x="80"  y="24"  class="q-label">Do first</text>
+        <text x="180" y="24"  class="q-label">Big bets</text>
+        <text x="80"  y="204" class="q-label">Fill-ins</text>
+        <text x="180" y="204" class="q-label">Reconsider</text>
 
-        <circle data-point="a" cx="104" cy="35" r="5" class="wsjfc-point wsjfc-point-a" />
-        <circle data-point="b" cx="15" cy="75" r="5" class="wsjfc-point wsjfc-point-b" />
+        <!-- Axis labels -->
+        <text x="14"  y="110" class="q-axis-label" text-anchor="middle" transform="rotate(-90 14 110)">Value →</text>
+        <text x="130" y="232" class="q-axis-label" text-anchor="middle">Effort →</text>
+
+        <!-- Endpoint tick labels: Low / High on each axis -->
+        <text x="30"  y="222" class="q-tick" text-anchor="middle">Low</text>
+        <text x="230" y="222" class="q-tick" text-anchor="middle">High</text>
+        <text x="26"  y="212" class="q-tick" text-anchor="end">Low</text>
+        <text x="26"  y="14"  class="q-tick" text-anchor="end">High</text>
+
+        <!-- Points (positions set by JS) -->
+        <circle data-point="a" cx="170" cy="70" r="5" class="wsjfc-point wsjfc-point-a" />
+        <circle data-point="b" cx="70"  cy="130" r="5" class="wsjfc-point wsjfc-point-b" />
       </svg>
     </div>
   </div>
@@ -253,7 +270,7 @@
 
   .wsjfc-chart {
     width: 100%;
-    max-width: 220px;
+    max-width: 260px;
     height: auto;
     aspect-ratio: 1 / 1;
   }
@@ -269,6 +286,12 @@
     stroke-width: 0.75;
   }
 
+  .q-border {
+    fill: none;
+    stroke: rgba(128, 128, 128, 0.35);
+    stroke-width: 0.75;
+  }
+
   .q-label {
     font-size: 8px;
     font-weight: 600;
@@ -279,10 +302,19 @@
   }
 
   .q-axis-label {
-    font-size: 7px;
+    font-size: 8px;
+    font-weight: 600;
+    fill: currentColor;
+    opacity: 0.7;
+    font-family: inherit;
+  }
+
+  .q-tick {
+    font-size: 6.5px;
     fill: currentColor;
     opacity: 0.55;
     font-family: inherit;
+    font-variant-numeric: tabular-nums;
   }
 
   .wsjfc-point {
@@ -331,7 +363,7 @@
     }
 
     .wsjfc-chart {
-      max-width: 260px;
+      max-width: 300px;
     }
   }
 </style>
@@ -339,6 +371,39 @@
 <script>
   (function () {
     const roots = document.querySelectorAll('.wsjfc');
+
+    // SAFe modified Fibonacci inputs, mapped to a clean 0-10 normalized axis using log scaling.
+    // The log spacing means each Fibonacci step takes a roughly equal visual distance,
+    // and no Fibonacci value lands on the quadrant divider (midpoint of axis).
+    const FIB = [1, 2, 3, 5, 8, 13, 20, 40, 100];
+    const LOG_MAX = Math.log(100); // log(highest value)
+
+    // Plot area: x from 30 to 230, y from 10 to 210 (200x200 box)
+    const PLOT_X_MIN = 30;
+    const PLOT_X_MAX = 230;
+    const PLOT_Y_MIN = 10;
+    const PLOT_Y_MAX = 210;
+    const PLOT_W = PLOT_X_MAX - PLOT_X_MIN; // 200
+    const PLOT_H = PLOT_Y_MAX - PLOT_Y_MIN; // 200
+
+    function normalize(v: number): number {
+      // log-scale normalized to 0..1
+      if (v <= 1) return 0;
+      if (v >= 100) return 1;
+      return Math.log(v) / LOG_MAX;
+    }
+
+    function plotX(effort: number): number {
+      // Inset slightly from edges so points at 1 or 100 aren't on the border
+      const n = normalize(effort);
+      return PLOT_X_MIN + 10 + n * (PLOT_W - 20);
+    }
+
+    function plotY(value: number): number {
+      // Y inverted: higher value = lower y pixel
+      const n = normalize(value);
+      return PLOT_Y_MAX - 10 - n * (PLOT_H - 20);
+    }
 
     roots.forEach((root) => {
       const inputs = root.querySelectorAll<HTMLSelectElement>('.wsjfc-input');
@@ -351,26 +416,11 @@
       const winnerEl = root.querySelector<HTMLElement>('[data-winner]');
       const reasonEl = root.querySelector<HTMLElement>('[data-reason]');
 
-      const AXIS_MAX = 100;
-      const CHART_PAD = 10;
-      const CHART_SIZE = 200;
-      const PLOT_RANGE = CHART_SIZE - CHART_PAD * 2;
-
       function getVal(card: string, field: string): number {
         const el = root.querySelector<HTMLSelectElement>(
           `.wsjfc-input[data-card="${card}"][data-field="${field}"]`
         );
         return el ? Number(el.value) || 0 : 0;
-      }
-
-      function plotX(effort: number): number {
-        const clamped = Math.max(0, Math.min(AXIS_MAX, effort));
-        return CHART_PAD + (clamped / AXIS_MAX) * PLOT_RANGE;
-      }
-
-      function plotY(value: number): number {
-        const clamped = Math.max(0, Math.min(AXIS_MAX, value));
-        return CHART_SIZE - CHART_PAD - (clamped / AXIS_MAX) * PLOT_RANGE;
       }
 
       function update() {
