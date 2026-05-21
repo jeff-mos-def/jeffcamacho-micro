@@ -1,0 +1,433 @@
+---
+// AgileCoachLayoffsTimeline.astro
+// Drop into src/components/ and reference in your post
+// Usage: <AgileCoachLayoffsTimeline />
+//
+// Vertical stack of Agile coach and PM-role layoff events from
+// January 2023 through mid-May 2026. Click a row to expand its body
+// and reveal the source link. One row open at a time. No hover.
+---
+
+<div class="acl-wrapper" id="acl-timeline">
+  <div class="acl-header">
+    <h3 class="acl-title">The Cascade: Agile Coach and PM Role Layoffs, 2023 to 2026</h3>
+    <p class="acl-subtitle">Named events and aggregate tech-sector totals. Click any row to expand.</p>
+  </div>
+
+  <ol class="acl-list">
+
+    <li class="acl-row named">
+      <button class="acl-row-btn" aria-expanded="false">
+        <div class="acl-row-marker"></div>
+        <div class="acl-row-summary">
+          <div class="acl-row-head">
+            <span class="acl-row-date">January 2023</span>
+            <span class="acl-row-tag">Named event</span>
+          </div>
+          <div class="acl-row-line">
+            <span class="acl-row-company">Capital One</span>
+            <span class="acl-row-count">~1,100 roles</span>
+          </div>
+        </div>
+        <div class="acl-row-chevron" aria-hidden="true">+</div>
+      </button>
+      <div class="acl-row-body">
+        <p>Eliminated the entire Agile job family: Scrum Masters, Agile Coaches, Agile Delivery Leads, Agile Portfolio Leads. Roles absorbed into engineering and product management.</p>
+        <a class="acl-row-source" href="https://www.computerweekly.com/news/252529477/More-than-1000-tech-roles-chopped-at-Capital-One" target="_blank" rel="noopener noreferrer">Source: Computer Weekly</a>
+      </div>
+    </li>
+
+    <li class="acl-row named">
+      <button class="acl-row-btn" aria-expanded="false">
+        <div class="acl-row-marker"></div>
+        <div class="acl-row-summary">
+          <div class="acl-row-head">
+            <span class="acl-row-date">December 2023</span>
+            <span class="acl-row-tag">Named event</span>
+          </div>
+          <div class="acl-row-line">
+            <span class="acl-row-company">Spotify</span>
+            <span class="acl-row-count">1,500 roles (17% of staff)</span>
+          </div>
+        </div>
+        <div class="acl-row-chevron" aria-hidden="true">+</div>
+      </button>
+      <div class="acl-row-body">
+        <p>CEO Daniel Ek's memo cited too many people doing work around the work rather than delivering for stakeholders. The coach-layer rationale, stated by the CEO.</p>
+        <a class="acl-row-source" href="https://www.cnbc.com/2023/12/04/spotify-to-lay-off-17percent-of-employees-ceo-daniel-ek-says.html" target="_blank" rel="noopener noreferrer">Source: CNBC</a>
+      </div>
+    </li>
+
+    <li class="acl-row aggregate">
+      <button class="acl-row-btn" aria-expanded="false">
+        <div class="acl-row-marker"></div>
+        <div class="acl-row-summary">
+          <div class="acl-row-head">
+            <span class="acl-row-date">Full Year 2025</span>
+            <span class="acl-row-tag">Sector aggregate</span>
+          </div>
+          <div class="acl-row-line">
+            <span class="acl-row-company">Tech sector total</span>
+            <span class="acl-row-count">~246,000 jobs</span>
+          </div>
+        </div>
+        <div class="acl-row-chevron" aria-hidden="true">+</div>
+      </button>
+      <div class="acl-row-body">
+        <p>Layoffs.fyi tracked nearly a quarter million tech jobs cut in 2025. Roughly 55,000 explicitly AI-attributed in the US alone.</p>
+        <a class="acl-row-source" href="https://www.informationweek.com/it-staffing-careers/2026-tech-company-layoffs" target="_blank" rel="noopener noreferrer">Source: InformationWeek</a>
+      </div>
+    </li>
+
+    <li class="acl-row named">
+      <button class="acl-row-btn" aria-expanded="false">
+        <div class="acl-row-marker"></div>
+        <div class="acl-row-summary">
+          <div class="acl-row-head">
+            <span class="acl-row-date">March 2026</span>
+            <span class="acl-row-tag">Named event</span>
+          </div>
+          <div class="acl-row-line">
+            <span class="acl-row-company">Atlassian</span>
+            <span class="acl-row-count">1,600 roles (10% of workforce)</span>
+          </div>
+        </div>
+        <div class="acl-row-chevron" aria-hidden="true">+</div>
+      </button>
+      <div class="acl-row-body">
+        <p>Cuts concentrated in content creation, customer support, quality assurance, and project management. 800 net new roles announced in AI engineering, ML ops, and AI safety.</p>
+        <a class="acl-row-source" href="https://www.metaintro.com/blog/atlassian-1600-layoffs-ceo-contradicts-ai-pivot-tech-workers-2026" target="_blank" rel="noopener noreferrer">Source: Metaintro</a>
+      </div>
+    </li>
+
+    <li class="acl-row aggregate">
+      <button class="acl-row-btn" aria-expanded="false">
+        <div class="acl-row-marker"></div>
+        <div class="acl-row-summary">
+          <div class="acl-row-head">
+            <span class="acl-row-date">Through Mid-May 2026</span>
+            <span class="acl-row-tag">Sector aggregate</span>
+          </div>
+          <div class="acl-row-line">
+            <span class="acl-row-company">Tech sector year-to-date</span>
+            <span class="acl-row-count">~128,000 jobs</span>
+          </div>
+        </div>
+        <div class="acl-row-chevron" aria-hidden="true">+</div>
+      </button>
+      <div class="acl-row-body">
+        <p>Roughly 1,000 tech jobs cut per day on average. Pace exceeds 2025. PM, QA, and content categories disproportionately represented.</p>
+        <a class="acl-row-source" href="https://www.trueup.io/layoffs" target="_blank" rel="noopener noreferrer">Source: TrueUp Layoffs Tracker</a>
+      </div>
+    </li>
+
+  </ol>
+</div>
+
+<style>
+  .acl-wrapper {
+    background: #1a1a1a;
+    border: 1px solid #2a2a2a;
+    border-radius: 8px;
+    padding: 24px 20px 20px 20px;
+    margin: 32px 0;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  }
+
+  .acl-header {
+    margin-bottom: 20px;
+  }
+
+  .acl-title {
+    color: #ffffff;
+    font-size: 18px;
+    font-weight: 600;
+    margin: 0 0 6px 0;
+    line-height: 1.3;
+  }
+
+  .acl-subtitle {
+    color: #aaaaaa;
+    font-size: 13px;
+    margin: 0;
+    line-height: 1.4;
+  }
+
+  .acl-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    position: relative;
+  }
+
+  .acl-list::before {
+    content: '';
+    position: absolute;
+    left: 7px;
+    top: 14px;
+    bottom: 14px;
+    width: 2px;
+    background: #2e2e2e;
+    z-index: 0;
+  }
+
+  .acl-row {
+    position: relative;
+    margin-bottom: 8px;
+    border-radius: 6px;
+    overflow: hidden;
+    background: #232323;
+    border: 1px solid #333333;
+    border-left: 3px solid #c44545;
+    transition: border-color 0.15s ease;
+  }
+
+  .acl-row.aggregate {
+    border-left-color: #4a7fa8;
+  }
+
+  .acl-row:last-child {
+    margin-bottom: 0;
+  }
+
+  .acl-row-btn {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    width: 100%;
+    padding: 12px 14px;
+    background: none;
+    border: none;
+    text-align: left;
+    cursor: pointer;
+    color: inherit;
+    font: inherit;
+    position: relative;
+  }
+
+  .acl-row-btn:focus {
+    outline: none;
+  }
+
+  .acl-row-btn:focus-visible {
+    box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.2);
+  }
+
+  .acl-row-marker {
+    flex-shrink: 0;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: #c44545;
+    border: 3px solid #1a1a1a;
+    box-shadow: 0 0 0 1px #2a2a2a;
+    margin-left: -8px;
+    position: relative;
+    z-index: 1;
+    transition: transform 0.15s ease;
+  }
+
+  .acl-row.aggregate .acl-row-marker {
+    background: #4a7fa8;
+  }
+
+  .acl-row.acl-open .acl-row-marker {
+    transform: scale(1.2);
+  }
+
+  .acl-row-summary {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .acl-row-head {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 3px;
+    flex-wrap: wrap;
+  }
+
+  .acl-row-date {
+    color: #aaaaaa;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+  }
+
+  .acl-row-tag {
+    color: #777777;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    padding: 2px 8px;
+    border: 1px solid #3a3a3a;
+    border-radius: 10px;
+  }
+
+  .acl-row-line {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .acl-row-company {
+    color: #ffffff;
+    font-size: 15px;
+    font-weight: 600;
+  }
+
+  .acl-row-count {
+    color: #c44545;
+    font-size: 13px;
+    font-weight: 600;
+  }
+
+  .acl-row.aggregate .acl-row-count {
+    color: #4a7fa8;
+  }
+
+  .acl-row-chevron {
+    flex-shrink: 0;
+    color: #888888;
+    font-size: 18px;
+    font-weight: 300;
+    line-height: 1;
+    width: 16px;
+    text-align: center;
+    transition: transform 0.2s ease, color 0.15s ease;
+  }
+
+  .acl-row.acl-open .acl-row-chevron {
+    transform: rotate(45deg);
+    color: #ffffff;
+  }
+
+  .acl-row-body {
+    color: #dddddd;
+    font-size: 13px;
+    line-height: 1.55;
+    max-height: 0;
+    overflow: hidden;
+    padding: 0 14px 0 44px;
+    transition: max-height 0.25s ease, padding 0.25s ease;
+  }
+
+  .acl-row-body p {
+    margin: 0 0 8px 0;
+  }
+
+  .acl-row-body p:last-child {
+    margin-bottom: 0;
+  }
+
+  .acl-row.acl-open .acl-row-body {
+    max-height: 300px;
+    padding: 0 14px 14px 44px;
+  }
+
+  .acl-row-source {
+    display: inline-block;
+    color: #8ab4d8;
+    font-size: 12px;
+    font-weight: 500;
+    text-decoration: none;
+    border-bottom: 1px solid #4a7fa8;
+    padding-bottom: 1px;
+    transition: color 0.15s ease, border-color 0.15s ease;
+  }
+
+  .acl-row-source:hover {
+    color: #b8d4ee;
+    border-bottom-color: #b8d4ee;
+  }
+
+  .acl-row.named .acl-row-source {
+    color: #e89a9a;
+    border-bottom-color: #c44545;
+  }
+
+  .acl-row.named .acl-row-source:hover {
+    color: #f0bcbc;
+    border-bottom-color: #f0bcbc;
+  }
+
+  @media (max-width: 600px) {
+    .acl-wrapper {
+      padding: 20px 16px 16px 16px;
+    }
+    .acl-row-btn {
+      padding: 10px 12px;
+      gap: 12px;
+    }
+    .acl-row-company {
+      font-size: 14px;
+    }
+    .acl-row-body {
+      font-size: 12px;
+      padding-left: 38px;
+    }
+    .acl-row.acl-open .acl-row-body {
+      padding: 0 12px 12px 38px;
+    }
+  }
+</style>
+
+<script is:inline>
+  function initAclTimeline() {
+    const wrapper = document.getElementById('acl-timeline');
+    if (!wrapper) return;
+
+    // Guard against double-init if both event listeners fire
+    if (wrapper.dataset.aclInitialized === 'true') return;
+    wrapper.dataset.aclInitialized = 'true';
+
+    const rows = wrapper.querySelectorAll('.acl-row');
+    const buttons = wrapper.querySelectorAll('.acl-row-btn');
+
+    function closeAll() {
+      rows.forEach((row) => {
+        row.classList.remove('acl-open');
+        const btn = row.querySelector('.acl-row-btn');
+        if (btn) btn.setAttribute('aria-expanded', 'false');
+      });
+    }
+
+    buttons.forEach((btn) => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const row = btn.closest('.acl-row');
+        if (!row) return;
+        const isOpen = row.classList.contains('acl-open');
+        closeAll();
+        if (!isOpen) {
+          row.classList.add('acl-open');
+          btn.setAttribute('aria-expanded', 'true');
+        }
+      });
+    });
+
+    document.addEventListener('click', (e) => {
+      if (!wrapper.contains(e.target)) {
+        closeAll();
+      }
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeAll();
+    });
+  }
+
+  // Fire on standard DOM ready (no View Transitions)
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initAclTimeline);
+  } else {
+    initAclTimeline();
+  }
+
+  // Fire on Astro View Transitions navigation (if enabled)
+  document.addEventListener('astro:page-load', initAclTimeline);
+</script>
