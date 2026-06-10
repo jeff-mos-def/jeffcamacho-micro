@@ -1,0 +1,97 @@
+---
+title: "Colors of Money: Why Agile Budgets Get Trapped"
+description: "Appropriations color is the constraint upstream of your backlog."
+date: "2026-06-09"
+tags: ["Appropriations", "Acquisition", "Agile", "Government", "RDTE", "Funding"]
+draft: false
+---
+
+import ColorsOfMoney_2 from '../../../components/ColorsOfMoney_2.astro';
+import IronTriangle from '../../../components/IronTriangle.astro';
+
+*Pop Quiz!*
+
+It's the second week of September. Your program has $1.8 million in O&M that expires on September 30, and a contractor team mid-PI with a backlog full of high-value development features ready to pull. The money is real. The work is real. The team has capacity. And you cannot connect them, because the money is the wrong color.
+
+If you came up in commercial project management, this scenario sounds insane. Money is money. A dollar in the budget is a dollar you can spend on whatever the project needs most. In federal acquisition, that assumption will get you an Antideficiency Act investigation and in a very uncomfortable conversation.
+
+If you are running or supporting incremental software delivery on a government contract, your biggest bottleneck lives well upstream of your backlog. To survive it, you have to master the three core appropriations an acquisition PM manages, understand their underlying purpose, and know how to handle the inevitable friction when they collide with Agile delivery.
+
+---
+
+## The Three Colors
+
+Congress doesn't appropriate "money." It appropriates specific amounts, for specific purposes, available for specific periods of time. Purpose, time, and amount. Violate any of the three and you've potentially violated fiscal law. The "color" shorthand refers to the purpose dimension, but each color also carries its own clock.
+
+**RDT&E (Research, Development, Test and Evaluation).** This pays for developing things that don't exist yet. New capabilities, prototypes, engineering development, developmental and operational testing. RDT&E is generally available for obligation for two years. In software terms, this is your new feature work, your new system development, your major capability insertions.
+
+**Procurement.** This buys things. Production quantities, fielding, the hardware and licenses that turn a developed capability into an operational one. Procurement money is generally available for three years and comes with the full funding policy: with limited exceptions, you fund the complete cost of a usable end item in the year you buy it. No paying for half a thing now and half later.
+
+**O&M (Operations and Maintenance).** This keeps things running. Sustainment, day-to-day operations, civilian salaries in many cases, repairs, and what fiscal law treats as "expenses" rather than "investments." O&M is one-year money. It expires at the end of the fiscal year in which it was appropriated, full stop.
+
+<ColorsOfMoney_2 />
+
+One clarification that saves PMs grief: "expired" and "cancelled" are not the same thing. When O&M expires on September 30, you can no longer create new obligations with it, but it remains available for five more years to pay adjustments on obligations you made in time. After that, it's cancelled and gone for good. The deadline that matters for your delivery planning is obligation, not payment.
+
+**Comparing the Timelines at a Glance**
+| Appropriation Type | Active / Current Phase (To Obligate) | Expired Phase (To Pay Invoices) | Cancelled Phase (Gone) | Total Lifecycle |
+| :--- | :--- | :--- | :--- | :--- |
+| **O&M** | 1 Year | 5 Years | After Year 6 | 6 Years |
+| **RDT&E** | 2 Years | 5 Years | After Year 7 | 7 Years |
+| **Procurement** | 3 Years | 5 Years | After Year 8 | 8 Years |
+
+---
+
+## Where This Collides With Agile
+
+Now put a cross-functional Agile team inside that structure.
+
+A healthy product team doesn't draw hard lines between building new capability, deploying it, and sustaining it. The same sprint might include a new feature, a production bug fix, a refactor that reduces tech debt, and an infrastructure change that improves deployment. That's the whole point of the model. The team owns the product across its life.
+
+Appropriations law looks at that same sprint and sees three different colors of money. The new feature is arguably RDT&E. The bug fix on a fielded system is arguably O&M. Depending on what's being deployed and how, fielding activity might touch Procurement. The team sees one backlog. The government sees a colorization problem.
+
+<IronTriangle />
+
+This creates real, recurring friction points:
+
+**The enhancement versus sustainment debate.** Is that backlog item a bug fix (O&M) or a new capability (RDT&E)? Every acquisition PM supporting software has sat in a meeting where reasonable people argued about whether a change "maintains existing capability" or "provides new capability." The answer determines which pot of money pays for it, and the line is genuinely blurry in modern software, where a "fix" often involves rearchitecting and an "enhancement" might be three lines of code. Your engineers find the debate absurd. Fiscal law does not care.
+
+**Funding profiles that don't match team cadence.** Your Agile teams are a relatively fixed cost: the same people, every sprint, all year. But your funding arrives in colored streams with different durations and different rules. If your program is funded with a mix of RDT&E and O&M, the team's level-of-effort reality has to be decomposed and charged against the right colors based on what the work actually was. That means your contract structure, your CLINs, and your charging guidance have to anticipate work the team hasn't planned yet. PI planning becomes, in part, a funding colorization exercise: features get tagged by color before they get sequenced by value.
+
+**The bona fide needs problem.** An appropriation can only be obligated for a genuine need arising during its period of availability. You can't bank this year's O&M against next year's sustainment workload just because the team will still exist next year. For incremental delivery, this raises a real question: when does the need for the next increment arise? Programs have gotten in trouble obligating current-year money for what was functionally next year's work.
+
+---
+
+## The September Scramble, Properly Understood
+
+Back to the opening scenario, because it's worth dissecting rather than just mocking.
+
+The year-end spending surge gets ridiculed as government waste, and sometimes it is. But from inside an acquisition program, it's a rational response to an irrational constraint. O&M that goes unobligated on September 30 doesn't roll forward to your program. It's gone, and worse, it signals to resource sponsors that you didn't need it, which shapes next year's allocation. So programs sprint to obligate.
+
+For the Agile acquisition PM, the failure mode is letting the money's clock override the backlog's priority. The September pressure pushes teams to pull O&M-eligible work forward regardless of value: sustainment tasks, license true-ups, severable services, anything that legitimately consumes expiring dollars. Meanwhile the highest-value development work sits because it's the wrong color. You end up optimizing the burn rate instead of the product.
+
+The mature version of this is planning for it. If you know in March that your O&M execution is trending behind, you have six months to line up legitimate, valuable, correctly colored work to obligate against it: sustainment backlog, tech refresh, training, support contract option periods. The teams that get burned are the ones who discover the problem in August and start funding whatever can be obligated fastest. Year-end execution health is a leading indicator you should be tracking all year, the same way you'd track a burn-down. By the time it's red in September, your options are bad ones.
+
+---
+
+## What Actually Helps
+
+A few practices that make the color problem manageable rather than constant:
+
+**Colorize at the feature level, early.** Don't wait to appropriate funds. When features enter the backlog, tag them with a funding color rationale as part of refinement. It forces the enhancement-versus-sustainment conversation while there's still time to adjust, and it builds the audit trail you'll want later.
+
+**Structure contracts to match the work, not the org chart.** If one contractor team does both development and sustainment, the contract needs CLINs or line items that let effort be charged to the right color. A single bucket invites colorization violations; a structure that mirrors the actual mix of work prevents them.
+
+**Keep a colored runway, not just a backlog.** Maintain visibility into how much obligable work you have ready in each color, against how much money you hold in each color and when each tranche expires. A backlog prioritized purely by value is incomplete in this environment. You need value sequencing within color constraints.
+
+**Know your service's software pilot landscape.** DoW has acknowledged this exact problem. The Software and Digital Technology Pilot Program created a single appropriation category for selected software programs, letting one color cover development, fielding, and sustainment of software as the continuous activity it actually is. It's not available to most programs, but it tells you where the thinking is headed, and if your program might qualify, it's worth pursuing. The friction described in this post is increasingly recognized as a policy bug, not a feature.
+
+---
+
+## The Takeaway
+
+Colors of money are not going away for most programs, and pretending the constraint doesn't exist is how acquisition PMs end up explaining obligations to an investigating officer. The job is to internalize the constraint deeply enough that it stops being a surprise: know which color funds which kind of work, track expiration clocks like delivery dates, force the colorization conversation early in refinement, and plan year-end execution starting in the spring.
+
+Your Agile teams will keep seeing one backlog. Congress will keep seeing three appropriations. The acquisition PM stands in the middle, and the programs that deliver well are the ones where that translation happens deliberately instead of in a panic the last week of September.
+
+- Jeff

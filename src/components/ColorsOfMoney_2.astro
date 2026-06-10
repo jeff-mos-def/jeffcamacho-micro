@@ -1,0 +1,212 @@
+---
+// ColorsOfMoney.astro
+// Interactive explorer for the big three appropriations: RDT&E, Procurement, O&M.
+// Self-contained: scoped styles, hardcoded hex colors, vanilla JS.
+// Import into an .mdx post: import ColorsOfMoney from '../../components/ColorsOfMoney.astro';
+---
+
+<div class="com" data-com>
+  <p class="com-kicker">The big three, by purpose and by clock</p>
+
+  <div class="com-tabs" role="tablist" aria-label="Appropriation types">
+    <button class="com-tab" role="tab" data-color="rdte" aria-selected="true">
+      <span class="com-dot com-dot-rdte"></span>RDT&amp;E
+    </button>
+    <button class="com-tab" role="tab" data-color="proc" aria-selected="false">
+      <span class="com-dot com-dot-proc"></span>Procurement
+    </button>
+    <button class="com-tab" role="tab" data-color="om" aria-selected="false">
+      <span class="com-dot com-dot-om"></span>O&amp;M
+    </button>
+  </div>
+
+  <div class="com-timeline" aria-hidden="true">
+    <div class="com-years">
+      <span>FY1</span><span>FY2</span><span>FY3</span><span class="com-expired-label">Expired</span>
+    </div>
+    <div class="com-row" data-bar="rdte">
+      <div class="com-bar com-bar-rdte" style="width: 50%;">
+        <span class="com-bar-label">RDT&amp;E &middot; 2 years</span>
+      </div>
+    </div>
+    <div class="com-row" data-bar="proc">
+      <div class="com-bar com-bar-proc" style="width: 75%;">
+        <span class="com-bar-label">Procurement &middot; 3 years</span>
+      </div>
+    </div>
+    <div class="com-row" data-bar="om">
+      <div class="com-bar com-bar-om" style="width: 25%;">
+        <span class="com-bar-label">O&amp;M &middot; 1 year</span>
+      </div>
+    </div>
+    <p class="com-clock-note">Period of availability for new obligations. After expiration, funds remain available five more years to adjust prior obligations, then cancel.</p>
+  </div>
+
+  <div class="com-panel" data-panel="rdte" role="tabpanel">
+    <h4 class="com-panel-title com-title-rdte">RDT&amp;E</h4>
+    <dl class="com-facts">
+      <div><dt>Purpose</dt><dd>Develop what does not exist yet. New capability, prototyping, engineering development, developmental and operational test.</dd></div>
+      <div><dt>Clock</dt><dd>Two years to obligate.</dd></div>
+      <div><dt>In software terms</dt><dd>New features, new system development, major capability insertions.</dd></div>
+      <div><dt>Watch out</dt><dd>The enhancement versus sustainment line is blurry. Tag the funding rationale during backlog refinement and keep the audit trail.</dd></div>
+    </dl>
+  </div>
+
+  <div class="com-panel" data-panel="proc" role="tabpanel" hidden>
+    <h4 class="com-panel-title com-title-proc">Procurement</h4>
+    <dl class="com-facts">
+      <div><dt>Purpose</dt><dd>Buy and field. Production quantities, hardware, and the licenses that turn developed capability into operational capability.</dd></div>
+      <div><dt>Clock</dt><dd>Three years to obligate, with the full funding policy: fund the complete usable end item in the year you buy it.</dd></div>
+      <div><dt>In software terms</dt><dd>Fielding activity, production licenses, hardware refresh tied to deployment.</dd></div>
+      <div><dt>Watch out</dt><dd>No incremental funding of a single end item. Half now, half later is not an option.</dd></div>
+    </dl>
+  </div>
+
+  <div class="com-panel" data-panel="om" role="tabpanel" hidden>
+    <h4 class="com-panel-title com-title-om">O&amp;M</h4>
+    <dl class="com-facts">
+      <div><dt>Purpose</dt><dd>Keep it running. Sustainment, operations, repairs, and what fiscal law treats as expenses rather than investments.</dd></div>
+      <div><dt>Clock</dt><dd>One year. New obligations end September 30, full stop.</dd></div>
+      <div><dt>In software terms</dt><dd>Bug fixes on fielded systems, sustainment backlog, support contracts, license true-ups.</dd></div>
+      <div><dt>Watch out</dt><dd>The September scramble. Track execution health all year so year-end obligation is a plan, not a panic.</dd></div>
+    </dl>
+  </div>
+</div>
+
+<style>
+  .com {
+    background: #14181f;
+    border: 1px solid #2a3140;
+    border-radius: 10px;
+    padding: 1.25rem 1.25rem 1rem;
+    margin: 2rem 0;
+    color: #dddddd;
+  }
+  .com-kicker {
+    margin: 0 0 0.75rem;
+    font-size: 0.75rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #aaaaaa;
+  }
+  .com-tabs {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-bottom: 1rem;
+  }
+  .com-tab {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    background: #1d2430;
+    border: 1px solid #2a3140;
+    border-radius: 999px;
+    color: #cccccc;
+    font-size: 0.85rem;
+    padding: 0.35rem 0.9rem;
+    cursor: pointer;
+    transition: border-color 0.15s ease, color 0.15s ease;
+  }
+  .com-tab:hover { border-color: #4a5468; }
+  .com-tab:focus-visible { outline: 2px solid #7da7d9; outline-offset: 2px; }
+  .com-tab[aria-selected="true"] { color: #ffffff; border-color: #5e6b85; background: #232c3c; }
+  .com-dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+  .com-dot-rdte { background: #4a9eda; }
+  .com-dot-proc { background: #3fa66b; }
+  .com-dot-om   { background: #e0833a; }
+
+  .com-timeline { margin-bottom: 1rem; }
+  .com-years {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 0.7rem;
+    color: #aaaaaa;
+    border-bottom: 1px solid #2a3140;
+    margin-bottom: 0.5rem;
+    padding-bottom: 0.25rem;
+  }
+  .com-expired-label { color: #6b7280; }
+  .com-row { margin: 0.4rem 0; opacity: 0.35; transition: opacity 0.2s ease; }
+  .com-row.is-active { opacity: 1; }
+  .com-bar {
+    height: 26px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    padding-left: 0.6rem;
+    min-width: 25%;
+  }
+  .com-bar-rdte { background: #2d5f86; border-right: 3px solid #4a9eda; }
+  .com-bar-proc { background: #26603f; border-right: 3px solid #3fa66b; }
+  .com-bar-om   { background: #8a4f22; border-right: 3px solid #e0833a; }
+  .com-bar-label {
+    font-size: 0.75rem;
+    color: #ffffff;
+    white-space: nowrap;
+  }
+  .com-clock-note {
+    font-size: 0.72rem;
+    color: #aaaaaa;
+    margin: 0.6rem 0 0;
+    line-height: 1.4;
+  }
+
+  .com-panel { border-top: 1px solid #2a3140; padding-top: 0.9rem; }
+  .com-panel-title { margin: 0 0 0.6rem; font-size: 1rem; }
+  .com-title-rdte { color: #4a9eda; }
+  .com-title-proc { color: #3fa66b; }
+  .com-title-om   { color: #e0833a; }
+  .com-facts { margin: 0; display: grid; gap: 0.55rem; }
+  .com-facts dt {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: #aaaaaa;
+    margin-bottom: 0.1rem;
+  }
+  .com-facts dd { margin: 0; font-size: 0.88rem; line-height: 1.5; color: #dddddd; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .com-tab, .com-row { transition: none; }
+  }
+</style>
+
+<script>
+  function initColorsOfMoney() {
+    document.querySelectorAll<HTMLElement>('[data-com]').forEach((root) => {
+      if (root.dataset.initialized) return;
+      root.dataset.initialized = 'true';
+
+      const tabs = root.querySelectorAll<HTMLElement>('.com-tab');
+      const panels = root.querySelectorAll<HTMLElement>('.com-panel');
+      const rows = root.querySelectorAll<HTMLElement>('.com-row');
+
+      function select(color: string | undefined) {
+        if (!color) return;
+        tabs.forEach((t) =>
+          t.setAttribute('aria-selected', t.dataset.color === color ? 'true' : 'false')
+        );
+        panels.forEach((p) => {
+          p.hidden = p.dataset.panel !== color;
+        });
+        rows.forEach((r) =>
+          r.classList.toggle('is-active', r.dataset.bar === color)
+        );
+      }
+
+      tabs.forEach((t) =>
+        t.addEventListener('click', () => select(t.dataset.color))
+      );
+      rows.forEach((r) =>
+        r.addEventListener('click', () => select(r.dataset.bar))
+      );
+
+      select('rdte');
+    });
+  }
+
+  document.addEventListener('astro:page-load', initColorsOfMoney);
+  document.addEventListener('DOMContentLoaded', initColorsOfMoney);
+</script>

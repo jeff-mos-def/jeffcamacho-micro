@@ -1,0 +1,235 @@
+---
+// IronTriangle.astro
+// Interactive comparison of Traditional vs Agile spending structure.
+// Fixed vertices stay locked; the variable vertex absorbs change.
+// A pressure slider models unplanned work and shows where it lands.
+// Self-contained: scoped styles, hardcoded hex, vanilla JS.
+// Import binding must be a plain identifier (no dots), e.g.:
+//   import IronTriangle from '../../../components/IronTriangle.astro';
+---
+
+<div class="it" data-it>
+  <div class="it-modes" role="tablist" aria-label="Delivery model">
+    <button class="it-mode" role="tab" data-mode="traditional" aria-selected="true">Traditional (Waterfall)</button>
+    <button class="it-mode" role="tab" data-mode="agile" aria-selected="false">Modern Agile</button>
+  </div>
+
+  <div class="it-grid">
+    <svg class="it-tri" viewBox="0 0 360 240" role="img" aria-label="Iron triangle">
+      <polygon class="it-edge" points="180,30 60,205 300,205"></polygon>
+
+      <g class="it-vertex" data-vertex="scope">
+        <circle cx="180" cy="30" r="9"></circle>
+        <text class="it-v-label" x="180" y="18" text-anchor="middle">Scope</text>
+        <text class="it-v-state" x="180" y="52" text-anchor="middle"></text>
+      </g>
+      <g class="it-vertex" data-vertex="cost">
+        <circle cx="60" cy="205" r="9"></circle>
+        <text class="it-v-label" x="48" y="228" text-anchor="middle">Cost</text>
+        <text class="it-v-state" x="48" y="242" text-anchor="middle"></text>
+      </g>
+      <g class="it-vertex" data-vertex="schedule">
+        <circle cx="300" cy="205" r="9"></circle>
+        <text class="it-v-label" x="312" y="228" text-anchor="middle">Schedule</text>
+        <text class="it-v-state" x="312" y="242" text-anchor="middle"></text>
+      </g>
+    </svg>
+
+    <div class="it-controls">
+      <label class="it-slider-label" for="it-pressure">Unplanned work / change</label>
+      <input id="it-pressure" class="it-slider" type="range" min="0" max="100" value="0" />
+
+      <div class="it-bars">
+        <div class="it-bar-row" data-metric="cost">
+          <span class="it-bar-name">Cost</span>
+          <div class="it-bar-track"><div class="it-bar-fill it-fill-cost"></div></div>
+          <span class="it-bar-val"></span>
+        </div>
+        <div class="it-bar-row" data-metric="schedule">
+          <span class="it-bar-name">Schedule</span>
+          <div class="it-bar-track"><div class="it-bar-fill it-fill-schedule"></div></div>
+          <span class="it-bar-val"></span>
+        </div>
+        <div class="it-bar-row" data-metric="scope">
+          <span class="it-bar-name">Scope</span>
+          <div class="it-bar-track"><div class="it-bar-fill it-fill-scope"></div></div>
+          <span class="it-bar-val"></span>
+        </div>
+      </div>
+
+      <p class="it-readout"></p>
+    </div>
+  </div>
+</div>
+
+<style>
+  .it {
+    background: #14181f;
+    border: 1px solid #2a3140;
+    border-radius: 10px;
+    padding: 1.25rem;
+    margin: 2rem 0;
+    color: #dddddd;
+  }
+  .it-modes { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1.1rem; }
+  .it-mode {
+    background: #1d2430;
+    border: 1px solid #2a3140;
+    border-radius: 999px;
+    color: #cccccc;
+    font-size: 0.85rem;
+    padding: 0.4rem 1rem;
+    cursor: pointer;
+    transition: border-color 0.15s ease, background 0.15s ease, color 0.15s ease;
+  }
+  .it-mode:hover { border-color: #4a5468; }
+  .it-mode:focus-visible { outline: 2px solid #7da7d9; outline-offset: 2px; }
+  .it-mode[aria-selected="true"] { color: #ffffff; border-color: #5e6b85; background: #232c3c; }
+
+  .it-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; align-items: center; }
+  @media (max-width: 640px) { .it-grid { grid-template-columns: 1fr; } }
+
+  .it-tri { width: 100%; height: auto; }
+  .it-edge { fill: none; stroke: #2a3140; stroke-width: 2; }
+  .it-vertex circle { stroke-width: 2.5; transition: fill 0.2s ease, stroke 0.2s ease; }
+  .it-vertex .it-v-label { font-size: 13px; font-weight: 600; fill: #ffffff; }
+  .it-vertex .it-v-state { font-size: 9px; letter-spacing: 0.06em; fill: #aaaaaa; text-transform: uppercase; }
+
+  .it-vertex.is-fixed circle { fill: #ffffff; stroke: #ffffff; }
+  .it-vertex.is-variable circle { fill: #14181f; stroke-dasharray: 3 3; }
+  .it-vertex[data-vertex="cost"].is-variable circle { stroke: #e0833a; }
+  .it-vertex[data-vertex="schedule"].is-variable circle { stroke: #3fa66b; }
+  .it-vertex[data-vertex="scope"].is-variable circle { stroke: #4a9eda; }
+
+  .it-slider-label {
+    display: block;
+    font-size: 0.72rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: #aaaaaa;
+    margin-bottom: 0.4rem;
+  }
+  .it-slider { width: 100%; accent-color: #7da7d9; margin-bottom: 1rem; }
+
+  .it-bars { display: grid; gap: 0.6rem; margin-bottom: 1rem; }
+  .it-bar-row { display: grid; grid-template-columns: 70px 1fr 70px; align-items: center; gap: 0.5rem; }
+  .it-bar-name { font-size: 0.8rem; color: #cccccc; }
+  .it-bar-track { background: #1d2430; border-radius: 4px; height: 18px; overflow: hidden; }
+  .it-bar-fill { height: 100%; border-radius: 4px; transition: width 0.25s ease; }
+  .it-fill-cost { background: #e0833a; }
+  .it-fill-schedule { background: #3fa66b; }
+  .it-fill-scope { background: #4a9eda; }
+  .it-bar-val { font-size: 0.78rem; color: #dddddd; text-align: right; font-variant-numeric: tabular-nums; }
+  .it-bar-row.is-fixed .it-bar-val::after { content: " locked"; color: #aaaaaa; font-size: 0.66rem; }
+
+  .it-readout {
+    font-size: 0.85rem;
+    line-height: 1.5;
+    color: #dddddd;
+    border-top: 1px solid #2a3140;
+    padding-top: 0.8rem;
+    margin: 0;
+    min-height: 3.4em;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .it-mode, .it-vertex circle, .it-bar-fill { transition: none; }
+  }
+</style>
+
+<script>
+  function initIronTriangle() {
+    document.querySelectorAll<HTMLElement>('[data-it]').forEach((root) => {
+      if (root.dataset.initialized) return;
+      root.dataset.initialized = 'true';
+
+      const modeBtns = root.querySelectorAll<HTMLElement>('.it-mode');
+      const vertices = root.querySelectorAll<HTMLElement>('.it-vertex');
+      const rows = root.querySelectorAll<HTMLElement>('.it-bar-row');
+      const slider = root.querySelector<HTMLInputElement>('.it-slider');
+      const readout = root.querySelector<HTMLElement>('.it-readout');
+
+      let mode = 'traditional';
+
+      const fixedByMode: Record<string, string[]> = {
+        traditional: ['scope'],
+        agile: ['cost', 'schedule'],
+      };
+
+      const stateText: Record<string, string> = {
+        fixed: 'Fixed',
+        variable: 'Flexes',
+      };
+
+      function model(activeMode: string, p: number) {
+        // p is 0..1 magnitude of unplanned change.
+        if (activeMode === 'traditional') {
+          return { cost: 1 + 0.8 * p, schedule: 1 + 0.6 * p, scope: 1 };
+        }
+        return { cost: 1, schedule: 1, scope: 1 - 0.7 * p };
+      }
+
+      function readoutText(activeMode: string, p: number) {
+        if (p === 0) {
+          return activeMode === 'traditional'
+            ? 'Scope is locked. Cost and schedule are the variables. Add work and they are what move.'
+            : 'Cost and schedule are locked. Scope is the variable. Add work and the backlog is what gives.';
+        }
+        return activeMode === 'traditional'
+          ? 'Scope held firm, so the change lands on cost and schedule. This is the overrun and slip you fund after the fact, and the moment you go hunting for more of the right color of money.'
+          : "With PIs and sprints locking down the schedule and lean budgeting keeping the cost firm, any pivot lands squarely on scope. You deliver a thinner increment, strictly on time and on budget. The value stream funding stays flat, and the backlog absorbs the hit.";
+      }
+
+      function pct(value: number) {
+        // index 0..2 maps to 0..100 percent of the track.
+        return Math.max(0, Math.min(100, (value / 2) * 100));
+      }
+
+      function render() {
+        const p = slider ? Number(slider.value) / 100 : 0;
+        const fixed = fixedByMode[mode] || [];
+        const m = model(mode, p);
+        const values: Record<string, number> = m;
+
+        vertices.forEach((v) => {
+          const key = v.dataset.vertex || '';
+          const isFixed = fixed.indexOf(key) !== -1;
+          v.classList.toggle('is-fixed', isFixed);
+          v.classList.toggle('is-variable', !isFixed);
+          const stateEl = v.querySelector<HTMLElement>('.it-v-state');
+          if (stateEl) stateEl.textContent = isFixed ? stateText.fixed : stateText.variable;
+        });
+
+        rows.forEach((row) => {
+          const key = row.dataset.metric || '';
+          const isFixed = fixed.indexOf(key) !== -1;
+          const value = values[key] ?? 1;
+          row.classList.toggle('is-fixed', isFixed);
+          const fill = row.querySelector<HTMLElement>('.it-bar-fill');
+          const val = row.querySelector<HTMLElement>('.it-bar-val');
+          if (fill) fill.style.width = pct(value) + '%';
+          if (val) val.textContent = Math.round(value * 100) + (isFixed ? '' : '');
+        });
+
+        if (readout) readout.textContent = readoutText(mode, p);
+      }
+
+      modeBtns.forEach((b) =>
+        b.addEventListener('click', () => {
+          mode = b.dataset.mode || 'traditional';
+          modeBtns.forEach((x) =>
+            x.setAttribute('aria-selected', x.dataset.mode === mode ? 'true' : 'false')
+          );
+          render();
+        })
+      );
+
+      if (slider) slider.addEventListener('input', render);
+
+      render();
+    });
+  }
+
+  document.addEventListener('astro:page-load', initIronTriangle);
+  document.addEventListener('DOMContentLoaded', initIronTriangle);
+</script>
