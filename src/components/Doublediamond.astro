@@ -1,0 +1,153 @@
+---
+// DoubleDiamond.astro
+// Interactive double diamond. Click or keyboard-select a phase to see
+// whether it is divergent or convergent and what happens in it.
+---
+
+<div class="dd-wrap" data-dd>
+  <svg viewBox="0 0 960 330" role="img" aria-label="The double diamond design process, four phases Discover, Define, Develop, Deliver, ending in a demonstration handed to the customer">
+    <text x="220" y="40" class="dd-head">Problem</text>
+    <text x="580" y="40" class="dd-head">Solution</text>
+
+    <polygon data-phase="discover" data-default="#24405a" data-active="#3a6a96"
+      points="40,170 220,60 220,280" fill="#24405a" stroke="#0f1115" stroke-width="2"
+      tabindex="0" role="button" aria-label="Discover, divergent" aria-pressed="false" />
+    <polygon data-phase="define" data-default="#5a4524" data-active="#96703a"
+      points="220,60 400,170 220,280" fill="#5a4524" stroke="#0f1115" stroke-width="2"
+      tabindex="0" role="button" aria-label="Define, convergent" aria-pressed="false" />
+    <polygon data-phase="develop" data-default="#24405a" data-active="#3a6a96"
+      points="400,170 580,60 580,280" fill="#24405a" stroke="#0f1115" stroke-width="2"
+      tabindex="0" role="button" aria-label="Develop, divergent" aria-pressed="false" />
+    <polygon data-phase="deliver" data-default="#5a4524" data-active="#96703a"
+      points="580,60 760,170 580,280" fill="#5a4524" stroke="#0f1115" stroke-width="2"
+      tabindex="0" role="button" aria-label="Deliver, convergent" aria-pressed="false" />
+
+    <text x="160" y="176" class="dd-label">Discover</text>
+    <text x="280" y="176" class="dd-label">Define</text>
+    <text x="520" y="176" class="dd-label">Develop</text>
+    <text x="640" y="176" class="dd-label">Deliver</text>
+
+    <text x="160" y="305" class="dd-sub">Diverge</text>
+    <text x="280" y="305" class="dd-sub">Converge</text>
+    <text x="520" y="305" class="dd-sub">Diverge</text>
+    <text x="640" y="305" class="dd-sub">Converge</text>
+
+    <line x1="762" y1="170" x2="804" y2="170" stroke="#888888" stroke-width="2" />
+    <polygon points="802,163 816,170 802,177" fill="#888888" />
+    <g fill="none" stroke="#e8e8e8" stroke-width="3" stroke-linejoin="round" stroke-linecap="round">
+      <polygon points="860,168 824,150 860,132 896,150" />
+      <polygon points="824,150 860,168 860,210 824,192" />
+      <polygon points="860,168 896,150 896,192 860,210" />
+      <line x1="846" y1="158" x2="872" y2="145" />
+      <line x1="852" y1="162" x2="878" y2="149" />
+      <polygon points="834,157 845,162 845,174 834,169" />
+    </g>
+    <text x="860" y="232" class="dd-out">Demo to customer</text>
+  </svg>
+
+  <div class="dd-legend">
+    <span><i style="background:#3a6a96"></i>Divergent</span>
+    <span><i style="background:#96703a"></i>Convergent</span>
+  </div>
+
+  <div class="dd-detail" data-dd-detail>
+    <p class="dd-d-desc">Each diamond widens to explore, then narrows to commit. Select a phase to see what happens in it.</p>
+  </div>
+</div>
+
+<style>
+  .dd-wrap {
+    background: #14171c;
+    border: 1px solid #2a2f38;
+    border-radius: 10px;
+    padding: 20px;
+    max-width: 820px;
+    margin: 1.5rem auto;
+    font-family: system-ui, -apple-system, sans-serif;
+  }
+  .dd-wrap svg { width: 100%; height: auto; display: block; }
+  .dd-head { fill: #cccccc; font-size: 15px; font-weight: 600; text-anchor: middle; letter-spacing: 0.06em; }
+  .dd-label { fill: #ffffff; font-size: 18px; font-weight: 600; text-anchor: middle; pointer-events: none; }
+  .dd-sub { fill: #888888; font-size: 12px; text-anchor: middle; pointer-events: none; letter-spacing: 0.04em; }
+  .dd-out { fill: #cccccc; font-size: 20px; font-weight: 600; text-anchor: middle; pointer-events: none; letter-spacing: 0.02em; }
+  .dd-wrap polygon[data-phase] { cursor: pointer; transition: fill 0.15s ease, opacity 0.15s ease; }
+  .dd-wrap polygon[data-phase]:hover { opacity: 0.85; }
+  .dd-wrap polygon[data-phase]:focus { outline: none; stroke: #ffffff; }
+  .dd-legend {
+    display: flex; gap: 18px; justify-content: center;
+    margin: 10px 0 4px; font-size: 13px; color: #aaaaaa;
+  }
+  .dd-legend span { display: inline-flex; align-items: center; gap: 6px; }
+  .dd-legend i { width: 12px; height: 12px; border-radius: 2px; display: inline-block; }
+  .dd-detail {
+    margin-top: 14px; background: #1b1f26;
+    border-left: 3px solid #3a6a96; border-radius: 4px;
+    padding: 12px 16px; color: #dddddd;
+  }
+  .dd-detail :global(.dd-d-name) { color: #ffffff; font-weight: 600; font-size: 16px; margin-right: 10px; }
+  .dd-detail :global(.dd-d-type) { color: #aaaaaa; font-size: 13px; text-transform: uppercase; letter-spacing: 0.04em; }
+  .dd-detail :global(.dd-d-desc) { margin: 8px 0 0; line-height: 1.5; }
+  @media (prefers-reduced-motion: reduce) {
+    .dd-wrap polygon[data-phase] { transition: none; }
+  }
+</style>
+
+<script is:inline>
+  (function () {
+    function initDoubleDiamond() {
+      var wraps = document.querySelectorAll('[data-dd]');
+      for (var w = 0; w < wraps.length; w++) {
+        var wrap = wraps[w];
+        if (wrap.getAttribute('data-initialized') === 'true') continue;
+        wrap.setAttribute('data-initialized', 'true');
+
+        var regions = wrap.querySelectorAll('[data-phase]');
+        var detail = wrap.querySelector('[data-dd-detail]');
+        var info = {
+          discover: { name: 'Discover', type: ' Divergent thinking', color: '#3a6a96', desc: 'Open the problem space. Spend time with the people affected and gather more than you can use before you name the problem.' },
+          define: { name: 'Define', type: ' Convergent thinking', color: '#96703a', desc: 'Pull what you found into one clear statement of the problem worth solving.' },
+          develop: { name: 'Develop', type: ' Divergent thinking', color: '#3a6a96', desc: 'Generate many possible answers to the defined problem instead of settling on the first.' },
+          deliver: { name: 'Deliver', type: ' Convergent thinking', color: '#96703a', desc: 'Test the options at small scale, drop what fails, and refine the one that works.' }
+        };
+
+        function select(key) {
+          if (!key || !info[key]) return;
+          for (var i = 0; i < regions.length; i++) {
+            var r = regions[i];
+            r.setAttribute('fill', r.getAttribute('data-default'));
+            r.setAttribute('stroke-width', '2');
+            r.setAttribute('aria-pressed', 'false');
+          }
+          var active = wrap.querySelector('[data-phase="' + key + '"]');
+          if (active) {
+            active.setAttribute('fill', active.getAttribute('data-active'));
+            active.setAttribute('stroke-width', '3');
+            active.setAttribute('aria-pressed', 'true');
+          }
+          var d = info[key];
+          detail.style.borderLeftColor = d.color;
+          detail.innerHTML = '<span class="dd-d-name">' + d.name + '</span> ' +
+            '<span class="dd-d-type">' + d.type + '</span>' +
+            '<p class="dd-d-desc">' + d.desc + '</p>';
+        }
+
+        for (var j = 0; j < regions.length; j++) {
+          (function (region) {
+            var key = region.getAttribute('data-phase');
+            region.addEventListener('click', function () { select(key); });
+            region.addEventListener('keydown', function (e) {
+              if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); select(key); }
+            });
+          })(regions[j]);
+        }
+      }
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initDoubleDiamond);
+    } else {
+      initDoubleDiamond();
+    }
+    document.addEventListener('astro:page-load', initDoubleDiamond);
+  })();
+</script>
