@@ -1,0 +1,133 @@
+---
+title: "Upgrading to Astro 6.4 and MDX 6"
+description: "A new Markdown processor, a Rust engine, and a deprecation to plan for."
+date: "2026-06-16"
+tags: ["Astro", "MDX", "Markdown", "Upgrades"]
+draft: false
+---
+
+Maintenance day. 
+
+My dev server warned me about an upgrade, so I ran npx @astrojs/upgrade and got four hits:
+
+```
+●  astro            v6.3.3 → v6.4.7
+●  @astrojs/react   v5.0.5 → v5.0.7
+●  @astrojs/sitemap v3.7.2 → v3.7.3
+▲  @astrojs/mdx     v5.0.6 → v6.0.3   ← major
+```
+
+Only MDX carries a major version bump, but the moment the dev server came back up it started printing this:
+
+```
+[astro] markdown.remarkPlugins, markdown.rehypePlugins, and
+markdown.remarkRehype are deprecated. Pass them to unified({...})
+from @astrojs/markdown-remark directly instead.
+```
+
+That warning is the thread that ties this release together. Worth understanding rather than silencing.
+
+## What changed
+
+Astro 6.4 ships a new markdown.processor option that lets you swap the entire Markdown pipeline. Until now, Astro ran everything through the JavaScript unified() ecosystem — remark and rehype. Flexible, but slow on content-heavy sites because parsing happens in JS.
+
+You can now point the config at Sätteri, a Rust-based processor, by installing @astrojs/markdown-satteri:
+
+```js
+// astro.config.mjs
+import { defineConfig } from 'astro/config';
+import { satteri } from '@astrojs/markdown-satteri';
+
+export default defineConfig({
+  markdown: {
+    processor: satteri({
+      features: { directive: true },
+    }),
+  },
+});
+```
+
+The trade is straightforward: Sätteri doesn't support remark, rehype, or recma plugins. If your site depends on those, you'd need to port them to MDAST or HAST equivalents. It's an early option aimed at build speed, not a drop-in replacement for a mature plugin stack. I'm staying on unified() for now — I lean on rehype plugins — but the argument gets stronger as post counts climb.
+
+This processor work is also why the deprecation warning fires. The old top-level keys — markdown.remarkPlugins, markdown.rehypePlugins, markdown.remarkRehype, markdown.gfm, markdown.smartypants — still function, but they're now marked for removal in a future major. Their new home is inside unified() imported from @astrojs/markdown-remark.
+
+One detail that tripped me up during migration: only the remark and rehype plugins move. Highlighting config like syntaxHighlight and shikiConfig are separate from the unified pipeline and stay exactly where they are. Here's my config transition, wrapping rehype-mermaid while leaving Shiki untouched:
+
+```diff
+// astro.config.mjs
+import { defineConfig } from "astro/config";
+import mdx from "@astrojs/mdx";
+import rehypeMermaid from "rehype-mermaid";
++ import { unified } from "@astrojs/markdown-remark";
+
+export default defineConfig({
+  integrations: [mdx()],
+  markdown: {
+    syntaxHighlight: {
+      type: "shiki",
+      excludeLangs: ["mermaid"],
+    },
+    shikiConfig: {
+      theme: "css-variables",
+    },
++   processor: unified({
++     rehypePlugins: [[rehypeMermaid, { strategy: "img-svg", dark: true }]],
++   }),
+-   rehypePlugins: [[rehypeMermaid, { strategy: "img-svg", dark: true }]],
+  },
+});
+```
+
+A rehype-mermaid note: the upgrade might trigger a Playwright browser binary error locally during content sync, so Mermaid diagrams may not populate in dev. This happens because the upgrade path can trip over Playwright's browser install step in restricted dev environments. Production builds fetch clean dependencies from scratch, so Netlify is not affected. Diagrams render fine in production.
+
+Nothing breaks if you ignore the deprecation warning today. It's a courtesy heads-up. Moving your plugins into unified() now is the cheapest way to be ready for the major that eventually removes the old keys.
+
+## The rest of the release
+
+The jump from 6.3.3 to 6.4.7 carried a stack of fixes beyond the processor work. A few worth knowing:
+
+Security. v6.4.7 reworked double-encoded URL handling. Previously, paths with double-encoded characters were rejected with a 400, breaking embedded tools whose client routers legitimately produce them. The fix decodes multi-level percent encoding to canonical form before routing while still preserving the CVE-2025-66202 middleware bypass fix — middleware now always sees the fully decoded path. v6.4.6 added request origin validation against allowedDomains before serving prerendered error pages.
+
+Dev experience. Several annoyances got fixed. Editing CSS no longer leaves stale inline styles in server-rendered HTML, killing the flash of old styles on reload. HMR now works for files in src/middleware/. Renaming an image while the dev server is running no longer crashes the build. CSS from client:only islands no longer leaks into unrelated pages when the bundler chunks modules together.
+
+Compatibility. v6.4.1 restored the astro/jsx/rehype.js entry point so older versions of @astrojs/mdx keep working with Astro 6.x. v6.4.2 fixed a "plugins is not iterable" crash that could fire when a pre-6.0 MDX integration ran alongside something like Starlight that sets markdown plugin options. If you upgraded Astro core but not MDX, those two patches are why it didn't fall over.
+
+There's also a Vite optimizer race condition fix that could drop React dependencies when using Astro Actions, plus i18n and locale URL corrections. If you don't touch i18n, those won't affect you.
+
+## The quiet bumps
+
+Two packages updated with no action required.
+
+@astrojs/react (5.0.5 to 5.0.7) is a pure dependency bump pulling devalue to v5.8.1. Nothing to configure.
+
+@astrojs/sitemap (3.7.2 to 3.7.3) is an SEO nicety. Each entry in sitemap-index.xml now carries the most recent lastmod from the URLs in the child sitemap it points to, rather than stamping one global date across every entry. Crawlers get a per-file freshness signal and can skip child sitemaps that haven't changed.
+
+---
+
+For most sites, this upgrade requires zero config changes to keep running. The one action item is the plugin migration: move remark and rehype setup into unified() from @astrojs/markdown-remark so the deprecation warning goes quiet and you're not caught out when a future major removes the old keys. Everything else is fixes you benefit from for free — plus a Rust-based processor option waiting for when you want to trade plugin flexibility for build speed.
+
+- Jeff
+
+```
+ astro  Integration upgrade in progress.
+
+       ◼  @astrojs/check is up to date on v0.9.9
+       ◼  @astrojs/rss is up to date on v4.0.18
+       ●  astro will be updated from v6.3.3 to v6.4.7
+       ●  @astrojs/react will be updated from v5.0.5 to v5.0.7
+       ●  @astrojs/sitemap will be updated from v3.7.2 to v3.7.3
+       ▲  @astrojs/mdx will be updated  from v5.0.6 to v6.0.3
+
+ wait  One package has breaking changes. Continue?
+        Yes
+
+ check  Be sure to follow the CHANGELOG.
+        @astrojs/mdx CHANGELOG
+
+ ██████  Installing dependencies with npm...
+
+╭─────╮  Houston:
+│ ◠ ◡ ◠  Have fun building!
+╰─────╯
+```
+
