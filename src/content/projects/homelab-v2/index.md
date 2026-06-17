@@ -142,7 +142,7 @@ Either the i5-9400 (non F) or the i5-8500 satisfies every requirement on this no
 
 ---
 
-# Software and Virtualization (Summary)
+# Software and Virtualization
 
 Equipment is the focus, so this is kept brief.
 
