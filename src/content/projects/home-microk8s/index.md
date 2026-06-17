@@ -6,7 +6,7 @@ startDate: "12/20/2025"
 endDate: "TBD"  # can be finalized once the project timeline is set
 #demoURL: "https://example.com"  # optional
 #repoURL: "https://github.com/..."  # optional
-status: "To Do"  # "To Do", "Doing", "Done", or "OBE"
+status: "OBE"  # "To Do", "Doing", "Done", or "OBE"
 draft: false  # optional, defaults to false
 ---
 
