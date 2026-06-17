@@ -35,7 +35,9 @@ These principles drive every equipment and placement decision below:
 
 Three nodes form a Proxmox VE 9.2 cluster. Each carries a role chosen to match its hardware, not the other way around.
 
-## Node 1, GPU Compute Node (Dell OptiPlex 7070 MT)
+## Node 1, GPU Compute Node
+
+**Dell OptiPlex 7070 MT**
 
 This is the node with the open CPU decision, covered in detail in the next section.
 
@@ -61,7 +63,9 @@ The 500W ATX PSU, fitted through the existing adapter, solves the proprietary De
 
 This node runs a single VM for the AI and media stack, so the workload is bound by the GPU. The CPU mostly feeds data to the card and carries OS overhead.
 
-## Node 2, Primary Services Node (HP EliteDesk 800 G4 Mini, 64GB)
+## Node 2, Primary Services Node
+
+**HP EliteDesk 800 G4 Mini, 64GB**
 
 | Component | Selection |
 | :--- | :--- |
@@ -72,7 +76,9 @@ This node runs a single VM for the AI and media stack, so the workload is bound 
 
 This node carries the most critical and most memory hungry services: Nginx Proxy Manager, Cloudflare Tunnel, Gitea, the Gitea Actions runner, and the Astro site. The 64GB of RAM keeps CI/CD builds clear of memory pressure and leaves room for generous Docker build caching. The 12 threads handle concurrent Git operations, build steps, and proxied connections without contention. 1GbE is enough, since inter node traffic is limited to small ZFS snapshot deltas and Corosync heartbeats.
 
-## Node 3, Supporting Services and Quorum (HP EliteDesk 800 G4 Mini, 16GB)
+## Node 3, Supporting Services and Quorum 
+
+**HP EliteDesk 800 G4 Mini, 16GB**
 
 | Component | Selection |
 | :--- | :--- |
