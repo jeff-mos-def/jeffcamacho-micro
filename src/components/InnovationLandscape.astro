@@ -1,0 +1,583 @@
+---
+/**
+ * InnovationLandscape.astro
+ *
+ * An interactive "value landscape" that dramatizes the article's thesis:
+ * sprint-time innovation (exploitation) climbs the nearest hill and stops on a
+ * local maximum (the horse & buggy). Innovation periods (exploration) let the
+ * team jump to new regions and discover the taller peak (the car).
+ *
+ * Self-contained: no external deps. Colors come from local CSS variables that
+ * adapt to light/dark. Remap the --il-* vars to your own theme tokens if you
+ * want it to match exactly.
+ */
+
+// Single source of truth for the two peaks. Used to build the static curve
+// here at build time AND passed to the client for the marker math.
+const peaks = [
+  { mu: 0.25, h: 0.58, s2: 0.010, label: "Horse & buggy", sub: "local max" },
+  { mu: 0.72, h: 1.0,  s2: 0.020, label: "The car",       sub: "global max" },
+];
+
+const geo = { w: 640, h: 340, padL: 18, padR: 18, padT: 26, padB: 42 };
+const plotW = geo.w - geo.padL - geo.padR;
+const plotH = geo.h - geo.padT - geo.padB;
+
+function value(x: number): number {
+  return peaks.reduce(
+    (sum, p) => sum + p.h * Math.exp(-((x - p.mu) ** 2) / (2 * p.s2)),
+    0
+  );
+}
+
+// Sample the curve and find its max so the plot fills the vertical space.
+const N = 240;
+const samples: { x: number; v: number }[] = [];
+let maxV = 0;
+for (let i = 0; i <= N; i++) {
+  const x = i / N;
+  const v = value(x);
+  if (v > maxV) maxV = v;
+  samples.push({ x, v });
+}
+
+const xToPx = (x: number) => geo.padL + x * plotW;
+const vToPx = (v: number) => geo.padT + (1 - v / maxV) * plotH;
+
+// Build the curve path + a closed fill path under it.
+let curveD = "";
+samples.forEach((s, i) => {
+  curveD += `${i === 0 ? "M" : "L"}${xToPx(s.x).toFixed(2)} ${vToPx(s.v).toFixed(2)} `;
+});
+const baseY = geo.padT + plotH;
+const fillD = `${curveD} L${xToPx(1).toFixed(2)} ${baseY} L${xToPx(0).toFixed(2)} ${baseY} Z`;
+
+const uid = "il-" + Math.random().toString(36).slice(2, 9);
+---
+
+<figure class="il" data-uid={uid} aria-labelledby={`${uid}-cap`}>
+  <div class="il-controls" role="group" aria-label="Innovation mode">
+    <div class="il-seg" role="radiogroup" aria-label="Choose how the team innovates">
+      <button type="button" class="il-mode is-active" data-mode="exploit" role="radio" aria-checked="true">
+        Sprints only
+        <span>exploit</span>
+      </button>
+      <button type="button" class="il-mode" data-mode="both" role="radio" aria-checked="false">
+        Sprints + innovation periods
+        <span>exploit + explore</span>
+      </button>
+    </div>
+    <div class="il-actions">
+      <button type="button" class="il-run" data-action="run">Run</button>
+      <button type="button" class="il-reset" data-action="reset">Reset</button>
+    </div>
+  </div>
+
+  <div class="il-stage">
+    <svg viewBox={`0 0 ${geo.w} ${geo.h}`} role="img" aria-describedby={`${uid}-status`} preserveAspectRatio="xMidYMid meet">
+      <path class="il-fill" d={fillD} />
+      <path class="il-curve" d={curveD} fill="none" />
+
+      {peaks.map((p) => (
+        <g class="il-peaklabel" transform={`translate(${xToPx(p.mu).toFixed(1)} ${vToPx(value(p.mu)).toFixed(1)})`}>
+          <circle r="2.5" class="il-peakdot" />
+          <text class="il-peaktext" y="-12">{p.label}</text>
+          <text class="il-peaksub" y="-1">{p.sub}</text>
+        </g>
+      ))}
+
+      <g class="il-best" data-best opacity="0">
+        <line x1="0" y1="0" x2="0" y2="-22" class="il-flagpole" />
+        <path d="M0 -22 L13 -18 L0 -14 Z" class="il-flag" />
+      </g>
+
+      <path class="il-arc" data-arc d="" fill="none" opacity="0" />
+
+      <g class="il-inno" data-inno opacity="0">
+        <path class="il-innomark" d="M0 -8 L7 0 L0 8 L-7 0 Z" />
+      </g>
+
+      <g class="il-team" data-team>
+        <circle r="7" class="il-teamdot" />
+        <circle r="13" class="il-teamhalo" />
+      </g>
+    </svg>
+  </div>
+
+  <p class="il-status" id={`${uid}-status`} data-status aria-live="polite">
+    Pick a mode and press Run. The dot is your team; height is the value you have unlocked.
+  </p>
+
+  <div class="il-legend" aria-hidden="true">
+    <span><i class="sw sw-team"></i>Work (delivery)</span>
+    <span><i class="sw sw-inno"></i>Innovation (scout)</span>
+    <span><i class="sw sw-best"></i>Higher peak found</span>
+  </div>
+
+  <figcaption class="il-cap" id={`${uid}-cap`}>
+    Exploiting alone climbs the nearest hill and stops on the buggy. With innovation periods,
+    a scout explores ahead and marks a higher peak, then delivery follows that path up to the car.
+    A scout that finds nothing better is a cheap, healthy failure: delivery simply stays put.
+  </figcaption>
+</figure>
+
+<style>
+  .il {
+    /* Remap these to your theme tokens to match the site exactly. */
+    --il-text: #1c1917;
+    --il-muted: #6b6b6b;
+    --il-line: #d9d6d1;
+    --il-surface: #faf9f7;
+    --il-curve: #b7b2aa;
+    --il-fill: rgba(120, 113, 108, 0.10);
+    --il-team: #2563eb;
+    --il-arc: #ea580c;
+    --il-best: #16a34a;
+    --il-accent-bg: #1c1917;
+    --il-accent-fg: #ffffff;
+
+    margin: 2rem 0;
+    font-family: inherit;
+    color: var(--il-text);
+  }
+  @media (prefers-color-scheme: dark) {
+    .il {
+      --il-text: #ececec;
+      --il-muted: #9a9a9a;
+      --il-line: #34322e;
+      --il-surface: #16150f;
+      --il-curve: #5b574f;
+      --il-fill: rgba(214, 211, 209, 0.07);
+      --il-team: #60a5fa;
+      --il-arc: #fb923c;
+      --il-best: #4ade80;
+      --il-accent-bg: #ececec;
+      --il-accent-fg: #16150f;
+    }
+  }
+  /* Honor sites that toggle dark mode with a class/attribute. */
+  :global(.dark) .il,
+  :global([data-theme="dark"]) .il {
+    --il-text: #ececec;
+    --il-muted: #9a9a9a;
+    --il-line: #34322e;
+    --il-surface: #16150f;
+    --il-curve: #5b574f;
+    --il-fill: rgba(214, 211, 209, 0.07);
+    --il-team: #60a5fa;
+    --il-arc: #fb923c;
+    --il-best: #4ade80;
+    --il-accent-bg: #ececec;
+    --il-accent-fg: #16150f;
+  }
+
+  .il-controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.85rem;
+  }
+  .il-seg {
+    display: inline-flex;
+    border: 1px solid var(--il-line);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  .il-mode {
+    appearance: none;
+    background: transparent;
+    border: 0;
+    color: var(--il-muted);
+    font: inherit;
+    font-size: 0.8rem;
+    line-height: 1.15;
+    text-align: left;
+    padding: 0.45rem 0.7rem;
+    cursor: pointer;
+    transition: background 0.15s ease, color 0.15s ease;
+  }
+  .il-mode + .il-mode { border-left: 1px solid var(--il-line); }
+  .il-mode span {
+    display: block;
+    font-size: 0.66rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    opacity: 0.7;
+  }
+  .il-mode.is-active {
+    background: var(--il-accent-bg);
+    color: var(--il-accent-fg);
+  }
+  .il-actions { display: inline-flex; gap: 0.5rem; }
+  .il-run, .il-reset {
+    appearance: none;
+    font: inherit;
+    font-size: 0.82rem;
+    padding: 0.45rem 0.95rem;
+    border-radius: 9px;
+    border: 1px solid var(--il-line);
+    background: var(--il-surface);
+    color: var(--il-text);
+    cursor: pointer;
+    transition: transform 0.08s ease, border-color 0.15s ease;
+  }
+  .il-run { border-color: var(--il-team); color: var(--il-team); }
+  .il-run:active, .il-reset:active { transform: translateY(1px); }
+  .il-run:disabled { opacity: 0.5; cursor: default; }
+
+  .il-stage {
+    border: 1px solid var(--il-line);
+    border-radius: 12px;
+    background: var(--il-surface);
+    padding: 0.4rem 0.4rem 0.2rem;
+  }
+  .il svg { width: 100%; height: auto; display: block; }
+
+  .il-curve { stroke: var(--il-curve); stroke-width: 2.5; stroke-linecap: round; }
+  .il-fill { fill: var(--il-fill); stroke: none; }
+  .il-peakdot { fill: var(--il-curve); }
+  .il-peaktext {
+    fill: var(--il-text);
+    font-size: 12px;
+    font-weight: 600;
+    text-anchor: middle;
+  }
+  .il-peaksub {
+    fill: var(--il-muted);
+    font-size: 9.5px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    text-anchor: middle;
+  }
+  .il-teamdot { fill: var(--il-team); }
+  .il-teamhalo {
+    fill: none;
+    stroke: var(--il-team);
+    stroke-width: 1.5;
+    opacity: 0.35;
+  }
+  .il-innomark { fill: var(--il-arc); stroke: var(--il-surface); stroke-width: 1.5; }
+  .il-arc { stroke: var(--il-arc); stroke-width: 2; stroke-dasharray: 4 4; }
+  .il-arc.is-work { stroke: var(--il-team); stroke-dasharray: none; }
+  .il-flagpole { stroke: var(--il-best); stroke-width: 1.6; }
+  .il-flag { fill: var(--il-best); }
+
+  .il-status {
+    margin: 0.7rem 0 0.2rem;
+    font-size: 0.9rem;
+    color: var(--il-text);
+    min-height: 1.3em;
+  }
+  .il-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    font-size: 0.74rem;
+    color: var(--il-muted);
+    margin-top: 0.35rem;
+  }
+  .il-legend span { display: inline-flex; align-items: center; gap: 0.4rem; }
+  .sw { width: 14px; height: 0; border-top-width: 3px; border-top-style: solid; display: inline-block; }
+  .sw-team { border-top-color: var(--il-team); }
+  .sw-inno { border-top-color: var(--il-arc); }
+  .sw-best { border-top-color: var(--il-best); }
+
+  .il-cap {
+    margin-top: 0.85rem;
+    font-size: 0.82rem;
+    line-height: 1.5;
+    color: var(--il-muted);
+  }
+
+  @media (max-width: 560px) {
+    .il-controls { flex-direction: column; align-items: stretch; }
+    .il-actions { justify-content: flex-end; }
+  }
+</style>
+
+<script define:vars={{ uid, peaks, geo, maxV, plotW, plotH }}>
+  (function () {
+    const root = document.querySelector(`[data-uid="${uid}"]`);
+    if (!root) return;
+
+    const svgTeam = root.querySelector("[data-team]");
+    const svgInno = root.querySelector("[data-inno]");
+    const svgArc = root.querySelector("[data-arc]");
+    const svgBest = root.querySelector("[data-best]");
+    const statusEl = root.querySelector("[data-status]");
+    const runBtn = root.querySelector('[data-action="run"]');
+    const resetBtn = root.querySelector('[data-action="reset"]');
+    const modeBtns = Array.from(root.querySelectorAll(".il-mode"));
+
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    const xToPx = (x) => geo.padL + x * plotW;
+    const vToPx = (v) => geo.padT + (1 - v / maxV) * plotH;
+    const valueAt = (x) =>
+      peaks.reduce((s, p) => s + p.h * Math.exp(-((x - p.mu) ** 2) / (2 * p.s2)), 0);
+    const gradAt = (x) => {
+      const h = 0.001;
+      return (valueAt(x + h) - valueAt(x - h)) / (2 * h);
+    };
+    const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
+
+    // Where innovation scouts, in order: first the global basin (a hit the team
+    // follows), then back near the old hill (a flop the team correctly ignores).
+    const JUMPS = [0.88, 0.18];
+
+    let state;
+    function reset() {
+      cancel();
+      state = {
+        teamX: 0.12,   // work / delivery marker
+        innoX: 0.12,   // innovation scout marker
+        bestX: 0.12,
+        bestV: -Infinity,
+        mode: currentMode(),
+        phase: "idle",
+        jumpIdx: 0,    // index of the NEXT scout target
+        jFrom: 0, jTo: 0, jT: 0, jWho: "inno",
+        running: false,
+      };
+      svgArc.setAttribute("opacity", "0");
+      svgArc.classList.remove("is-work");
+      svgBest.setAttribute("opacity", "0");
+      svgInno.setAttribute("opacity", "0");
+      placeTeam(state.teamX);
+      runBtn.disabled = false;
+      runBtn.textContent = "Run";
+      setStatus("Pick a mode and press Run. Blue is delivery work; height is the value it has unlocked.");
+    }
+
+    function currentMode() {
+      const active = modeBtns.find((b) => b.classList.contains("is-active"));
+      return active ? active.dataset.mode : "exploit";
+    }
+
+    function placeAt(group, x) {
+      group.setAttribute("transform", `translate(${xToPx(x).toFixed(2)} ${vToPx(valueAt(x)).toFixed(2)})`);
+    }
+    const placeTeam = (x) => placeAt(svgTeam, x);
+    const placeInno = (x) => placeAt(svgInno, x);
+
+    function showFlag(x) {
+      svgBest.setAttribute("transform", `translate(${xToPx(x).toFixed(2)} ${vToPx(valueAt(x)).toFixed(2)})`);
+      svgBest.setAttribute("opacity", "1");
+    }
+
+    function setStatus(msg) { statusEl.textContent = msg; }
+
+    let raf = null;
+    function cancel() { if (raf) { cancelAnimationFrame(raf); raf = null; } }
+
+    const CLIMB_LR = 0.0012;
+    const CLIMB_MAX = 0.006;
+    const CONVERGE = 0.06;
+    const JUMP_FRAMES = reduce ? 1 : 78;
+    const CLIMB_ITERS = reduce ? 60 : 1;
+    const HOLD_MS = reduce ? 0 : 1500; // pause so each status line is readable
+
+    // Pause on the current frame, then continue.
+    function holdThen(ms, next) {
+      state.phase = "hold";
+      setTimeout(() => { if (state.running) next(); }, ms);
+    }
+
+    function run() {
+      if (state.running) return;
+      reset();
+      state.running = true;
+      state.mode = currentMode();
+      runBtn.disabled = true;
+      runBtn.textContent = "Running…";
+      modeBtns.forEach((b) => (b.disabled = true));
+      state.phase = "teamClimb";
+      setStatus("Delivery: the team climbs the nearest hill, improving the product it already ships.");
+      loop();
+    }
+
+    function arcPoint(t) {
+      const x = state.jFrom + (state.jTo - state.jFrom) * t;
+      const px = xToPx(x);
+      const baseY = vToPx(valueAt(x));
+
+      if (state.jWho === "work") {
+        // Trace directly along the existing curve instead of leaping over it
+        return { px, py: baseY, x };
+      } else {
+        // Lift the arc above the curve for a visible scout leap.
+        const liftV = Math.max(valueAt(state.jFrom), valueAt(state.jTo)) + 0.55;
+        const peakY = vToPx(liftV);
+        const py = baseY + (peakY - baseY) * Math.sin(Math.PI * t);
+        return { px, py, x };
+      }
+    }
+
+    // Innovation scouts ahead to the next target.
+    function beginScout() {
+      svgInno.setAttribute("opacity", "1");
+      placeInno(state.teamX);
+      svgArc.classList.remove("is-work");
+      state.jWho = "inno";
+      state.jFrom = state.teamX;
+      state.jTo = JUMPS[state.jumpIdx];
+      state.jT = 0;
+      state.phase = "jumping";
+      setStatus("Innovation period: a scout leaves the current peak to explore a new area.");
+    }
+
+    // Work follows the path the scout opened, up to the new top.
+    function beginFollow(targetX) {
+      svgArc.classList.add("is-work");
+      state.jWho = "work";
+      state.jFrom = state.teamX;
+      state.jTo = targetX;
+      state.jT = 0;
+      state.phase = "jumping";
+      setStatus("Delivery follows the path the scout opened, climbing toward the higher peak.");
+    }
+
+    function afterScout() {
+      const teamV = valueAt(state.teamX);
+      const scoutV = valueAt(state.innoX);
+      if (scoutV > teamV + 0.02) {
+        showFlag(state.innoX);
+        setStatus("Innovation found a higher peak. It marks the path forward, and delivery will follow.");
+        const target = state.innoX;
+        holdThen(HOLD_MS, () => beginFollow(target));
+      } else {
+        setStatus("That area was no higher. The experiment fails, and that is fine. Delivery stays put.");
+        holdThen(HOLD_MS, () => { svgInno.setAttribute("opacity", "0"); nextScoutOrFinish(); });
+      }
+    }
+
+    function nextScoutOrFinish() {
+      state.jumpIdx += 1;
+      if (state.jumpIdx < JUMPS.length) holdThen(HOLD_MS, beginScout);
+      else holdThen(HOLD_MS, finishBoth);
+    }
+
+    function loop() {
+      raf = requestAnimationFrame(loop);
+
+      // Climbing: work (teamClimb) or scout (innoClimb).
+      if (state.phase === "teamClimb" || state.phase === "innoClimb") {
+        const isTeam = state.phase === "teamClimb";
+        let pos = isTeam ? state.teamX : state.innoX;
+        let converged = false;
+        for (let i = 0; i < CLIMB_ITERS; i++) {
+          const g = gradAt(pos);
+          const step = clamp(CLIMB_LR * g, -CLIMB_MAX, CLIMB_MAX);
+          pos = clamp(pos + step, 0, 1);
+          if (Math.abs(g) < CONVERGE || pos <= 0 || pos >= 1) { converged = true; break; }
+        }
+        if (isTeam) { state.teamX = pos; placeTeam(pos); }
+        else { state.innoX = pos; placeInno(pos); }
+
+        if (converged) {
+          const v = valueAt(pos);
+          if (v > state.bestV) { state.bestV = v; state.bestX = pos; }
+          if (isTeam) {
+            if (state.mode === "exploit") {
+              setStatus("Reached the top of the nearest hill. Nothing here can climb higher.");
+              holdThen(HOLD_MS, finishExploit);
+            } else if (state.jumpIdx < JUMPS.length) {
+              setStatus("Delivery has optimized this hill. Time for an innovation period.");
+              holdThen(HOLD_MS, beginScout);
+            } else {
+              holdThen(HOLD_MS, finishBoth);
+            }
+          } else {
+            afterScout();
+          }
+        }
+        return;
+      }
+
+      // Jump animation: the scout leaping out, or work following the path.
+      if (state.phase === "jumping") {
+        state.jT += 1 / JUMP_FRAMES;
+        const t = Math.min(state.jT, 1);
+        const pt = arcPoint(t);
+        const mover = state.jWho === "work" ? svgTeam : svgInno;
+        mover.setAttribute("transform", `translate(${pt.px.toFixed(2)} ${pt.py.toFixed(2)})`);
+
+        let d = "";
+        const steps = 24;
+        for (let i = 0; i <= steps; i++) {
+          const tt = (i / steps) * t;
+          const p = arcPoint(tt);
+          d += `${i === 0 ? "M" : "L"}${p.px.toFixed(1)} ${p.py.toFixed(1)} `;
+        }
+        svgArc.setAttribute("d", d);
+        svgArc.setAttribute("opacity", "1");
+
+        if (t >= 1) {
+          const fade = () => {
+            if (!reduce) setTimeout(() => svgArc.setAttribute("opacity", "0"), 280);
+            else svgArc.setAttribute("opacity", "0");
+          };
+          if (state.jWho === "work") {
+            state.teamX = state.jTo;
+            placeTeam(state.teamX);
+            fade();
+            svgInno.setAttribute("opacity", "0"); // scout rejoins; its job is done
+            const v = valueAt(state.teamX);
+            if (v > state.bestV) { state.bestV = v; state.bestX = state.teamX; }
+            setStatus("Delivery reached the higher peak. The new value is shipped.");
+            nextScoutOrFinish();
+          } else {
+            state.innoX = state.jTo;
+            placeInno(state.innoX);
+            fade();
+            setStatus("The scout surveys the new area to see how high it could reach.");
+            holdThen(HOLD_MS, () => { state.phase = "innoClimb"; });
+          }
+        }
+        return;
+      }
+    }
+
+    // Wiring remains unchanged...
+    function endRun(msg) {
+      cancel();
+      state.running = false;
+      runBtn.disabled = false;
+      runBtn.textContent = "Run again";
+      modeBtns.forEach((b) => (b.disabled = false));
+      setStatus(msg);
+    }
+
+    function finishExploit() {
+      placeTeam(state.teamX);
+      endRun("Stuck on a local maximum: a finely optimized horse & buggy. Nothing here can reveal the car.");
+    }
+
+    function finishBoth() {
+      svgInno.setAttribute("opacity", "0");
+      placeTeam(state.teamX);
+      const foundCar = valueAt(state.teamX) > 0.9 * maxV;
+      endRun(
+        foundCar
+          ? "Delivery now sits on the car. Innovation found the path; work followed it and banked the value."
+          : "Innovation explored; delivery followed where it paid off and ignored where it did not."
+      );
+    }
+
+    modeBtns.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        if (state.running) return;
+        modeBtns.forEach((b) => { b.classList.remove("is-active"); b.setAttribute("aria-checked", "false"); });
+        btn.classList.add("is-active");
+        btn.setAttribute("aria-checked", "true");
+        reset();
+      });
+    });
+    runBtn.addEventListener("click", run);
+    resetBtn.addEventListener("click", () => { reset(); });
+
+    reset();
+  })();
+</script>
