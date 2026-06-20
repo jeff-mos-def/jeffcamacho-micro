@@ -1,0 +1,64 @@
+---
+title: "Overhauling the Blog Index"
+description: "Building a Chronological Archive with a Sticky Sidebar"
+date: "06/20/2026"
+tags: ["agile", "safe", "product-management", "innovation", "scrum", "leadership"]
+draft: false
+---
+
+As a blog grows, keeping a flat stream of articles quickly turns the user experience into an endless scroll. To make browsing past content effortless, I recently overhauled my main `/blog` index page into a structured, chronological archive.
+
+This update wasn't just a visual facelift; it required restructuring how data flows through the Astro frontmatter and solving a classic CSS layout puzzle to keep the UI clean. Here is the technical breakdown of how it came together.
+
+---
+
+## The Data Layer
+
+**Converting a Flat Array into a Nested Map**
+
+Initially, the blog index rendered posts using a straightforward **flat stream** strategy. The site fetched a single array of articles from the content collection, and the template looped directly through them using a standard `.map()` function.
+
+To group them by date, I introduced a **Data Transformation** step into the component frontmatter using JavaScript's `.reduce()` function. This intercepts the flat array and re-maps it into a deeply nested object tree structured entirely by metadata:
+
+```text
+[Old Flat Array] ──> [Data Transformation via .reduce()] ──> [New Nested Object Tree]
+                                                             └── 2026
+                                                                  └── June -> [Post A, Post B]
+                                                                  └── May  -> [Post C]
+
+```
+
+A minor hurdle here is that JavaScript objects automatically sort numeric keys in ascending order—meaning older years would naturally bubble up to the top. To fix this, I used `Object.entries()` to extract the data back into an array, then chained a custom descending `.sort()` to guarantee that the most recent years and months always render first.
+
+---
+
+## The Layout Layer
+
+**Solving the Sticky-in-Absolute Conflict**
+
+The primary frontend challenge was implementing the sidebar without breaking the uniform alignment grid shared by the global header and branding.
+
+Standard CSS layout tools like grid columns would compress the main blog feed to the right, throwing the article cards completely out of line with the header navigation. To bypass this constraints box, I utilized a CSS composition technique combining absolute and sticky positioning:
+
+* **The Absolute Boundary:** The main blog feed acts as a relative structural anchor. The sidebar uses `absolute` positioning to "hang" `lg:-left-60` (240px) out into the empty left viewport gutter. This leaves the main column entirely untouched and perfectly aligned with the rest of the site.
+* **The Sticky Rail:** Because standard absolute elements scroll off the screen immediately, the sidebar's parent container stretches from `top-0` to `bottom-0` to act as an explicit vertical track. Inside it, the actual `<nav>` element uses `sticky` positioning.
+
+As a reader scrolls down, the navigation locks to the viewport and glides smoothly down this invisible track, remaining fixed on screen until it hits the absolute bottom of the blog feed.
+
+---
+
+## The UX Layer
+
+**Header-Aware Interactivity**
+
+When clicking an archive anchor link (such as `#arch-2026-june`), the browser's native behavior is to snap that section header directly to the absolute top edge of the window (`y = 0`).
+
+However, because this site utilizes a sticky global top navigation bar, snapping a section to the absolute top of the screen means the section titles would get buried directly underneath the header menu.
+
+To protect the readability of the titles, I applied Tailwind's `scroll-mt-24` (Scroll Margin Top) utility to the year and month wrapper blocks. This instructs the browser's scrolling engine to maintain an intentional 96-pixel cushion right above the target element. Now, smooth-scrolling via the sidebar snaps perfectly into view right below the global navigation bar.
+
+---
+
+Hopefully this allows visitors to have a little more clarity when navigating the archival blog space and allows for a more robust experience in reading older articles.
+
+- Jeff
