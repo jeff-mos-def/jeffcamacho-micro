@@ -5,9 +5,13 @@ startDate: "11/17/2024"
 endDate: "12/31/2024"  # can be a date or "TBD"
 #demoURL: "https://example.com"  # optional
 #repoURL: "https://github.com/..."  # optional
-status: "Doing"  # "To Do", "Doing", "Done", or "OBE"
+status: "OBE"  # "To Do", "Doing", "Done", or "OBE"
 draft: false  # optional, defaults to false
 ---
+
+## Update: 20 Jun 26
+
+This project is being moved to an OBE status due to fundamental API access limitations. The Community Management API is cleanly walled off to the page. You can manage and measure everything the page does, but personal LinkedIn identity is completely out of scope by design. LinkedIn intentionally prevents developers from using page-scoped API keys to build personal profile tools, and accessing member profile data (even my own) would require applying for a LinkedIn partnership, which entails a demonstrated business use case and a formal review process. For the scope of what this project aimed to accomplish, the Community Management API simply does not provide the necessary access.
 
 ## Project Introduction
 
