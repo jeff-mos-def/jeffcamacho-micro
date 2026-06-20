@@ -1,64 +1,136 @@
 ---
-import { type CollectionEntry, getCollection } from "astro:content";
+import { getCollection } from "astro:content";
 import Layout from "@layouts/Layout.astro";
 import Container from "@components/Container.astro";
-import ArrowCard from "@components/ArrowCard.astro";
-import { BLOG } from "@consts";
 
-const data = (await getCollection("blog"))
+// 1. Fetch all blog posts and sort them newest to oldest
+const posts = (await getCollection("blog"))
   .filter((post) => !post.data.draft)
   .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
 
-type Acc = {
-  [year: string]: CollectionEntry<"blog">[];
-};
+// 2. Group posts by Year, then by Month
+const groupedPosts = posts.reduce((acc, post) => {
+  const date = new Date(post.data.date);
+  const year = date.getFullYear();
+  const month = date.toLocaleString("default", { month: "long" });
 
-const posts = data.reduce((acc: Acc, post) => {
-  const year = post.data.date.getFullYear().toString();
-  if (!acc[year]) {
-    acc[year] = [];
-  }
-  acc[year].push(post);
+  if (!acc[year]) acc[year] = {};
+  if (!acc[year][month]) acc[year][month] = [];
+
+  acc[year][month].push(post);
   return acc;
-}, {});
+}, {} as Record<number, Record<string, typeof posts>>);
 
-const years = Object.keys(posts).sort((a, b) => parseInt(b) - parseInt(a));
+// 3. Sort the years in descending order (most recent first)
+const sortedYears = Object.entries(groupedPosts).sort(
+  ([yearA], [yearB]) => Number(yearB) - Number(yearA)
+);
 ---
 
-<Layout title={BLOG.TITLE} description={BLOG.DESCRIPTION}>
+<Layout title="Blog" description="Jeff Camacho's Blog">
   <Container>
-    <aside data-pagefind-ignore>
-      <div class="space-y-10">
-        <div class="space-y-4">
-          {
-            years.map((year) => (
-              <section class="animate space-y-4">
-                <div class="font-semibold text-black dark:text-white">
-                  {year}
-                </div>
-                <div>
-                  <ul class="not-prose flex flex-col gap-4">
-                    {posts[year].map((post) => (
+    <div class="space-y-10">
+      <div class="animate font-semibold text-black dark:text-white text-2xl">
+        Blog
+      </div>
+      
+      <div class="relative w-full">
+        
+        <aside class="animate hidden lg:block lg:absolute lg:top-0 lg:bottom-0 lg:-left-60 lg:w-48">
+          <nav class="lg:sticky lg:top-24 h-fit space-y-2 pr-4">
+            <h2 class="text-xs font-bold uppercase tracking-wider text-neutral-500 dark:text-neutral-500 mb-4">
+              Archive Navigation
+            </h2>
+            <ul class="space-y-4">
+              {sortedYears.map(([year, months]) => (
+                <li class="space-y-1">
+                  <a 
+                    href={`#arch-${year}`} 
+                    class="font-semibold text-sm text-neutral-800 dark:text-neutral-200 hover:text-blue-500 dark:hover:text-blue-400 transition-colors block"
+                  >
+                    {year}
+                  </a>
+                  <ul class="pl-3 space-y-1.5 border-l border-neutral-200 dark:border-neutral-800">
+                    {Object.keys(months).map((month) => (
                       <li>
-                        <ArrowCard entry={post} />
-                        {post.data.tags && post.data.tags.length > 0 && (
-                          <div class="mt-2 flex flex-wrap gap-2">
-                            {post.data.tags.map((tag) => (
-                              <a href={`/tags/${tag}`} class="px-2 py-1 text-xs font-medium rounded bg-neutral-200 dark:bg-neutral-800 text-black dark:text-white hover:bg-neutral-300 dark:hover:bg-neutral-700 transition-colors">
-                                #{tag}
-                              </a>
-                            ))}
+                        <a 
+                          href={`#arch-${year}-${month.toLowerCase()}`} 
+                          class="text-xs text-neutral-500 dark:text-neutral-400 hover:text-blue-500 dark:hover:text-blue-400 transition-colors block"
+                        >
+                          {month}
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        </aside>
+
+        <div class="space-y-16">
+          {sortedYears.map(([year, months]) => (
+            <div class="animate space-y-10 scroll-mt-24" id={`arch-${year}`}>
+              <h2 class="text-3xl font-bold text-black dark:text-white mt-6 border-b-2 border-neutral-200 dark:border-neutral-800 pb-2">
+                {year}
+              </h2>
+              
+              {Object.entries(months).map(([month, monthPosts]) => (
+                <div class="space-y-6 scroll-mt-24" id={`arch-${year}-${month.toLowerCase()}`}>
+                  <h3 class="text-sm font-bold uppercase tracking-wider text-neutral-500 dark:text-neutral-400 border-b border-neutral-200 dark:border-neutral-800 pb-1">
+                    {month}
+                  </h3>
+                  
+                  <ul class="flex flex-col gap-6">
+                    {monthPosts.map((post) => (
+                      <li class="space-y-3">
+                        <a 
+                          href={`/blog/${post.id}`} 
+                          class="group flex flex-nowrap justify-between items-center p-5 rounded-lg border border-neutral-200 dark:border-neutral-800 hover:bg-neutral-50 dark:hover:bg-neutral-900 transition-colors duration-200"
+                        >
+                          <div class="flex flex-col gap-1 pr-4">
+                            <div class="font-semibold text-lg text-black dark:text-white group-hover:text-blue-500 dark:group-hover:text-blue-400 transition-colors">
+                              {post.data.title}
+                            </div>
+                            {post.data.description && (
+                              <div class="text-sm text-neutral-600 dark:text-neutral-400 line-clamp-2">
+                                {post.data.description}
+                              </div>
+                            )}
                           </div>
+                          <svg 
+                            xmlns="http://www.w3.org/2000/svg" 
+                            viewBox="0 0 24 24" 
+                            class="size-4 stroke-2 fill-none stroke-current text-neutral-400 group-hover:text-black dark:group-hover:text-white transition-colors flex-shrink-0"
+                          >
+                            <polyline points="9 18 15 12 9 6" />
+                          </svg>
+                        </a>
+                        
+                        {post.data.tags && post.data.tags.length > 0 && (
+                          <ul class="flex flex-wrap gap-2">
+                            {post.data.tags.map((tag: string) => (
+                              <li>
+                                <a 
+                                  href={`/tags/${tag}`} 
+                                  class="px-2 py-1 text-xs font-medium rounded bg-neutral-200 dark:bg-neutral-800 text-black dark:text-white hover:bg-neutral-300 dark:hover:bg-neutral-700 transition-colors"
+                                >
+                                  #{tag}
+                                </a>
+                              </li>
+                            ))}
+                          </ul>
                         )}
                       </li>
                     ))}
                   </ul>
                 </div>
-              </section>
-            ))
-          }
+              ))}
+            </div>
+          ))}
         </div>
+        
       </div>
-    </aside>
+    </div>
   </Container>
 </Layout>
