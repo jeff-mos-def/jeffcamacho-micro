@@ -18,10 +18,9 @@ import { SITE } from "@consts";
         <Link href="/education">education</Link>
         <span>{`/`}</span>
 
-        <!-- Blog Dropdown -->
         <div class="relative group" id="blog-dropdown">
           <Link href="/blog">blog</Link>
-          <div class="absolute left-1/2 -translate-x-1/2 mt-2 hidden min-w-[8rem] rounded-lg bg-neutral-100 p-2 text-sm shadow-lg dark:bg-neutral-900 group-hover:block" id="blog-menu">
+          <div class="absolute left-1/2 -translate-x-1/2 mt-2 hidden min-w-[8rem] rounded-lg bg-neutral-100 p-2 text-sm shadow-lg dark:bg-neutral-900" id="blog-menu">
             <a href="/tags" class="block px-3 py-1 w-full text-center rounded hover:bg-neutral-200 dark:hover:bg-neutral-800">
               tags
             </a>
@@ -57,28 +56,45 @@ import { SITE } from "@consts";
   </Container>
 </header>
 
-<!-- JavaScript to Keep Dropdown Open -->
 <script>
-  document.addEventListener("DOMContentLoaded", () => {
-    const blogDropdown = document.getElementById("blog-dropdown") as HTMLElement | null;
-    const blogMenu = document.getElementById("blog-menu") as HTMLElement | null;
+  // FIXED: Changed to 'astro:page-load' to support Astro View Transitions properly
+  document.addEventListener("astro:page-load", () => {
+    const blogDropdown = document.getElementById("blog-dropdown");
+    const blogMenu = document.getElementById("blog-menu");
 
-    if (!blogDropdown || !blogMenu) return; // Prevent TypeScript errors
+    if (!blogDropdown || !blogMenu) return; 
 
-    let timeout: NodeJS.Timeout | null = null;
+    let timeout: ReturnType<typeof setTimeout> | null = null;
 
     function showDropdown() {
       if (timeout) clearTimeout(timeout);
       blogMenu!.classList.remove("hidden");
     }
 
+    if (timeout) clearTimeout(timeout);
     function hideDropdown() {
       timeout = setTimeout(() => {
-        blogMenu?.classList.add("hidden");
-      }, 200); // Small delay to prevent flickering
+        blogMenu!.classList.add("hidden");
+      }, 200); 
     }
 
+    // Handle desktop hover functionality
     blogDropdown.addEventListener("mouseenter", showDropdown);
     blogDropdown.addEventListener("mouseleave", hideDropdown);
+
+    // FIXED: Tap/Click outside handler to close dropdown on mobile
+    document.addEventListener("click", (event) => {
+      const target = event.target as Node;
+      if (!blogDropdown.contains(target)) {
+        hideDropdown();
+      } else if (target === blogDropdown || blogDropdown.firstElementChild?.contains(target)) {
+        // Toggle menu visibility if the main "blog" link itself is tapped on mobile
+        if (blogMenu.classList.contains("hidden")) {
+          showDropdown();
+        } else {
+          hideDropdown();
+        }
+      }
+    });
   });
 </script>
