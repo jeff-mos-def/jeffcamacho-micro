@@ -1,0 +1,344 @@
+---
+// MysteryFlavorPicker.astro
+// Visualizes the flavor changeover on a Dum Dums line: 100% outbound flavor,
+// the transition window where the two blend (the off spec "mystery" candy),
+// and 100% inbound flavor. Pick the two flavors, scrub or play the line.
+//
+//   import MysteryFlavorPicker from "../../components/MysteryFlavorPicker.astro";
+//   <MysteryFlavorPicker />
+//
+// No props. Colors and labels are driven by the selected flavors.
+
+const flavors: { name: string; color: string }[] = [
+  { name: "Cream Soda", color: "#e9d18a" },
+  { name: "Blue Raspberry", color: "#2f7fd1" },
+  { name: "Cherry", color: "#c0202e" },
+  { name: "Grape", color: "#6b3fa0" },
+  { name: "Butterscotch", color: "#c8881f" },
+  { name: "Watermelon", color: "#ef6079" },
+  { name: "Strawberry", color: "#e23b5a" },
+  { name: "Orange", color: "#f08a24" },
+  { name: "Root Beer", color: "#6a4226" },
+  { name: "Pineapple", color: "#f2d535" },
+  { name: "Fruit Punch", color: "#d02a55" },
+  { name: "Cotton Candy", color: "#f49ac2" },
+  { name: "Lemon Lime", color: "#a7cf3a" },
+  { name: "Mango", color: "#f5a623" },
+  { name: "Tangerine", color: "#f0741f" },
+  { name: "Bubble Gum", color: "#f06fb0" },
+];
+
+// Plot geometry (kept in sync with the script).
+const X0 = 70, X1 = 730;          // plot left / right
+const Y_TOP = 50, Y_BOT = 210;    // 100% / 0% concentration
+const T_START = 0.3, T_END = 0.7; // transition window as fraction of the line
+const xStart = X0 + T_START * (X1 - X0); // 268
+const xEnd = X0 + T_END * (X1 - X0);     // 532
+---
+
+<figure class="mf-proc" data-mf>
+  <figcaption class="mf-cap">A flavor changeover on the line</figcaption>
+
+  <div class="mf-pickers">
+    <label class="mf-field">
+      <span class="mf-field-label">Outbound batch</span>
+      <select data-mf-a>
+        {flavors.map((f, i) => <option value={i} selected={i === 0}>{f.name}</option>)}
+      </select>
+    </label>
+    <span class="mf-arrow" aria-hidden="true">&rarr;</span>
+    <label class="mf-field">
+      <span class="mf-field-label">Inbound batch</span>
+      <select data-mf-b>
+        {flavors.map((f, i) => <option value={i} selected={i === 1}>{f.name}</option>)}
+      </select>
+    </label>
+  </div>
+
+  <svg viewBox="0 0 800 360" class="mf-svg" role="img"
+       aria-label="Concentration of the outbound and inbound flavors along the production line, with a mystery transition window in the middle.">
+    <defs>
+      <linearGradient id="mfBar" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0%"  data-grad-a stop-color="#e9d18a" />
+        <stop offset="30%" data-grad-a stop-color="#e9d18a" />
+        <stop offset="70%" data-grad-b stop-color="#2f7fd1" />
+        <stop offset="100%" data-grad-b stop-color="#2f7fd1" />
+      </linearGradient>
+    </defs>
+
+    {/* concentration axis */}
+    <line x1={X0} y1={Y_TOP} x2={X0} y2={Y_BOT} class="mf-axis" />
+    <text x={X0 - 8} y={Y_TOP + 4} class="mf-axislabel" text-anchor="end">100%</text>
+    <text x={X0 - 8} y={(Y_TOP + Y_BOT) / 2 + 4} class="mf-axislabel" text-anchor="end">50%</text>
+    <text x={X0 - 8} y={Y_BOT + 4} class="mf-axislabel" text-anchor="end">0%</text>
+
+    {/* mystery window band */}
+    <rect x={xStart} y={Y_TOP} width={xEnd - xStart} height={Y_BOT - Y_TOP} class="mf-band" />
+    <line x1={xStart} y1={Y_TOP} x2={xStart} y2={Y_BOT + 70} class="mf-divider" />
+    <line x1={xEnd} y1={Y_TOP} x2={xEnd} y2={Y_BOT + 70} class="mf-divider" />
+    <text x={(xStart + xEnd) / 2} y={Y_TOP + 36} class="mf-qmark" text-anchor="middle">?</text>
+    <text x={(xStart + xEnd) / 2} y={Y_TOP + 58} class="mf-bandlabel" text-anchor="middle">mystery window</text>
+
+    {/* concentration ramps */}
+    <polyline data-curve-a fill="none" stroke="#e9d18a" stroke-width="3"
+      points={`${X0},${Y_TOP} ${xStart},${Y_TOP} ${xEnd},${Y_BOT} ${X1},${Y_BOT}`} />
+    <polyline data-curve-b fill="none" stroke="#2f7fd1" stroke-width="3"
+      points={`${X0},${Y_BOT} ${xStart},${Y_BOT} ${xEnd},${Y_TOP} ${X1},${Y_TOP}`} />
+
+    {/* the candy bar, colored by blend along the line */}
+    <rect x={X0} y={250} width={X1 - X0} height={44} rx="6" fill="url(#mfBar)" stroke="rgba(0,0,0,0.15)" />
+
+    {/* zone labels under the bar */}
+    <text x={(X0 + xStart) / 2} y={314} class="mf-zone" text-anchor="middle" data-label-a>100% Cream Soda</text>
+    <text x={(xStart + xEnd) / 2} y={314} class="mf-zone mf-zone-mid" text-anchor="middle">the blend</text>
+    <text x={(xEnd + X1) / 2} y={314} class="mf-zone" text-anchor="middle" data-label-b>100% Blue Raspberry</text>
+    <text x={xStart} y={336} class="mf-tick" text-anchor="middle">transition begins</text>
+    <text x={xEnd} y={336} class="mf-tick" text-anchor="middle">transition ends</text>
+
+    {/* playhead */}
+    <line data-playline x1={X0} y1={Y_TOP - 10} x2={X0} y2={294} class="mf-playline" />
+    <line data-pop-stick x1={X0} y1={31} x2={X0} y2={Y_TOP - 10} class="mf-popstick" />
+    <circle data-pop x={X0} cx={X0} cy="20" r="11" class="mf-pop" />
+  </svg>
+
+  <div class="mf-readout" data-readout aria-live="polite">
+    <p class="mf-readout-head" data-readout-head>Start of the line</p>
+    <div class="mf-bars">
+      <div class="mf-bar-row">
+        <span class="mf-bar-name" data-bar-a-name>Cream Soda</span>
+        <span class="mf-bar-track"><span class="mf-bar-fill" data-bar-a></span></span>
+        <span class="mf-bar-pct" data-pct-a>100%</span>
+      </div>
+      <div class="mf-bar-row">
+        <span class="mf-bar-name" data-bar-b-name>Blue Raspberry</span>
+        <span class="mf-bar-track"><span class="mf-bar-fill" data-bar-b></span></span>
+        <span class="mf-bar-pct" data-pct-b>0%</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="mf-controls">
+    <button type="button" class="mf-play" data-play>Run the line</button>
+    <input type="range" min="0" max="1000" value="0" class="mf-scrub" data-scrub
+      aria-label="Position along the production line" />
+  </div>
+</figure>
+
+<style>
+  .mf-proc {
+    --mf-accent: var(--accent, #cc3366);
+    --mf-border: var(--border, rgba(127, 127, 127, 0.25));
+    --mf-fg: var(--text-color, var(--foreground, currentColor));
+    --mf-muted: color-mix(in srgb, var(--mf-fg) 78%, transparent);
+    color: var(--mf-fg);
+    margin: 2rem 0;
+    padding: 1.25rem;
+    border: 1px solid var(--mf-border);
+    border-radius: 14px;
+    background: var(--secondary-bg, rgba(127, 127, 127, 0.06));
+    line-height: 1.5;
+  }
+  .mf-cap { font-weight: 700; margin-bottom: 0.9rem; }
+
+  .mf-pickers {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+  }
+  .mf-field { display: flex; flex-direction: column; gap: 0.3rem; flex: 1 1 170px; }
+  .mf-field-label {
+    font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.04em; opacity: 0.7;
+  }
+  .mf-field select {
+    padding: 0.45rem 0.55rem; border: 1px solid var(--mf-border); border-radius: 8px;
+    background-color: #1f1f1f; color: #f0f0f0; font: inherit; cursor: pointer;
+    color-scheme: dark;
+  }
+  .mf-field select option {
+    background-color: #1f1f1f;
+    color: #f0f0f0;
+  }
+  .mf-arrow { font-size: 1.4rem; padding-bottom: 0.4rem; opacity: 0.6; }
+
+  .mf-svg { width: 100%; height: auto; display: block; }
+  .mf-axis { stroke: var(--mf-muted); stroke-width: 1; }
+  .mf-axislabel { fill: var(--mf-muted); font-size: 11px; }
+  .mf-band { fill: color-mix(in srgb, var(--mf-accent) 12%, transparent); }
+  .mf-divider { stroke: color-mix(in srgb, var(--mf-accent) 40%, transparent); stroke-width: 1; stroke-dasharray: 4 4; }
+  .mf-qmark { fill: var(--mf-accent); font-size: 40px; font-weight: 800; }
+  .mf-bandlabel { fill: var(--mf-accent); font-size: 11px; letter-spacing: 0.05em; text-transform: uppercase; }
+  .mf-zone { fill: var(--mf-fg); font-size: 12px; font-weight: 600; }
+  .mf-zone-mid { fill: var(--mf-accent); }
+  .mf-tick { fill: var(--mf-muted); font-size: 10px; }
+  .mf-playline { stroke: var(--mf-fg); stroke-width: 1.5; opacity: 0.5; }
+  .mf-popstick { stroke: var(--mf-muted); stroke-width: 2; }
+  .mf-pop { stroke: rgba(0,0,0,0.25); stroke-width: 1.5; fill: #e9d18a; }
+
+  .mf-readout { margin-top: 0.5rem; }
+  .mf-readout-head { margin: 0 0 0.6rem; font-weight: 700; color: var(--mf-accent); }
+  .mf-bars { display: flex; flex-direction: column; gap: 0.45rem; }
+  .mf-bar-row { display: flex; align-items: center; gap: 0.6rem; }
+  .mf-bar-name { flex: 0 0 8.5rem; font-size: 0.85rem; }
+  .mf-bar-track {
+    flex: 1 1 auto; height: 0.7rem; border-radius: 999px;
+    background: color-mix(in srgb, var(--mf-fg) 12%, transparent); overflow: hidden;
+  }
+  .mf-bar-fill { display: block; height: 100%; width: 100%; transform-origin: left; background: #e9d18a; }
+  .mf-bar-pct { flex: 0 0 3rem; text-align: right; font-variant-numeric: tabular-nums; font-size: 0.85rem; }
+
+  .mf-controls { display: flex; align-items: center; gap: 0.9rem; margin-top: 1.1rem; }
+  .mf-play {
+    padding: 0.5rem 0.9rem; border: 1px solid var(--mf-accent); border-radius: 8px;
+    background: transparent; color: var(--mf-accent); font: inherit; font-weight: 600;
+    cursor: pointer; white-space: nowrap; transition: background 0.15s ease, color 0.15s ease;
+  }
+  .mf-play:hover { background: var(--mf-accent); color: #fff; }
+  .mf-scrub { flex: 1 1 auto; accent-color: var(--mf-accent); cursor: pointer; }
+</style>
+
+<script>
+  type Flavor = { name: string; color: string };
+
+  function initMysteryProc(root: Element) {
+    const flavors: Flavor[] = [
+      { name: "Cream Soda", color: "#e9d18a" },
+      { name: "Blue Raspberry", color: "#2f7fd1" },
+      { name: "Cherry", color: "#c0202e" },
+      { name: "Grape", color: "#6b3fa0" },
+      { name: "Butterscotch", color: "#c8881f" },
+      { name: "Watermelon", color: "#ef6079" },
+      { name: "Strawberry", color: "#e23b5a" },
+      { name: "Orange", color: "#f08a24" },
+      { name: "Root Beer", color: "#6a4226" },
+      { name: "Pineapple", color: "#f2d535" },
+      { name: "Fruit Punch", color: "#d02a55" },
+      { name: "Cotton Candy", color: "#f49ac2" },
+      { name: "Lemon Lime", color: "#a7cf3a" },
+      { name: "Mango", color: "#f5a623" },
+      { name: "Tangerine", color: "#f0741f" },
+      { name: "Bubble Gum", color: "#f06fb0" },
+    ];
+
+    const X0 = 70, X1 = 730, T_START = 0.3, T_END = 0.7;
+    const SWEEP_SECONDS = 18; // how long the playhead takes to cross the whole line
+
+    const q = <T extends Element>(sel: string) => root.querySelector<T>(sel);
+    const qa = (sel: string) => Array.from(root.querySelectorAll(sel));
+
+    const selA = q<HTMLSelectElement>("[data-mf-a]");
+    const selB = q<HTMLSelectElement>("[data-mf-b]");
+    const scrub = q<HTMLInputElement>("[data-scrub]");
+    const playBtn = q<HTMLButtonElement>("[data-play]");
+    if (!selA || !selB || !scrub || !playBtn) return;
+
+    const gradA = qa("[data-grad-a]") as SVGStopElement[];
+    const gradB = qa("[data-grad-b]") as SVGStopElement[];
+    const curveA = q<SVGPolylineElement>("[data-curve-a]");
+    const curveB = q<SVGPolylineElement>("[data-curve-b]");
+    const playline = q<SVGLineElement>("[data-playline]");
+    const popStick = q<SVGLineElement>("[data-pop-stick]");
+    const pop = q<SVGCircleElement>("[data-pop]");
+    const labelA = q<SVGTextElement>("[data-label-a]");
+    const labelB = q<SVGTextElement>("[data-label-b]");
+    const head = q<HTMLElement>("[data-readout-head]");
+    const barA = q<HTMLElement>("[data-bar-a]");
+    const barB = q<HTMLElement>("[data-bar-b]");
+    const barAName = q<HTMLElement>("[data-bar-a-name]");
+    const barBName = q<HTMLElement>("[data-bar-b-name]");
+    const pctA = q<HTMLElement>("[data-pct-a]");
+    const pctB = q<HTMLElement>("[data-pct-b]");
+
+    // Linear interpolation between two hex colors.
+    const hex = (h: string) => [1, 3, 5].map((i) => parseInt(h.slice(i, i + 2), 16));
+    function mix(c1: string, c2: string, t: number): string {
+      const a = hex(c1), b = hex(c2);
+      const r = a.map((v, i) => Math.round(v + (b[i] - v) * t));
+      return "#" + r.map((v) => v.toString(16).padStart(2, "0")).join("");
+    }
+
+    function flavorA() { return flavors[Number(selA!.value)]; }
+    function flavorB() { return flavors[Number(selB!.value)]; }
+
+    // Outbound concentration as a fraction of the line position p in [0,1].
+    function outboundShare(p: number): number {
+      if (p <= T_START) return 1;
+      if (p >= T_END) return 0;
+      return (T_END - p) / (T_END - T_START);
+    }
+
+    function applyColors() {
+      const A = flavorA(), B = flavorB();
+      gradA.forEach((s) => s.setAttribute("stop-color", A.color));
+      gradB.forEach((s) => s.setAttribute("stop-color", B.color));
+      curveA?.setAttribute("stroke", A.color);
+      curveB?.setAttribute("stroke", B.color);
+      if (labelA) labelA.textContent = "100% " + A.name;
+      if (labelB) labelB.textContent = "100% " + B.name;
+      if (barAName) barAName.textContent = A.name;
+      if (barBName) barBName.textContent = B.name;
+      if (barA) barA.style.background = A.color;
+      if (barB) barB.style.background = B.color;
+    }
+
+    function update(p: number) {
+      const A = flavorA(), B = flavorB();
+      const out = outboundShare(p);
+      const inn = 1 - out;
+      const x = X0 + p * (X1 - X0);
+
+      playline?.setAttribute("x1", String(x));
+      playline?.setAttribute("x2", String(x));
+      popStick?.setAttribute("x1", String(x));
+      popStick?.setAttribute("x2", String(x));
+      pop?.setAttribute("cx", String(x));
+      pop?.setAttribute("fill", mix(A.color, B.color, inn));
+
+      const op = Math.round(out * 100), ip = Math.round(inn * 100);
+      if (barA) barA.style.transform = `scaleX(${out})`;
+      if (barB) barB.style.transform = `scaleX(${inn})`;
+      if (pctA) pctA.textContent = op + "%";
+      if (pctB) pctB.textContent = ip + "%";
+
+      if (head) {
+        if (op === 100) head.textContent = "Pure outbound batch. Straight " + A.name + ".";
+        else if (ip === 100) head.textContent = "Pure inbound batch. Straight " + B.name + ".";
+        else head.textContent = "Mystery window: " + op + "% " + A.name + " / " + ip + "% " + B.name + ", stamped with the ?";
+      }
+    }
+
+    // Animation loop.
+    let raf = 0;
+    let playing = false;
+    let last = 0;
+    function frame(t: number) {
+      if (!last) last = t;
+      const dt = (t - last) / 1000;
+      last = t;
+      let p = Number(scrub!.value) / 1000 + dt / SWEEP_SECONDS;
+      if (p >= 1) { p = 1; stop(); }
+      scrub!.value = String(Math.round(p * 1000));
+      update(p);
+      if (playing) raf = requestAnimationFrame(frame);
+    }
+    function play() {
+      if (Number(scrub!.value) >= 1000) scrub!.value = "0";
+      playing = true; last = 0; playBtn!.textContent = "Pause";
+      raf = requestAnimationFrame(frame);
+    }
+    function stop() {
+      playing = false; cancelAnimationFrame(raf); playBtn!.textContent = "Run the line";
+    }
+
+    selA.addEventListener("change", () => { applyColors(); update(Number(scrub.value) / 1000); });
+    selB.addEventListener("change", () => { applyColors(); update(Number(scrub.value) / 1000); });
+    scrub.addEventListener("input", () => { stop(); update(Number(scrub.value) / 1000); });
+    playBtn.addEventListener("click", () => (playing ? stop() : play()));
+
+    applyColors();
+    update(0);
+  }
+
+  document.querySelectorAll("[data-mf]").forEach(initMysteryProc);
+</script>
