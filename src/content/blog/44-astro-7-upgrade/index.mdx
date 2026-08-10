@@ -1,0 +1,295 @@
+---
+title: "Upgrading This Site From Astro 6 to Astro 7"
+description: "Astro 6.4.7 to 7.2.0, plus a few others."
+date: 2026-08-09
+tags: ["astro", "javascript", "web", "vite", "pagefind"]
+draft: false
+---
+
+Maintenance day. #yay
+
+I haven't been writing much lately, so the udpates piled up.
+
+Ran `npx @astrojs/upgrade` and got handed three majors. The version bump itself was the easy part. What actually cost the evening was a two year old dependency pin sitting in my own `package.json`.
+
+## The version table
+
+| Package | From | To | Type |
+| --- | --- | --- | --- |
+| `astro` | 6.4.7 | 7.2.0 | Major |
+| `@astrojs/mdx` | 6.0.3 | 7.0.5 | Major |
+| `@astrojs/react` | 5.0.7 | 6.0.2 | Major |
+| `@astrojs/rss` | 4.0.18 | 4.0.19 | Patch |
+| `@astrojs/check` | 0.9.9 | 0.9.10 | Patch |
+| `@astrojs/sitemap` | 3.7.3 | 3.7.3 | No change |
+
+## Astro 7 core changes
+
+### Vite 8
+
+Astro 7 moves the dev server and production bundler to Vite 8, which also brings rolldown into the build path. For most projects this is invisible unless you have custom Vite plugins or reach into Vite internals.
+
+For me it was not invisible at all. More on that below.
+
+### The Rust compiler is now the only compiler
+
+The Go based `.astro` compiler is gone, replaced by the Rust one that shipped behind `experimental.rustCompiler` in v6. If you had that flag set, delete it.
+
+Two behavioral consequences:
+
+1. **Unclosed tags are now errors.** The old compiler silently tolerated a dangling `<p>` or an unclosed component tag. The Rust compiler wants a matching closing tag on every non void element. Void elements like `<br>`, `<img>`, `<input>`, and `<hr>` are still fine bare.
+
+2. **Invalid HTML is no longer silently repaired.** The old compiler would quietly restructure markup to match the HTML parsing spec, for example hoisting a block level element out of a `<p>`. The new one passes your markup through as written and lets the browser sort it out.
+
+There are also cosmetic CSS output differences. Named colors may serialize to hex, and `url()` values may gain or lose quotes. Neither changes rendering.
+
+My 62 files came through this clean, which was a pleasant surprise given how much hand written markup lives in my visualizer components.
+
+### Sätteri replaces remark/rehype as the default Markdown processor
+
+Astro 7 renders `.md` and `.mdx` through Sätteri, a native Rust Markdown pipeline, instead of the unified/remark/rehype stack. `@astrojs/markdown-remark` is no longer installed by default.
+
+If you do not use remark or rehype plugins, nothing to do. GitHub Flavored Markdown and SmartyPants still apply.
+
+I use `rehype-mermaid` for diagram rendering, so I stayed on unified:
+
+```bash
+npm install @astrojs/markdown-remark
+```
+
+```js
+// astro.config.mjs
+import { unified } from '@astrojs/markdown-remark';
+
+export default defineConfig({
+  markdown: {
+    processor: unified(),
+    rehypePlugins: [[rehypeMermaid, { strategy: "img-svg", dark: true }]],
+  },
+});
+```
+
+This still logs a deprecation warning telling you to pass plugins into `unified({...})` directly. It builds fine for now. That is on my list.
+
+Worth flagging: `recmaPlugins` are not supported under Sätteri at all, so anything depending on estree manipulation has to stay on unified permanently.
+
+### `compressHTML` now defaults to `'jsx'`
+
+The default changed from `true` to `'jsx'`. Astro now strips whitespace using JSX rules, the same way React does.
+
+```astro
+<span>hello</span>
+<em>world</em>
+```
+
+That rendered as `hello world` under v6. Under v7 it renders as `helloworld`. Fix with an explicit `{" "}`, or set `compressHTML: true` to keep the old behavior.
+
+### `src/fetch.ts` is now reserved
+
+Advanced routing graduated from experimental and claims `src/fetch.ts` as a special file, similar to `src/middleware.ts`. If you already have one, rename it or set `fetchFile` in your config.
+
+### Experimental flags that graduated
+
+Remove these from `experimental`. They are stable or default now: `logger`, `queuedRendering`, `rustCompiler`, `advancedRouting`, `cache`, and `routeRules`.
+
+### Removals
+
+**`@astrojs/db` is gone**, along with the `astro db`, `astro login`, `astro logout`, `astro link`, and `astro init` CLI commands.
+
+**Deprecated `astro:transitions` internals are gone.** The `TRANSITION_*` constants, `isTransitionBeforePreparationEvent()`, `isTransitionBeforeSwapEvent()`, and `createAnimationScope()`. Use the lifecycle event name strings directly instead.
+
+## The part that actually cost the evening
+
+The build failed immediately with this:
+
+```
+rollupOptions.input should not be an html file when building for SSR.
+Please specify a dedicated SSR entry.
+```
+
+Which is a strange thing to see on a static site with no adapter and no SSR. There is an open Astro issue with the identical trace from a user with zero integrations, so it is not integration specific.
+
+I chased three wrong theories before finding it.
+
+**Wrong theory one: a stale config block.** My `astro.config.mjs` had a top level `build.rollupOptions` entry externalizing `astro:content-layer-deferred-module`, plus a `@vite/env` resolve alias. Both were workarounds from older Astro versions. `build.rollupOptions` is not a valid Astro option at all, so it was doing nothing useful either way. Removing it was correct housekeeping. It did not fix the build.
+
+**Wrong theory two: the pagefind integration.** `npm ls` flagged `astro-pagefind@1.8.6` as `invalid`, since its peer range topped out at Astro 6. That looked like a smoking gun. It was not. I bumped it to 2.0.1 and broke my working search component for nothing. That detour is its own section below.
+
+**The actual cause.** Buried in the `npm ls vite` output was this:
+
+```
+└── vite@7.3.6
+```
+
+Top level. Not nested under Astro. Astro 7 declares `vite: ^8.0.13`, but my `package.json` had `"vite": "^7.0.0"` in two places, once in `dependencies` and once in `overrides`. The override is the hard cap: it forces every consumer in the tree down to Vite 7 regardless of what they ask for. Astro 7's build code was calling into a Vite 8 API surface against a Vite 7 install, and Vite 7 rejected the input shape.
+
+Both entries were leftovers from an earlier upgrade where I had pinned Vite to work around something. I had long since forgotten why.
+
+The fix:
+
+```bash
+# remove "vite": "^7.0.0" from both dependencies and overrides
+rm -rf node_modules package-lock.json
+npm install
+npm ls vite --depth=0
+```
+
+Vite 8.x resolved, the SSR input error vanished, and the build ran all the way through to MDX transform.
+
+**Lesson.** If you carry version overrides, audit them on every major upgrade. An override does not warn you when it is holding a dependency back; it just silently wins. `npm ls <package> --depth=0` compared against the framework's declared range would have found this in thirty seconds.
+
+### One more casualty
+
+Wiping `node_modules` also wiped Playwright's browser cache, which `rehype-mermaid` needs for `strategy: "img-svg"`:
+
+```bash
+npx playwright install chromium
+```
+
+After that, 155 pages built in 2.14s.
+
+## Rebuilding search
+
+The pagefind detour ended somewhere better than it started, but not by design.
+
+`astro-pagefind` 2.x is a rewrite. It drops the Pagefind Default UI wrapper in favor of Pagefind's newer `<pagefind-searchbox>` web component, introduced in Pagefind 1.5.0. The prop API changed with it: `id` became `instance`, and `uiOptions` split into `searchboxOptions` and `configOptions`. The export path also changed, since the package now maps subpaths literally, so the import needs the file extension:
+
+```astro
+import Search from "astro-pagefind/components/Search.astro";
+```
+
+That all built. It also did not work for my layout at all.
+
+My search lives in a modal: a fixed backdrop with `invisible` toggled by a magnifying glass button and a `/` or Cmd+K binding. The built HTML showed why the new component broke it:
+
+```html
+<pagefind-searchbox placeholder="Search" instance="search"></pagefind-searchbox>
+```
+
+Empty. The component hydrates entirely client side and renders its results into a floating dropdown that escapes the wrapper, so it ignored the `invisible` class and parked itself permanently at the top of every page. The component is designed to be its own UI, not to live inside someone else's modal.
+
+The upstream README is candid about this: the wrapper component is in maintenance mode, and new users are pointed at the Pagefind UI component directly.
+
+So I went one layer down. Pagefind still ships the Default UI in the index it generates:
+
+```bash
+$ ls dist/pagefind/ | grep ui
+pagefind-component-ui.css
+pagefind-component-ui.js
+pagefind-modular-ui.css
+pagefind-modular-ui.js
+pagefind-ui.css
+pagefind-ui.js
+```
+
+`astro-pagefind` 1.8.x was only a thin wrapper around `pagefind-ui.js`. Calling it directly gets the identical DOM, which means every one of my existing `--pagefind-ui-*` variables, `.pagefind-ui__*` selectors, and event handlers work unchanged:
+
+```astro
+<div id="search" class="pagefind-ui"></div>
+
+<script is:inline src="/pagefind/pagefind-ui.js"></script>
+<script is:inline>
+  function initPagefind() {
+    const el = document.getElementById("search");
+    if (!el || el.dataset.initialized) return;
+    if (typeof PagefindUI === "undefined") {
+      setTimeout(initPagefind, 50);
+      return;
+    }
+    new PagefindUI({
+      element: "#search",
+      showImages: false,
+      excerptLength: 15,
+      resetStyles: false,
+    });
+    el.dataset.initialized = "true";
+  }
+
+  initPagefind();
+  document.addEventListener("astro:page-load", initPagefind);
+</script>
+```
+
+One trap here. I initially also linked `/pagefind/pagefind-ui.css`, which the wrapper had never loaded. That pulls in Pagefind's own default styling and stomps all over a theme built with `resetStyles: false`. Dropping the stylesheet link restored my formatting.
+
+With the wrapper gone, the integration goes too, and indexing moves into the build script:
+
+```json
+"build": "astro check && astro build && pagefind --site dist"
+```
+
+`pagefind` was already a devDependency, so nothing new to install. One fewer package in the tree, and the search UI is now pinned to Pagefind itself rather than to a wrapper's release cadence.
+
+The dev server caveat is unchanged: `/pagefind/` only exists after a build, so search 404s in `astro dev` unless you copy `dist/pagefind` into `public/`.
+
+## Deployment
+
+Two things needed pinning in `netlify.toml`:
+
+```toml
+[build]
+  command = "npx playwright install chromium && npm run build"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "22.22.1"
+```
+
+The Playwright install was already there from a previous round. The Node pin was not, and Astro 7 requires 22.12.0 minimum, so leaving it to Netlify's default was a coin flip.
+
+Worth knowing: `netlify.toml` overrides the dashboard build settings, and the dashboard tells you so with a small warning under the field. If you set the command in the file, the stale dashboard value is inert and you can leave it.
+
+## Housekeeping the upgrade surfaced
+
+The Vite 8 bump pulled esbuild from 0.27.7 to 0.28.2, which tripped my `allowScripts` pin:
+
+```
+npm warn allow-scripts esbuild@0.28.2 (postinstall: node install.js)
+```
+
+Esbuild needs that postinstall to fetch its platform binary, so the pin needs updating alongside the dependency:
+
+```json
+"allowScripts": {
+  "esbuild@0.28.2": true,
+  "sharp@0.34.5": true
+}
+```
+
+Separately, my `tsconfig.json` was missing an explicit `moduleResolution`, which meant TypeScript ignored the `exports` field in package.json files and could not resolve subpath type declarations:
+
+```json
+{
+  "extends": "astro/tsconfigs/strict",
+  "compilerOptions": {
+    "strictNullChecks": true,
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "baseUrl": ".",
+    "paths": { "@*": ["./src/*"] }
+  }
+}
+```
+
+Astro's shipped tsconfigs already set this, so an explicit override somewhere in my file had been quietly undoing it.
+
+## Upgrade checklist, in the order I wish I had done it
+
+1. Branch or commit first. Three majors deserves a one command rollback.
+2. **Audit `overrides` and `resolutions` in `package.json` before running anything.** Compare each pin against what the new framework version declares.
+3. Run `npx @astrojs/upgrade`.
+4. Verify with `npm ls vite --depth=0` that you actually got the Vite the framework asked for.
+5. Strip graduated experimental flags and any stale `vite` or `build` config blocks.
+6. Build. Fix compiler strictness errors.
+7. Decide on the Markdown pipeline.
+8. Reinstall Playwright browsers if you wiped `node_modules`.
+9. Change one thing at a time. Revert immediately when a theory dies.
+10. Pin Node in your deploy config.
+
+Step nine is the one I actually failed. I stacked a package major on top of an unproven hypothesis, and when the hypothesis died the package change stayed in and broke working code that had nothing to do with the problem.
+
+## Verdict
+
+The performance pitch is real. Two of the slowest stages of the build, the `.astro` compiler and the Markdown processor, are both native now, and 155 pages in 2.14s is a meaningful improvement.
+
+The upgrade itself was not the hard part. Astro's migration guide is thorough and the compiler strictness caught nothing in my markup. What cost the time was accumulated debt in my own `package.json`, a Vite pin I could not remember adding, guarding a workaround I could not remember needing.
