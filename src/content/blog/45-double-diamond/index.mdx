@@ -1,0 +1,77 @@
+---
+title: "You Cannot Know Everything at the Start"
+description: "A mentor's line about uncertainty and the design model it always sends me back to"
+date: "2026-08-15"
+tags: ["Discovery", "Requirements", "Decomposition", "Uncertainty"]
+draft: false
+---
+
+import Doublediamond from "../../../components/Doublediamond.astro";
+
+I used to co-instruct with a mentor, and there is a line he has always emphasized. "You cannot possibly know everything from the start." Every time it comes up, it brings me back to the double diamond.
+
+His lesson carries the statement. Mine carries the model. Over time I have come to see them as one idea split between two instructors.
+
+<Doublediamond />
+
+---
+
+## The Model
+
+The double diamond is a design process model from the British Design Council. It draws the work as two diamonds set side by side, and each one widens before it narrows. The widening is divergent thinking, where you open the space and gather more than you will end up using. The narrowing is convergent thinking, where you commit.
+
+The first diamond is the problem. Its phases are Discover and Define. You discover by going wide, then you define by pulling what you found into a single clear statement of what needs solving. The second diamond is the solution. You develop by generating many possible answers, then you deliver by testing them down to the one that holds up.
+
+The reason his line brings me back to this model is that the first diamond is built on it. The entire left half exists because you cannot know everything from the start. If you could, there would be no reason to discover anything. You would walk in certain and go straight to building. The diamond opens wide first because the honest starting position is incomplete, and the discipline is to stay in that wide space long enough to learn before you converge.
+
+---
+
+## The Ask Is Not the Requirement
+
+This is also the shape of working requirements from a customer. The ask arrives already defined, or stated as though it were. Someone hands you a sentence that sounds finished. Build us a dashboard. Automate the intake process. Replace the legacy system.
+
+That sentence is a starting point, not a specification. The job of the first diamond is to discover the requirement's working parts, the pieces underneath the ask that the customer did not spell out and often did not know to.
+
+Discovery is where you find out what "dashboard" actually means to the person who asked for one. Who opens it, and on what day of the week. What decision are they making when they open it. What are they doing today instead, which is usually a spreadsheet someone maintains by hand every Thursday afternoon. What happens if the number is wrong. Who else needs to see it, and who explicitly must not. What system the data lives in, whether anyone owns that system, and whether the field they care about is populated reliably or only when someone remembers.
+
+None of that was in the original sentence. All of it changes what gets built.
+
+The customer is not withholding this. They are in the same position you are. They know the outcome they want and they described it with the words they had. The working parts are discoverable, but only by going wide before you narrow. Ask the question five different ways, talk to the person who does the manual version of the task, sit through the meeting where the number gets argued about. Gather more than you will use.
+
+Then you converge. Defining the requirement means writing down what the thing actually has to do, in language specific enough that someone could disagree with it. A requirement nobody can push back on is usually too vague to build from. That definition is the point of the first diamond, and it is worth the time it costs, because everything downstream inherits it.
+
+---
+
+## Breaking the Work Down
+
+The second diamond is where the defined requirement turns into work, and it diverges before it converges for the same reason the first one did.
+
+Divergence in the second diamond means generating options. There is more than one way to satisfy a well-defined requirement, and the first approach the team names is rarely the best one available. Buy versus build. A report against the existing warehouse versus a new pipeline. A manual workaround for the edge case versus modeling it properly. Spending an hour laying out three approaches before committing to one is cheap. Discovering the alternative six weeks in is not.
+
+Then you converge, and convergence here is decomposition. The work breaks down into pieces small enough to estimate honestly and sequenced so that value shows up early rather than all at once at the end.
+
+The test I use for a good breakdown is whether each piece can be demonstrated. Not whether it can be checked off, whether it can be shown to someone. A piece of work that produces nothing a customer can look at is a piece of work you cannot get feedback on, which means it carries its risk silently until integration. When the breakdown holds, every increment gives the customer something to react to.
+
+That reaction is the whole reason the structure works. You build something out, you demonstrate it back, and the demonstration is where you learn whether what you discovered matches what they actually needed. The customer sees the thing and says the number is right but it needs to be filtered by region, and that sentence is worth more than another round of requirements review. They could not have told you that in the kickoff meeting. They needed something in front of them.
+
+Which means the second diamond feeds the first one. What you learn in a demo goes back into discovery. The model looks linear on a slide, and in practice it loops.
+
+---
+
+## When the First Diamond Collapses
+
+The common planning mistake is to skip the widening. The opening framing gets treated as the answer. A charter gets written as settled fact rather than a best current guess. A team converges on the first plausible solution because uncertainty is uncomfortable and reads, to an impatient stakeholder, like a lack of progress.
+
+The tell is a work breakdown that reads cleanly and estimates precisely for something nobody has questioned. Precision on an undiscovered requirement is false confidence, and it is expensive because it survives review. The plan looks credible. The tasks are well formed. The schedule holds together right up until the demo, when someone says that is not what we meant.
+
+The diamond flattens into a straight line from assumption to delivery, and the cost surfaces later when the wrong problem turns out to have been solved very well.
+
+---
+
+## Final Thought
+
+The model does not remove the discomfort of not knowing. It gives that discomfort a structure and an endpoint. Diverge, then define. Diverge again, then deliver. The not knowing becomes a phase you pass through with purpose.
+
+So the line and the model travel together for me now. His sentence gives a room permission to begin before they are certain. The diamond gives them a way to spend that uncertainty well. You will not know everything at the start. You were never going to. What matters is what you do with the space between not knowing and knowing.
+
+- Jeff
