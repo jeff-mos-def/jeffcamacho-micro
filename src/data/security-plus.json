@@ -1,0 +1,263 @@
+[
+  {
+    "id": "domain-1",
+    "status": "completed",
+    "track": "Study",
+    "sortKey": "2026-06-01",
+    "end": "2026-07-01",
+    "title": "General Security Concepts",
+    "summary": "Foundational vocabulary for SY0-701, covering control types, the CIA triad, zero trust, and change management.",
+    "details": [
+      "Compared preventive, deterrent, detective, corrective, compensating, and directive controls across technical, managerial, operational, and physical categories",
+      "Mapped zero trust control plane and data plane components including policy engine, policy administrator, and policy enforcement point",
+      "Documented AAA, gap analysis, and the role of change management in security posture",
+      "Built a lab PKI with a private CA and issued certificates to Caddy on forge"
+    ],
+    "tags": [
+      "SY0-701",
+      "Foundations",
+      "Zero Trust",
+      "PKI"
+    ]
+  },
+  {
+    "id": "domain-2",
+    "status": "completed",
+    "track": "Study",
+    "sortKey": "2026-07-01",
+    "end": "2026-08-01",
+    "title": "Threats, Vulnerabilities, and Mitigations",
+    "summary": "Threat actor profiles, attack surfaces, and the mitigation techniques that reduce exposure on a two-host lab.",
+    "details": [
+      "Classified threat actors by motivation, resources, and internal versus external origin",
+      "Worked through social engineering vectors including phishing, pretexting, watering hole, and business email compromise",
+      "Reviewed application attacks such as injection, buffer overflow, replay, and privilege escalation",
+      "Deployed CrowdSec on both nodes and reviewed decisions against live SSH and HTTP probe traffic",
+      "Ran a Nessus Essentials scan against the lab subnet and triaged findings by CVSS score"
+    ],
+    "tags": [
+      "SY0-701",
+      "Threat Actors",
+      "CrowdSec",
+      "Vulnerability Scanning"
+    ]
+  },
+  {
+    "id": "domain-3",
+    "status": "in-progress",
+    "track": "Study",
+    "sortKey": "2026-08-01",
+    "end": "2026-09-01",
+    "title": "Security Architecture",
+    "summary": "Architecture models, secure network design, and data protection strategies applied to the forge and watch hosts.",
+    "details": [
+      "Compared on premises, cloud, hybrid, IaC, serverless, and microservice architecture tradeoffs",
+      "Segmented the lab network into VLANs and enforced east west rules at the host firewall",
+      "Configured Pi-hole with upstream DNS over TLS and documented the resolution path",
+      "Implemented full disk encryption and evaluated tokenization versus masking for the Directus datastore",
+      "Drafted a resilience plan covering RTO, RPO, MTTR, and Borgmatic backup verification"
+    ],
+    "tags": [
+      "SY0-701",
+      "Architecture",
+      "Segmentation",
+      "Resilience"
+    ]
+  },
+  {
+    "id": "domain-4",
+    "status": "planned",
+    "track": "Study",
+    "sortKey": "2026-09-01",
+    "end": "2026-10-01",
+    "title": "Security Operations",
+    "summary": "The largest exam domain, covering hardening, monitoring, incident response, and identity management.",
+    "details": [
+      "Apply CIS Benchmark hardening to Ubuntu Server and record the delta from the default build",
+      "Centralize logs with Alloy and Loki, then build Grafana panels for authentication failures and firewall drops",
+      "Practice the incident response lifecycle from preparation through lessons learned using a simulated compromise",
+      "Configure SSO, MFA, and least privilege role assignments across lab services",
+      "Write automation scripts for user provisioning and deprovisioning"
+    ],
+    "tags": [
+      "SY0-701",
+      "SecOps",
+      "Loki",
+      "Grafana",
+      "Incident Response"
+    ]
+  },
+  {
+    "id": "domain-5",
+    "status": "planned",
+    "track": "Study",
+    "sortKey": "2026-10-01",
+    "end": "2026-11-01",
+    "title": "Security Program Management and Oversight",
+    "summary": "Governance, risk, third party assessment, and compliance reporting concepts.",
+    "details": [
+      "Build a risk register with likelihood, impact, risk appetite, and treatment decisions",
+      "Compare quantitative risk formulas including SLE, ARO, and ALE against qualitative heat maps",
+      "Review vendor assessment artifacts such as SLA, MOU, MSA, and BPA",
+      "Summarize NIST CSF, ISO 27001, and RMF alignment for a federal delivery context",
+      "Outline a security awareness training plan with phishing campaign metrics"
+    ],
+    "tags": [
+      "SY0-701",
+      "GRC",
+      "Risk Management",
+      "Compliance"
+    ]
+  },
+  {
+    "id": "exam-prep",
+    "status": "planned",
+    "track": "Study",
+    "sortKey": "2026-11-01",
+    "end": "2026-12-01",
+    "title": "Exam Preparation and Performance Based Questions",
+    "summary": "Final review cycle focused on timed practice exams and performance based question drills.",
+    "details": [
+      "Complete three full length timed practice exams with a target score above 85 percent",
+      "Drill port numbers, protocol pairings, and cryptographic algorithm selection from flashcards",
+      "Work performance based questions on firewall rule ordering and log analysis",
+      "Rebuild weak area notes into a single page reference sheet",
+      "Schedule the SY0-701 exam at a Pearson VUE testing center"
+    ],
+    "tags": [
+      "SY0-701",
+      "Practice Exams",
+      "PBQ",
+      "Certification"
+    ]
+  },
+  {
+    "id": "practice-baseline",
+    "status": "completed",
+    "track": "Exam",
+    "sortKey": "2026-06-18",
+    "end": "2026-07-10",
+    "title": "Baseline Practice Exam",
+    "summary": "Cold diagnostic run taken before formal study to establish a starting score and identify weak domains.",
+    "details": [
+      "Scored 612 of 900 on an untimed diagnostic covering all five domains",
+      "Strongest performance in Security Operations, weakest in Security Program Management and Oversight",
+      "Missed the majority of questions involving cryptographic algorithm selection",
+      "Logged every missed question into a spreadsheet tagged by exam objective"
+    ],
+    "tags": [
+      "SY0-701",
+      "Practice Exam",
+      "Diagnostic",
+      "Baseline"
+    ]
+  },
+  {
+    "id": "practice-midpoint",
+    "status": "in-progress",
+    "track": "Exam",
+    "sortKey": "2026-07-20",
+    "end": "2026-08-12",
+    "title": "Domain 1 to 3 Checkpoint Exam",
+    "summary": "Timed sectional exam limited to the first three domains to verify retention before moving into Security Operations.",
+    "details": [
+      "90 minute timed run restricted to General Security Concepts, Threats, and Architecture",
+      "Target threshold of 80 percent per domain before advancing",
+      "Review incorrect answers against lab notes rather than course video rewatch",
+      "Rebuild flashcard deck from missed items only"
+    ],
+    "tags": [
+      "SY0-701",
+      "Practice Exam",
+      "Checkpoint",
+      "Timed"
+    ]
+  },
+  {
+    "id": "practice-pbq",
+    "status": "planned",
+    "track": "Exam",
+    "sortKey": "2026-08-22",
+    "end": "2026-09-14",
+    "title": "Performance Based Question Drills",
+    "summary": "Focused simulation work on the interactive question formats that open the real exam.",
+    "details": [
+      "Practice firewall rule ordering and ACL construction simulations",
+      "Work log correlation exercises identifying attack type from raw entries",
+      "Complete drag and drop control mapping across the four control categories",
+      "Time each PBQ set to under four minutes per question",
+      "Repeat any drill scored below 90 percent after a 48 hour gap"
+    ],
+    "tags": [
+      "SY0-701",
+      "PBQ",
+      "Simulation",
+      "Drills"
+    ]
+  },
+  {
+    "id": "practice-full-1",
+    "status": "planned",
+    "track": "Exam",
+    "sortKey": "2026-09-24",
+    "end": "2026-10-18",
+    "title": "Full Length Practice Exam Series",
+    "summary": "Three full length timed exams under real testing conditions to confirm readiness and pacing.",
+    "details": [
+      "Run each exam at 90 minutes with 90 questions and no reference material",
+      "Maintain a scoring log to confirm an upward trend across all three attempts",
+      "Require 85 percent or better on the final attempt before scheduling the real exam",
+      "Simulate testing center conditions with a cleared desk and no interruptions",
+      "Record average time per question to identify pacing risk"
+    ],
+    "tags": [
+      "SY0-701",
+      "Practice Exam",
+      "Timed",
+      "Readiness"
+    ]
+  },
+  {
+    "id": "exam-schedule",
+    "status": "planned",
+    "track": "Exam",
+    "sortKey": "2026-10-26",
+    "end": "2026-11-08",
+    "title": "Schedule SY0-701 Exam",
+    "summary": "Voucher purchase and seat reservation at a local Pearson VUE testing center.",
+    "details": [
+      "Purchase the CompTIA exam voucher and apply any available bundle discount",
+      "Reserve a morning seat at a San Antonio Pearson VUE testing center",
+      "Confirm identification requirements and testing center policies",
+      "Block the two days prior for final review only"
+    ],
+    "tags": [
+      "SY0-701",
+      "Scheduling",
+      "Pearson VUE",
+      "Logistics"
+    ]
+  },
+  {
+    "id": "exam-attempt",
+    "status": "planned",
+    "track": "Exam",
+    "sortKey": "2026-12-08",
+    "end": "2026-12-22",
+    "title": "CompTIA Security+ SY0-701 Exam",
+    "summary": "The certification attempt itself, with a passing threshold of 750 on a scale of 100 to 900.",
+    "details": [
+      "Arrive 30 minutes early with two forms of identification",
+      "Clear performance based questions first, then flag and return as time allows",
+      "Reserve the final 10 minutes for flagged question review",
+      "Record the score report and add the certification to resume and LinkedIn on pass",
+      "Log the three year continuing education renewal date"
+    ],
+    "tags": [
+      "SY0-701",
+      "Certification",
+      "Exam Day",
+      "Milestone"
+    ]
+  }
+]

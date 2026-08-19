@@ -1,0 +1,114 @@
+---
+import RoadmapCard from './RoadmapCard.astro';
+import { STATUSES, statusVar } from '../types/roadmap';
+import type { RoadmapItem } from '../types/roadmap';
+
+interface Props {
+  items: RoadmapItem[];
+}
+
+const { items } = Astro.props;
+
+// Columns come straight from STATUSES, so adding a status adds a column.
+const columns = STATUSES.map((status) => ({
+  status,
+  items: items.filter((item) => item.status === status.id),
+}));
+---
+
+<div class="board" style={`--column-count:${columns.length}`}>
+  {columns.map((column) => (
+    <section
+      class="board__col"
+      style={statusVar(column.status.id)}
+      aria-label={column.status.columnHeading}
+    >
+      <div class="board__head">
+        <h3 class="board__heading">
+          {column.status.columnHeading}
+          <span class="board__count">{column.items.length}</span>
+        </h3>
+        {column.status.columnNote && (
+          <p class="board__note">{column.status.columnNote}</p>
+        )}
+      </div>
+
+      <div class="board__stack">
+        {column.items.length > 0 ? (
+          column.items.map((item) => <RoadmapCard item={item} />)
+        ) : (
+          <p class="board__empty">Nothing here yet.</p>
+        )}
+      </div>
+    </section>
+  ))}
+</div>
+
+<style>
+  .board {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+    align-items: start;
+  }
+
+  /* Responds to the width available to the component, not the viewport,
+     so it stacks correctly inside a narrow prose column. */
+  @container roadmap (min-width: 52rem) {
+    .board {
+      grid-template-columns: repeat(var(--column-count, 3), minmax(0, 1fr));
+    }
+  }
+
+  .board__col {
+    display: flex;
+    flex-direction: column;
+    gap: 0.9rem;
+  }
+
+  .board__head {
+    padding-bottom: 0.6rem;
+    border-bottom: 2px solid var(--status-color, var(--hr-line));
+  }
+
+  .board__heading {
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--status-color);
+  }
+
+  .board__count {
+    font-family: var(--hr-font-mono);
+    font-size: 0.7rem;
+    padding: 0.05rem 0.45rem;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--status-color) 15%, transparent);
+  }
+
+  .board__note {
+    margin: 0.3rem 0 0;
+    font-size: 0.78rem;
+    color: var(--hr-muted);
+  }
+
+  .board__stack {
+    display: flex;
+    flex-direction: column;
+    gap: 0.9rem;
+  }
+
+  .board__empty {
+    margin: 0;
+    padding: 1rem;
+    border: 1px dashed var(--hr-line);
+    border-radius: 10px;
+    font-size: 0.82rem;
+    color: var(--hr-muted);
+  }
+</style>

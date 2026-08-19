@@ -1,0 +1,222 @@
+---
+import defaultItems from '../data/roadmap.json';
+import RoadmapBoard from './RoadmapBoard.astro';
+import RoadmapTimeline from './RoadmapTimeline.astro';
+import { sortItems } from '../types/roadmap';
+import type { RoadmapItem } from '../types/roadmap';
+
+interface Props {
+  title: string;
+  intro?: string;
+  /** Defaults to src/data/roadmap.json. Pass a different set to reuse. */
+  items?: RoadmapItem[];
+  /** Namespaces the saved view mode. Give each instance its own. */
+  storageKey?: string;
+}
+
+const {
+  title,
+  intro,
+  items: providedItems,
+  storageKey = 'roadmap:view',
+} = Astro.props;
+
+const items = sortItems((providedItems ?? defaultItems) as RoadmapItem[]);
+---
+
+<section class="roadmap not-prose" data-roadmap data-view="timeline" data-storage-key={storageKey}>
+  <div class="hr__header">
+    <div>
+      <h2 class="hr__title">{title}</h2>
+      {intro && <p class="hr__intro">{intro}</p>}
+    </div>
+
+    <div class="hr__switch" role="group" aria-label="View mode" hidden data-switch>
+      <button type="button" data-mode="timeline" aria-pressed="true">Timeline</button>
+      <button type="button" data-mode="board" aria-pressed="false">Board</button>
+    </div>
+  </div>
+
+  <div class="hr__view hr__view--timeline" data-view-panel="timeline">
+    <RoadmapTimeline items={items} />
+  </div>
+
+  <div class="hr__view hr__view--board" data-view-panel="board" hidden>
+    <RoadmapBoard items={items} />
+  </div>
+
+</section>
+
+<style>
+  .roadmap {
+    /* Tokens inherit down into the child components. */
+    --hr-bg: #0d1117;
+    --hr-surface: #161b22;
+    --hr-line: #2b333d;
+    --hr-text: #e6edf3;
+    --hr-muted: #8b959f;
+    --hr-accent: #58a6ff;
+    --hr-tag-bg: #1f2630;
+    --hr-tag-text: #b7c2cd;
+    --hr-completed: #3fb950;
+    --hr-progress: #d29922;
+    --hr-planned: #8957e5;
+    --hr-font-mono: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace;
+
+    /* Establishes the query container the board view measures against. */
+    container-type: inline-size;
+    container-name: roadmap;
+
+    display: flex;
+    flex-direction: column;
+    gap: 1.75rem;
+    padding: 1.75rem;
+    border: 1px solid var(--hr-line);
+    border-radius: 14px;
+    background: var(--hr-bg);
+    color: var(--hr-text);
+
+    /* Break out of a narrow prose column up to a capped width, centred.
+       Falls back to plain full width where max() on margins misbehaves. */
+    width: min(72rem, 100vw - 2rem);
+    max-width: 100vw;
+    margin-inline: calc(50% - min(36rem, 50vw - 1rem));
+  }
+
+  /* Only box-sizing is forced globally. Everything else is left to each
+     component's own scoped styles, which `not-prose` keeps intact. */
+  .roadmap :global(*) {
+    box-sizing: border-box;
+  }
+
+  .hr__header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .hr__title {
+    margin: 0;
+    font-size: 1.35rem;
+    font-weight: 650;
+    letter-spacing: -0.01em;
+  }
+
+  .hr__intro {
+    margin: 0.4rem 0 0;
+    max-width: 52ch;
+    font-size: 0.9rem;
+    line-height: 1.55;
+    color: var(--hr-muted);
+  }
+
+  .hr__switch {
+    display: inline-flex;
+    padding: 3px;
+    border: 1px solid var(--hr-line);
+    border-radius: 10px;
+    background: var(--hr-surface);
+  }
+
+  .hr__switch button {
+    font: inherit;
+    font-size: 0.78rem;
+    padding: 0.4rem 0.85rem;
+    border: 0;
+    border-radius: 7px;
+    background: transparent;
+    color: var(--hr-muted);
+    cursor: pointer;
+  }
+
+  .hr__switch button[aria-pressed='true'] {
+    background: var(--hr-tag-bg);
+    color: var(--hr-text);
+  }
+
+  .hr__switch button:focus-visible {
+    outline: 2px solid var(--hr-accent);
+    outline-offset: 2px;
+  }
+
+  .hr__view[hidden] {
+    display: none;
+  }
+</style>
+
+<script>
+  function initRoadmap(root: HTMLElement) {
+    const storageKey = root.dataset.storageKey || 'roadmap:view';
+    const settings = root.querySelector<HTMLElement>('[data-switch]');
+    const buttons = Array.from(root.querySelectorAll<HTMLButtonElement>('[data-mode]'));
+    const panels = Array.from(root.querySelectorAll<HTMLElement>('[data-view-panel]'));
+    const modes = buttons.map((btn) => btn.dataset.mode).filter(Boolean) as string[];
+    if (!settings || buttons.length === 0) return;
+
+    // The switch is hidden in the markup so the no-JS fallback lands on the
+    // timeline view, which reads fine without any scripting.
+    settings.hidden = false;
+
+    function setView(mode: string) {
+      root.dataset.view = mode;
+      buttons.forEach((btn) => {
+        btn.setAttribute('aria-pressed', String(btn.dataset.mode === mode));
+      });
+      panels.forEach((panel) => {
+        panel.hidden = panel.dataset.viewPanel !== mode;
+      });
+    }
+
+    buttons.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const mode = btn.dataset.mode;
+        if (!mode) return;
+        setView(mode);
+        try {
+          localStorage.setItem(storageKey, mode);
+        } catch {
+          /* storage blocked, mode just won't persist */
+        }
+      });
+    });
+
+    let saved: string | null = null;
+    try {
+      saved = localStorage.getItem(storageKey);
+    } catch {
+      saved = null;
+    }
+    if (saved && modes.includes(saved)) setView(saved);
+  }
+
+
+  /* Runs on DOM ready and isolates each instance, so an unrelated script
+     throwing elsewhere on the page cannot stop this component from
+     initialising. */
+  function bootRoadmaps() {
+    document.querySelectorAll<HTMLElement>('[data-roadmap]').forEach((el) => {
+      // Both listeners can fire for the same element on a first load, so
+      // each node is only ever wired up once.
+      if (el.dataset.initialised === 'true') return;
+      el.dataset.initialised = 'true';
+      try {
+        initRoadmap(el);
+      } catch (error) {
+        console.error('Roadmap failed to initialise', error);
+      }
+    });
+  }
+
+  /* `astro:page-load` fires on first load and after every view transition,
+     which a plain DOMContentLoaded listener misses because the document is
+     never reloaded during a client-side navigation. */
+  document.addEventListener('astro:page-load', bootRoadmaps);
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', bootRoadmaps);
+  } else {
+    bootRoadmaps();
+  }
+</script>

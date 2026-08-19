@@ -2,7 +2,7 @@
 company: "ManTech"
 role: "Release Train Engineer / CNO Agile Manager"
 dateStart: 2024-07-02
-dateEnd: Current
+dateEnd: 2026-06-24
 type: work
 ---
 

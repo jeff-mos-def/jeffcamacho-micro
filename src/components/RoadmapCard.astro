@@ -1,0 +1,124 @@
+---
+import { dateLabel, getStatus, statusVar } from '../types/roadmap';
+import type { RoadmapItem } from '../types/roadmap';
+
+interface Props {
+  item: RoadmapItem;
+}
+
+const { item } = Astro.props;
+const status = getStatus(item.status);
+---
+
+<article class="card" style={statusVar(item.status)}>
+  <div class="card__head">
+    <span class="card__date">{dateLabel(item)}</span>
+    <span class="card__badge">{status.label}</span>
+  </div>
+
+  <h3 class="card__title">{item.title}</h3>
+  <p class="card__summary">{item.summary}</p>
+
+  {item.details && item.details.length > 0 && (
+    <ul class="card__details">
+      {item.details.map((detail) => <li>{detail}</li>)}
+    </ul>
+  )}
+
+  {item.tags && item.tags.length > 0 && (
+    <ul class="card__tags">
+      {item.tags.map((tag) => <li class="tag">{tag}</li>)}
+    </ul>
+  )}
+</article>
+
+<style>
+  .card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    padding: 1.25rem;
+    border: 1px solid var(--hr-line);
+    border-left: 3px solid var(--status-color, var(--hr-line));
+    border-radius: 10px;
+    background: var(--hr-surface);
+    color: var(--hr-text);
+  }
+
+  .card__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+  }
+
+  .card__date {
+    font-family: var(--hr-font-mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--hr-muted);
+  }
+
+  .card__badge {
+    font-family: var(--hr-font-mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 0.2rem 0.55rem;
+    border-radius: 999px;
+    color: var(--status-color);
+    border: 1px solid color-mix(in srgb, var(--status-color) 45%, transparent);
+    background: color-mix(in srgb, var(--status-color) 12%, transparent);
+    white-space: nowrap;
+  }
+
+  .card__title {
+    margin: 0;
+    font-size: 1.05rem;
+    line-height: 1.3;
+    font-weight: 600;
+  }
+
+  .card__summary {
+    margin: 0;
+    font-size: 0.9rem;
+    line-height: 1.55;
+    color: var(--hr-muted);
+  }
+
+  .card__details {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    font-family: var(--hr-font-mono);
+    font-size: 0.78rem;
+    color: var(--hr-text);
+  }
+
+  .card__details li::before {
+    content: '\00b7 ';
+    color: var(--hr-muted);
+  }
+
+  .card__tags {
+    margin: 0.25rem 0 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+
+  .tag {
+    font-size: 0.72rem;
+    padding: 0.2rem 0.6rem;
+    border-radius: 999px;
+    background: var(--hr-tag-bg);
+    color: var(--hr-tag-text);
+    border: 1px solid var(--hr-line);
+  }
+</style>

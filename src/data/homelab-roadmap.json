@@ -1,0 +1,50 @@
+[
+  {
+    "id": "v1-conception",
+    "status": "completed",
+    "track": "Compute",
+    "sortKey": "2023-01",
+    "end": "2024-06",
+    "displayDate": "Jan 2023",
+    "title": "Initial Conception: Raspberry Pi Setup",
+    "summary": "Started with a single Raspberry Pi 4 running Pi-hole and Docker.",
+    "specs": ["Raspberry Pi 4 4GB", "64GB SD Card"],
+    "tags": ["Docker", "Pi-hole", "Networking"]
+  },
+  {
+    "id": "v2-storage",
+    "status": "completed",
+    "track": "Storage",
+    "sortKey": "2024-06",
+    "end": "2026-07",
+    "displayDate": "Jun 2024",
+    "title": "First Dedicated NAS Build",
+    "summary": "Upgraded to custom TrueNAS SCALE build for centralized storage.",
+    "specs": ["i3-12100", "32GB ECC RAM", "4x 12TB ZFS RAIDZ2"],
+    "tags": ["Storage", "TrueNAS", "ZFS"]
+  },
+  {
+    "id": "v3-k8s-migration",
+    "status": "in-progress",
+    "track": "Platform",
+    "sortKey": "2026-07",
+    "end": "2026-10",
+    "displayDate": "Q3 2026",
+    "title": "Talos Linux Kubernetes Cluster",
+    "summary": "Migrating core services from standalone Docker Compose to a 3-node HA cluster.",
+    "specs": ["3x Minisforum Mini PCs", "10GbE Switch"],
+    "tags": ["Kubernetes", "Talos", "HA"]
+  },
+  {
+    "id": "v4-offsite-backup",
+    "status": "planned",
+    "track": "Operations",
+    "sortKey": "2026-10",
+    "end": "2027-01",
+    "displayDate": "Q4 2026",
+    "title": "Automated Offsite Backups",
+    "summary": "Implementing encrypted 3-2-1 backup pipeline via BorgBackup.",
+    "specs": ["Hetzner Storage Box"],
+    "tags": ["Security", "Backups", "Automation"]
+  }
+]

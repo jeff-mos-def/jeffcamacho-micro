@@ -1,0 +1,678 @@
+---
+import RoadmapCard from './RoadmapCard.astro';
+import { DEFAULT_TRACK, dateLabel, getStatus, statusVar } from '../types/roadmap';
+import type { RoadmapItem } from '../types/roadmap';
+
+interface Props {
+  items: RoadmapItem[];
+}
+
+const { items } = Astro.props;
+
+const DAY = 86400000;
+
+/**
+ * Accepts `YYYY-MM` or `YYYY-MM-DD` and returns a day index, so a bar that
+ * starts on the 18th sits three weeks right of one that starts on the 1st.
+ * A bare `YYYY-MM` is read as the first of that month.
+ */
+function toDays(key: string): number {
+  const [year, month, day] = key.split('-').map(Number);
+  return Date.UTC(year, (month || 1) - 1, day || 1) / DAY;
+}
+
+function startOfMonth(dayIndex: number): number {
+  const d = new Date(dayIndex * DAY);
+  return Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), 1) / DAY;
+}
+
+function addMonths(dayIndex: number, count: number): number {
+  const d = new Date(dayIndex * DAY);
+  return Date.UTC(d.getUTCFullYear(), d.getUTCMonth() + count, 1) / DAY;
+}
+
+const placed = items.map((item) => {
+  const start = toDays(item.sortKey);
+  // No end date means a point milestone, drawn one month wide.
+  const end = item.end ? toDays(item.end) : addMonths(startOfMonth(start), 1);
+  return { item, start, end: Math.max(end, start + 7) };
+});
+
+// Snap the domain to month boundaries. Padding to whole years wasted most
+// of the axis on short roadmaps.
+const domainStart = startOfMonth(Math.min(...placed.map((p) => p.start)));
+const domainEnd = addMonths(startOfMonth(Math.max(...placed.map((p) => p.end))), 1);
+const span = domainEnd - domainStart;
+
+const pct = (value: number) => ((value - domainStart) / span) * 100;
+
+const monthSpan = Math.max(1, Math.round(span / 30.44));
+
+/**
+ * All three tick densities are generated at build time and switched with
+ * CSS as the zoom changes, which keeps date maths out of the browser.
+ */
+type Granularity = 'month' | 'quarter' | 'year';
+const STEPS: Record<Granularity, number> = { month: 1, quarter: 3, year: 12 };
+
+function buildTicks(granularity: Granularity) {
+  const step = STEPS[granularity];
+  const out: { label: string; left: number }[] = [];
+
+  for (let cursor = domainStart; cursor < domainEnd; cursor = addMonths(cursor, step)) {
+    const d = new Date(cursor * DAY);
+    const month = d.getUTCMonth();
+    const year = d.getUTCFullYear();
+    const first = cursor === domainStart;
+
+    let label: string;
+    if (granularity === 'year') {
+      label = String(year);
+    } else if (granularity === 'quarter') {
+      // Year is only repeated when it changes, to keep the axis uncluttered.
+      label = `Q${Math.floor(month / 3) + 1}${month === 0 || first ? ` ${year}` : ''}`;
+    } else {
+      const name = d.toLocaleString('en-US', { month: 'short', timeZone: 'UTC' });
+      label = month === 0 || first ? `${name} ${year}` : name;
+    }
+
+    out.push({ label, left: pct(cursor) });
+  }
+  return out;
+}
+
+const tickSets: { granularity: Granularity; ticks: ReturnType<typeof buildTicks> }[] = [
+  { granularity: 'month', ticks: buildTicks('month') },
+  { granularity: 'quarter', ticks: buildTicks('quarter') },
+  { granularity: 'year', ticks: buildTicks('year') },
+];
+
+/**
+ * Minor marks, one per day. Only rendered when the roadmap is short enough
+ * that the DOM cost is reasonable; longer spans rely on the labelled ticks.
+ * CSS keeps them hidden until the zoom level gives each day real width.
+ */
+const DAY_MARK_LIMIT = 1200;
+const dayCount = Math.round(span);
+const dayMarks =
+  dayCount <= DAY_MARK_LIMIT
+    ? Array.from({ length: dayCount }, (_, i) => pct(domainStart + i))
+    : [];
+
+const nowDays = Math.floor(Date.now() / DAY);
+const nowInDomain = nowDays >= domainStart && nowDays <= domainEnd;
+const nowLeft = pct(nowDays);
+
+// Group into swimlanes, preserving the order tracks first appear.
+const trackNames: string[] = [];
+for (const p of placed) {
+  const track = p.item.track ?? DEFAULT_TRACK;
+  if (!trackNames.includes(track)) trackNames.push(track);
+}
+
+// Within a lane, pack overlapping bars onto separate rows.
+const lanes = trackNames.map((name) => {
+  const laneItems = placed
+    .filter((p) => (p.item.track ?? DEFAULT_TRACK) === name)
+    .sort((a, b) => a.start - b.start);
+
+  const rows: (typeof laneItems)[] = [];
+  for (const entry of laneItems) {
+    const row = rows.find((r) => r[r.length - 1].end <= entry.start);
+    if (row) row.push(entry);
+    else rows.push([entry]);
+  }
+  return { name, rows };
+});
+---
+
+<div class="rm" data-roadmap-chart>
+  <div class="rm__toolbar" hidden data-toolbar>
+    <button type="button" class="rm__zoom-btn" data-zoom-out aria-label="Zoom out">&#8722;</button>
+    <input
+      type="range"
+      class="rm__zoom-range"
+      min="1"
+      max="8"
+      step="0.25"
+      value="1"
+      data-zoom-range
+      aria-label="Timeline zoom"
+    />
+    <button type="button" class="rm__zoom-btn" data-zoom-in aria-label="Zoom in">+</button>
+    <span class="rm__zoom-value" aria-live="polite" data-zoom-value>1.0&#215;</span>
+  </div>
+
+  <div class="rm__scroll" data-scroll tabindex="0">
+    <div
+      class="rm__inner"
+      data-inner
+      data-ticks="month"
+      data-days="off"
+      data-month-span={monthSpan}
+      data-now={nowInDomain ? nowLeft : undefined}
+      style="--zoom:1"
+    >
+      <div class="rm__axis" aria-hidden="true">
+        {dayMarks.length > 0 && (
+          <div class="rm__daymarks" data-daymarks>
+            {dayMarks.map((left) => (
+              <span class="rm__daymark" style={`left:${left}%`}></span>
+            ))}
+          </div>
+        )}
+        <div class="rm__gridlines">
+          {tickSets.map((set) =>
+            set.ticks.map((tick) => (
+              <span
+                class="rm__gridline"
+                data-granularity={set.granularity}
+                style={`left:${tick.left}%`}
+              ></span>
+            ))
+          )}
+          {nowInDomain && <span class="rm__nowline" style={`left:${nowLeft}%`}></span>}
+        </div>
+        <div class="rm__ticks">
+          {tickSets.map((set) =>
+            set.ticks.map((tick) => (
+              <span
+                class="rm__tick"
+                data-granularity={set.granularity}
+                style={`left:${tick.left}%`}
+              >
+                {tick.label}
+              </span>
+            ))
+          )}
+          {nowInDomain && (
+            <span class="rm__nowtick" style={`left:${nowLeft}%`}>Now</span>
+          )}
+        </div>
+      </div>
+
+      {lanes.map((lane) => (
+        <section class="rm__lane" aria-label={lane.name}>
+          <h3 class="rm__lane-name">{lane.name}</h3>
+          <div class="rm__lane-rows">
+            {lane.rows.map((row) => (
+              <div class="rm__row">
+                {row.map(({ item, start, end }) => (
+                  <button
+                    type="button"
+                    class="rm__bar"
+                    data-bar={item.id}
+                    data-provisional={getStatus(item.status).provisional ? 'true' : undefined}
+                    aria-pressed="false"
+                    style={`${statusVar(item.status)}left:${pct(start)}%;width:${((end - start) / span) * 100}%`}
+                    title={`${item.title}, ${dateLabel(item)}, ${getStatus(item.status).label}`}
+                  >
+                    <span class="rm__bar-label">{item.title}</span>
+                  </button>
+                ))}
+              </div>
+            ))}
+          </div>
+        </section>
+      ))}
+    </div>
+  </div>
+
+  <p class="rm__hint">Select a bar for detail.</p>
+
+  <div class="rm__details">
+    {items.map((item) => (
+      <div class="rm__detail" data-detail={item.id} hidden>
+        <RoadmapCard item={item} />
+      </div>
+    ))}
+  </div>
+</div>
+
+<style>
+  .rm {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    /* Lane label gutter, shared by the axis so ticks line up with bars. */
+    --lane-gutter: 7.5rem;
+  }
+
+  .rm__toolbar {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .rm__zoom-btn {
+    font: inherit;
+    font-size: 0.9rem;
+    line-height: 1;
+    width: 1.9rem;
+    height: 1.9rem;
+    border-radius: 6px;
+    border: 1px solid var(--hr-line);
+    background: var(--hr-surface);
+    color: var(--hr-text);
+    cursor: pointer;
+  }
+
+  .rm__zoom-btn:hover:not(:disabled) {
+    border-color: var(--hr-accent);
+    color: var(--hr-accent);
+  }
+
+  .rm__zoom-btn:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+  }
+
+  .rm__zoom-range {
+    flex: 1;
+    max-width: 14rem;
+    accent-color: var(--hr-accent);
+  }
+
+  .rm__zoom-value {
+    font-family: var(--hr-font-mono);
+    font-size: 0.72rem;
+    color: var(--hr-muted);
+    min-width: 3.2ch;
+  }
+
+  .rm__scroll {
+    overflow-x: auto;
+    overflow-y: hidden;
+    scrollbar-width: thin;
+    scrollbar-color: var(--hr-line) transparent;
+  }
+
+  .rm__scroll:focus-visible {
+    outline: 2px solid var(--hr-accent);
+    outline-offset: 3px;
+    border-radius: 8px;
+  }
+
+  /* Only the plotted area is stretched. The lane gutter keeps its width so
+     labels stay legible at every zoom level. */
+  .rm__inner {
+    width: calc(var(--lane-gutter) + (100% - var(--lane-gutter)) * var(--zoom, 1));
+    min-width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+  }
+
+  /* Tick density follows the zoom level, set on the wrapper by script. */
+  .rm__inner[data-ticks='month'] [data-granularity]:not([data-granularity='month']),
+  .rm__inner[data-ticks='quarter'] [data-granularity]:not([data-granularity='quarter']),
+  .rm__inner[data-ticks='year'] [data-granularity]:not([data-granularity='year']) {
+    display: none;
+  }
+
+  /* Day marks sit at the foot of the axis and fade in with zoom, so they
+     read as texture when far out and as a usable scale when close in. */
+  .rm__daymarks {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 0.3rem;
+    opacity: 0;
+    transition: opacity 160ms ease-out;
+    pointer-events: none;
+  }
+
+  .rm__inner[data-days='sparse'] .rm__daymarks {
+    opacity: 0.3;
+  }
+
+  .rm__inner[data-days='dense'] .rm__daymarks {
+    opacity: 0.65;
+  }
+
+  .rm__daymark {
+    position: absolute;
+    bottom: 0;
+    width: 1px;
+    height: 100%;
+    background: var(--hr-line);
+  }
+
+  .rm__inner[data-days='dense'] .rm__daymark {
+    height: 0.45rem;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .rm__daymarks {
+      transition: none;
+    }
+  }
+
+  .rm__axis {
+    position: relative;
+    margin-left: var(--lane-gutter);
+    height: 1.4rem;
+  }
+
+  .rm__ticks {
+    position: relative;
+    height: 100%;
+  }
+
+  .rm__tick,
+  .rm__nowtick {
+    position: absolute;
+    top: 0;
+    transform: translateX(-50%);
+    font-family: var(--hr-font-mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.06em;
+    color: var(--hr-muted);
+    white-space: nowrap;
+  }
+
+  .rm__nowtick {
+    color: var(--hr-accent);
+  }
+
+  /* Gridlines are drawn once and stretched down over every lane. */
+  .rm__gridlines {
+    position: absolute;
+    top: 1.4rem;
+    left: 0;
+    right: 0;
+    height: 0;
+    overflow: visible;
+    z-index: 0;
+  }
+
+  .rm__gridline,
+  .rm__nowline {
+    position: absolute;
+    top: 0;
+    width: 1px;
+    height: var(--rm-chart-height, 0px);
+    background: var(--hr-line);
+  }
+
+  .rm__nowline {
+    background: var(--hr-accent);
+    opacity: 0.55;
+  }
+
+  .rm__lane {
+    position: relative;
+    display: grid;
+    grid-template-columns: var(--lane-gutter) minmax(0, 1fr);
+    align-items: start;
+    gap: 0.5rem;
+    padding: 0.45rem 0;
+    z-index: 1;
+  }
+
+  .rm__lane + .rm__lane {
+    border-top: 1px solid color-mix(in srgb, var(--hr-line) 55%, transparent);
+  }
+
+  /* Pinned so the lane stays identifiable while the chart is panned. */
+  .rm__lane-name {
+    position: sticky;
+    left: 0;
+    z-index: 3;
+    margin: 0;
+    padding: 0.35rem 0.5rem 0.35rem 0;
+    background: var(--hr-bg);
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: var(--hr-muted);
+  }
+
+  .rm__lane-rows {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+  }
+
+  .rm__row {
+    position: relative;
+    height: 2rem;
+  }
+
+  .rm__bar {
+    position: absolute;
+    top: 0;
+    height: 2rem;
+    min-width: 1.5rem;
+    display: flex;
+    align-items: center;
+    padding: 0 0.6rem;
+    border-radius: 6px;
+    border: 1px solid var(--status-color);
+    background: color-mix(in srgb, var(--status-color) 22%, var(--hr-surface));
+    color: var(--hr-text);
+    font: inherit;
+    font-size: 0.78rem;
+    text-align: left;
+    cursor: pointer;
+    overflow: hidden;
+  }
+
+  /* Forecast work reads as provisional, not committed. */
+  .rm__bar[data-provisional='true'] {
+    background: repeating-linear-gradient(
+      45deg,
+      color-mix(in srgb, var(--status-color) 16%, var(--hr-surface)) 0 6px,
+      var(--hr-surface) 6px 12px
+    );
+    border-style: dashed;
+  }
+
+  .rm__bar-label {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .rm__bar:hover,
+  .rm__bar[aria-pressed='true'] {
+    background: color-mix(in srgb, var(--status-color) 38%, var(--hr-surface));
+  }
+
+  .rm__bar:focus-visible {
+    outline: 2px solid var(--hr-accent);
+    outline-offset: 2px;
+  }
+
+  .rm__hint {
+    margin: 0;
+    font-size: 0.75rem;
+    color: var(--hr-muted);
+  }
+
+  .rm__detail[hidden] {
+    display: none;
+  }
+
+  /* Narrow containers cannot carry a time axis. Fall back to a plain
+     chronological list rather than an unreadable one. */
+  @container roadmap (max-width: 46rem) {
+    .rm__scroll,
+    .rm__toolbar,
+    .rm__hint {
+      display: none;
+    }
+
+    .rm__detail[hidden] {
+      display: block;
+    }
+
+    .rm__details {
+      display: flex;
+      flex-direction: column;
+      gap: 0.9rem;
+    }
+  }
+</style>
+
+<script>
+  const MIN_ZOOM = 1;
+  const MAX_ZOOM = 8;
+  const STEP = 0.5;
+
+  function initRoadmapChart(root: HTMLElement) {
+    const bars = Array.from(root.querySelectorAll<HTMLButtonElement>('[data-bar]'));
+    const details = Array.from(root.querySelectorAll<HTMLElement>('[data-detail]'));
+    const scroll = root.querySelector<HTMLElement>('[data-scroll]');
+    const inner = root.querySelector<HTMLElement>('[data-inner]');
+    const toolbar = root.querySelector<HTMLElement>('[data-toolbar]');
+    const range = root.querySelector<HTMLInputElement>('[data-zoom-range]');
+    const zoomIn = root.querySelector<HTMLButtonElement>('[data-zoom-in]');
+    const zoomOut = root.querySelector<HTMLButtonElement>('[data-zoom-out]');
+    const readout = root.querySelector<HTMLElement>('[data-zoom-value]');
+    if (bars.length === 0 || !scroll || !inner) return;
+
+    function select(id: string | null) {
+      bars.forEach((bar) => {
+        bar.setAttribute('aria-pressed', String(bar.dataset.bar === id));
+      });
+      details.forEach((detail) => {
+        detail.hidden = detail.dataset.detail !== id;
+      });
+    }
+
+    bars.forEach((bar) => {
+      bar.addEventListener('click', () => {
+        const id = bar.dataset.bar ?? null;
+        const alreadyOpen = bar.getAttribute('aria-pressed') === 'true';
+        select(alreadyOpen ? null : id);
+      });
+    });
+
+    // Gridlines are absolutely positioned, so their height has to be
+    // measured from the rendered lanes rather than assumed.
+    function sizeGridlines() {
+      const axis = inner!.querySelector<HTMLElement>('.rm__axis');
+      const height = inner!.offsetHeight - (axis?.offsetHeight ?? 0);
+      root.style.setProperty('--rm-chart-height', `${Math.max(height, 0)}px`);
+    }
+
+    /** Width in pixels of the plotted area, excluding the lane gutter. */
+    function plotWidth(): number {
+      const axis = inner!.querySelector<HTMLElement>('.rm__axis');
+      return axis?.offsetWidth ?? inner!.offsetWidth;
+    }
+
+    /**
+     * Zooming keeps the Now marker in the middle of the viewport, so the
+     * point of interest does not slide off screen as resolution increases.
+     * Roadmaps entirely in the past or future have no marker, so those hold
+     * the current centre instead.
+     */
+    function anchorFraction(): number {
+      const now = inner!.dataset.now;
+      if (now !== undefined) return Number(now) / 100;
+
+      const gutter = inner!.offsetWidth - plotWidth();
+      const centre = scroll!.scrollLeft + scroll!.clientWidth / 2 - gutter;
+      return Math.min(Math.max(centre / plotWidth(), 0), 1);
+    }
+
+    function centreOn(fraction: number) {
+      const gutter = inner!.offsetWidth - plotWidth();
+      const target = gutter + fraction * plotWidth();
+      scroll!.scrollLeft = target - scroll!.clientWidth / 2;
+    }
+
+    /** Denser ticks only appear once there is room to read them. */
+    function updateTickDensity() {
+      const months = Number(inner!.dataset.monthSpan) || 1;
+      const pxPerMonth = plotWidth() / months;
+      inner!.dataset.ticks =
+        pxPerMonth >= 44 ? 'month' : pxPerMonth >= 16 ? 'quarter' : 'year';
+
+      // Roughly 30.44 days per month, so this is pixels per day.
+      const pxPerDay = pxPerMonth / 30.44;
+      inner!.dataset.days =
+        pxPerDay >= 6 ? 'dense' : pxPerDay >= 2 ? 'sparse' : 'off';
+    }
+
+    function applyZoom(next: number, recentre = true) {
+      const zoom = Math.min(Math.max(next, MIN_ZOOM), MAX_ZOOM);
+      const fraction = recentre ? anchorFraction() : null;
+
+      inner!.style.setProperty('--zoom', String(zoom));
+      if (range) range.value = String(zoom);
+      if (readout) readout.textContent = `${zoom.toFixed(1)}\u00d7`;
+      if (zoomIn) zoomIn.disabled = zoom >= MAX_ZOOM;
+      if (zoomOut) zoomOut.disabled = zoom <= MIN_ZOOM;
+
+      // Layout has to settle before the new plot width can be measured.
+      requestAnimationFrame(() => {
+        updateTickDensity();
+        sizeGridlines();
+        if (fraction !== null) centreOn(fraction);
+      });
+    }
+
+    function currentZoom(): number {
+      return Number(inner!.style.getPropertyValue('--zoom')) || MIN_ZOOM;
+    }
+
+    // Hidden in the markup so the control never appears without its script.
+    if (toolbar) toolbar.hidden = false;
+
+    range?.addEventListener('input', () => applyZoom(Number(range.value)));
+    zoomIn?.addEventListener('click', () => applyZoom(currentZoom() + STEP));
+    zoomOut?.addEventListener('click', () => applyZoom(currentZoom() - STEP));
+
+    scroll.addEventListener('keydown', (event: KeyboardEvent) => {
+      if (event.key === 'ArrowRight') {
+        event.preventDefault();
+        scroll.scrollLeft += 60;
+      } else if (event.key === 'ArrowLeft') {
+        event.preventDefault();
+        scroll.scrollLeft -= 60;
+      }
+    });
+
+    const observer = new ResizeObserver(() => {
+      updateTickDensity();
+      sizeGridlines();
+    });
+    observer.observe(inner);
+
+    applyZoom(MIN_ZOOM, false);
+    select(null);
+  }
+
+  /* Runs on DOM ready and isolates each instance, so an unrelated script
+     throwing elsewhere on the page cannot stop this component from
+     initialising. */
+  function bootCharts() {
+    document.querySelectorAll<HTMLElement>('[data-roadmap-chart]').forEach((el) => {
+      // Both listeners can fire for the same element on a first load, so
+      // each node is only ever wired up once.
+      if (el.dataset.initialised === 'true') return;
+      el.dataset.initialised = 'true';
+      try {
+        initRoadmapChart(el);
+      } catch (error) {
+        console.error('Roadmap chart failed to initialise', error);
+      }
+    });
+  }
+
+  /* `astro:page-load` fires on first load and after every view transition,
+     which a plain DOMContentLoaded listener misses because the document is
+     never reloaded during a client-side navigation. */
+  document.addEventListener('astro:page-load', bootCharts);
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', bootCharts);
+  } else {
+    bootCharts();
+  }
+</script>

@@ -29,47 +29,52 @@ const renderedEntries = await Promise.all(
     })
 );
 
-const tableOfContents = [
-  { title: "Education", id: "education" },
-  { title: "Certifications", id: "certifications" },
-  { title: "Certificates", id: "certificates" },
-];
+const educationItems = renderedEntries.filter((e) => e.data.type === 'education');
+const certificationItems = renderedEntries.filter((e) => e.data.type === 'certification');
+const certificateItems = renderedEntries.filter((e) => e.data.type === 'certificate');
+
+const sections = [
+  { title: "Education", id: "education", count: educationItems.length },
+  { title: "Certifications", id: "certifications", count: certificationItems.length },
+  { title: "Certificates", id: "certificates", count: certificateItems.length },
+].filter((section) => section.count > 0);
 ---
 
 <Layout title={EDUCATION.TITLE} description={EDUCATION.DESCRIPTION}>
   <Container>
-    {/* Table of Contents */}
-    <details open class="animate rounded-lg border border-black/15 dark:border-white/20">
-      <summary class="cursor-pointer rounded-t-lg px-3 py-1.5 font-medium transition-colors hover:bg-black/5 dark:hover:bg-white/5 bg-black/5 dark:bg-white/5">
-        Table of Contents
-      </summary>
-      <nav>
-        <ul class="py-3">
-          {tableOfContents.map((item) => (
-            <li class="list-inside list-disc px-6 py-1.5 text-sm">
-              <a href={`#${item.id}`} target="_self" class="inline-block decoration-black/30 dark:decoration-white/30 hover:decoration-black/50 focus-visible:decoration-black/50 dark:hover:decoration-white/50 dark:focus-visible:decoration-white/50 text-current hover:text-black focus-visible:text-black dark:hover:text-white dark:focus-visible:text-white transition-colors duration-300 ease-in-out underline underline-offset-[3px]">
-                {item.title}
-              </a>
-            </li>
-          ))}
-        </ul>
-      </nav>
-    </details>
+    <div class="relative w-full">
 
-    <aside data-pagefind-ignore>
-      <br/><br/>
-      {/* Divider */}
-      <hr class="border-t border-zinc-200 dark:border-zinc-700" />
-      <br/><br/>
-      {/* Education Section */}
-      <div id="education" class="space-y-6">
-        <h2 class="animate text-lg font-semibold text-zinc-800 dark:text-zinc-200 underline underline-offset-4">
-          Education
-        </h2>
-        <ul class="animate not-prose flex flex-col gap-8">
-          {renderedEntries
-            .filter(entry => entry.data.type === 'education')
-            .map(entry => (
+      <aside class="animate hidden lg:block lg:absolute lg:top-0 lg:bottom-0 lg:-left-60 lg:w-48" data-pagefind-ignore>
+        <nav class="lg:sticky lg:top-24 h-fit space-y-2 pr-4">
+          <h2 class="text-xs font-bold uppercase tracking-wider text-neutral-500 dark:text-neutral-500 mb-4">
+            Sections
+          </h2>
+          <ul class="space-y-1.5 pl-3 border-l border-neutral-200 dark:border-neutral-800">
+            {sections.map((section) => (
+              <li>
+                <a
+                  href={`#${section.id}`}
+                  class="flex items-center justify-between gap-2 text-sm text-neutral-700 dark:text-neutral-300 hover:text-blue-500 dark:hover:text-blue-400 transition-colors"
+                >
+                  <span class="truncate">{section.title}</span>
+                  <span class="text-xs tabular-nums text-neutral-500 dark:text-neutral-500">
+                    {section.count}
+                  </span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </nav>
+      </aside>
+
+      <aside data-pagefind-ignore>
+        {/* Education Section */}
+        <div id="education" class="space-y-6 scroll-mt-24">
+          <h2 class="animate text-lg font-semibold text-zinc-800 dark:text-zinc-200 underline underline-offset-4">
+            Education
+          </h2>
+          <ul class="animate not-prose flex flex-col gap-8">
+            {educationItems.map(entry => (
               <li class="space-y-2">
                 {entry.data.dateStart && (
                   <div class="text-sm text-zinc-500 dark:text-zinc-400">
@@ -88,21 +93,19 @@ const tableOfContents = [
                 </div>
               </li>
             ))}
-        </ul>
-      </div>
-      <br/><br/>
-      {/* Divider */}
-      <hr class="border-t border-zinc-200 dark:border-zinc-700" />
-      <br/><br/>
-      {/* Certifications Section */}
-      <div id="certifications" class="space-y-6">
-        <h2 class="animate text-lg font-semibold text-zinc-800 dark:text-zinc-200 underline underline-offset-4">
-          Certifications
-        </h2>
-        <ul class="animate not-prose flex flex-col gap-8">
-          {renderedEntries
-            .filter(entry => entry.data.type === 'certification')
-            .map(entry => (
+          </ul>
+        </div>
+        <br/><br/>
+        {/* Divider */}
+        <hr class="border-t border-zinc-200 dark:border-zinc-700" />
+        <br/><br/>
+        {/* Certifications Section */}
+        <div id="certifications" class="space-y-6 scroll-mt-24">
+          <h2 class="animate text-lg font-semibold text-zinc-800 dark:text-zinc-200 underline underline-offset-4">
+            Certifications
+          </h2>
+          <ul class="animate not-prose flex flex-col gap-8">
+            {certificationItems.map(entry => (
               <li class="space-y-2">
                 <div class="text-lg text-zinc-800 dark:text-zinc-100">{entry.data.institution}</div>
                 <div class="text-zinc-500 dark:text-zinc-400">{entry.data.degree}</div>
@@ -111,21 +114,19 @@ const tableOfContents = [
                 </div>
               </li>
             ))}
-        </ul>
-      </div>
-      <br/><br/>
-      {/* Divider */}
-      <hr class="border-t border-zinc-200 dark:border-zinc-700" />
-      <br/><br/>
-      {/* Certificates Section */}
-      <div id="certificates" class="space-y-6">
-        <h2 class="animate text-lg font-semibold text-zinc-800 dark:text-zinc-200 underline underline-offset-4">
-          Certificates
-        </h2>
-        <ul class="animate not-prose flex flex-col gap-8">
-          {renderedEntries
-            .filter(entry => entry.data.type === 'certificate')
-            .map(entry => (
+          </ul>
+        </div>
+        <br/><br/>
+        {/* Divider */}
+        <hr class="border-t border-zinc-200 dark:border-zinc-700" />
+        <br/><br/>
+        {/* Certificates Section */}
+        <div id="certificates" class="space-y-6 scroll-mt-24">
+          <h2 class="animate text-lg font-semibold text-zinc-800 dark:text-zinc-200 underline underline-offset-4">
+            Certificates
+          </h2>
+          <ul class="animate not-prose flex flex-col gap-8">
+            {certificateItems.map(entry => (
               <li class="space-y-2">
                 <div class="text-lg text-zinc-800 dark:text-zinc-100">{entry.data.institution}</div>
                 <div class="text-zinc-500 dark:text-zinc-400">{entry.data.degree}</div>
@@ -134,8 +135,10 @@ const tableOfContents = [
                 </div>
               </li>
             ))}
-        </ul>
-      </div>
-    </aside>
+          </ul>
+        </div>
+      </aside>
+
+    </div>
   </Container>
 </Layout>

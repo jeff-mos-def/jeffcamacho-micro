@@ -25,6 +25,21 @@ const groupedPosts = posts.reduce((acc, post) => {
 const sortedYears = Object.entries(groupedPosts).sort(
   ([yearA], [yearB]) => Number(yearB) - Number(yearA)
 );
+
+// 4. Build tag counts across all published posts
+const tagCounts = new Map<string, number>();
+for (const post of posts) {
+  for (const tag of post.data.tags ?? []) {
+    tagCounts.set(tag, (tagCounts.get(tag) ?? 0) + 1);
+  }
+}
+const sortedTags = Array.from(tagCounts.entries()).sort(
+  ([tagA, countA], [tagB, countB]) =>
+    countB - countA ||
+    tagA.localeCompare(tagB, undefined, { sensitivity: "base" })
+);
+const VISIBLE_TAG_LIMIT = 10;
+const hiddenTagCount = Math.max(0, sortedTags.length - VISIBLE_TAG_LIMIT);
 ---
 
 <Layout title="Blog" description="Jeff Camacho's Blog">
@@ -68,22 +83,84 @@ const sortedYears = Object.entries(groupedPosts).sort(
           </nav>
         </aside>
 
+        <aside class="animate hidden lg:block lg:absolute lg:top-0 lg:bottom-0 lg:-right-60 lg:w-48">
+          <nav class="lg:sticky lg:top-24 h-fit lg:max-h-[calc(100vh-8rem)] flex flex-col space-y-2 pl-4">
+            <h2 class="text-xs font-bold uppercase tracking-wider text-neutral-500 dark:text-neutral-500 mb-4">
+              Tags
+            </h2>
+            <div
+              data-tag-scroll
+              data-visible-limit={VISIBLE_TAG_LIMIT}
+              class="max-h-[60vh] overflow-y-auto overscroll-contain pr-1 tag-scroll"
+            >
+            <ul class="space-y-2">
+              {sortedTags.map(([tag, count], i) => (
+                <li
+                  class={i >= VISIBLE_TAG_LIMIT ? "hidden" : undefined}
+                  data-tag-overflow={i >= VISIBLE_TAG_LIMIT ? "true" : undefined}
+                >
+                  <label class="flex items-center justify-between gap-2 px-3 py-2 rounded border border-neutral-200 dark:border-neutral-800 hover:bg-neutral-50 dark:hover:bg-neutral-900 transition-colors cursor-pointer">
+                    <span class="flex items-center gap-2 min-w-0">
+                      <input
+                        type="checkbox"
+                        value={tag}
+                        data-tag-filter
+                        class="size-3.5 flex-shrink-0 accent-blue-500"
+                      />
+                      <span class="text-xs text-neutral-700 dark:text-neutral-300 truncate">
+                        {tag}
+                      </span>
+                    </span>
+                    <span class="text-xs tabular-nums text-neutral-500 dark:text-neutral-500 flex-shrink-0">
+                      {count}
+                    </span>
+                  </label>
+                </li>
+              ))}
+            </ul>
+            </div>
+            {hiddenTagCount > 0 && (
+              <button
+                type="button"
+                data-tag-toggle
+                data-hidden-count={hiddenTagCount}
+                class="mt-3 text-xs font-medium text-neutral-500 dark:text-neutral-400 hover:text-blue-500 dark:hover:text-blue-400 transition-colors"
+              >
+                {`Show ${hiddenTagCount} more`}
+              </button>
+            )}
+            <button
+              type="button"
+              data-tag-clear
+              class="mt-4 hidden text-xs text-neutral-500 dark:text-neutral-400 hover:text-blue-500 dark:hover:text-blue-400 transition-colors"
+            >
+              Clear filters
+            </button>
+            <p
+              data-tag-empty
+              class="mt-4 hidden text-xs text-neutral-500 dark:text-neutral-400"
+            >
+              No posts match all selected tags.
+            </p>
+          </nav>
+        </aside>
+
         <div class="space-y-16">
           {sortedYears.map(([year, months]) => (
-            <div class="animate space-y-10 scroll-mt-24" id={`arch-${year}`}>
+            <div class="animate space-y-10 scroll-mt-24" id={`arch-${year}`} data-year-group>
               <h2 class="text-3xl font-bold text-black dark:text-white mt-6 border-b-2 border-neutral-200 dark:border-neutral-800 pb-2">
                 {year}
               </h2>
               
               {Object.entries(months).map(([month, monthPosts]) => (
-                <div class="space-y-6 scroll-mt-24" id={`arch-${year}-${month.toLowerCase()}`}>
+                <div class="space-y-6 scroll-mt-24" id={`arch-${year}-${month.toLowerCase()}`} data-month-group>
                   <h3 class="text-sm font-bold uppercase tracking-wider text-neutral-500 dark:text-neutral-400 border-b border-neutral-200 dark:border-neutral-800 pb-1">
                     {month}
                   </h3>
                   
                   <ul class="flex flex-col gap-6">
                     {monthPosts.map((post) => (
-                      <li class="space-y-3">
+                      <li class="space-y-3" data-post-tags={(post.data.tags ?? []).join("|")}>
                         <a 
                           href={`/blog/${post.id}`} 
                           class="group flex flex-nowrap justify-between items-center p-5 rounded-lg border border-neutral-200 dark:border-neutral-800 hover:bg-neutral-50 dark:hover:bg-neutral-900 transition-colors duration-200"
@@ -134,3 +211,131 @@ const sortedYears = Object.entries(groupedPosts).sort(
     </div>
   </Container>
 </Layout>
+
+<style>
+  .tag-scroll {
+    scrollbar-width: thin;
+    scrollbar-color: rgb(212 212 212) transparent;
+  }
+  :global(.dark) .tag-scroll {
+    scrollbar-color: rgb(64 64 64) transparent;
+  }
+  .tag-scroll::-webkit-scrollbar {
+    width: 6px;
+  }
+  .tag-scroll::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .tag-scroll::-webkit-scrollbar-thumb {
+    background-color: rgb(212 212 212);
+    border-radius: 9999px;
+  }
+  :global(.dark) .tag-scroll::-webkit-scrollbar-thumb {
+    background-color: rgb(64 64 64);
+  }
+</style>
+
+<script>
+  function initTagFilter() {
+    const boxes = Array.from(
+      document.querySelectorAll("input[data-tag-filter]")
+    ) as HTMLInputElement[];
+    if (!boxes.length) return;
+
+    const postItems = Array.from(document.querySelectorAll("[data-post-tags]"));
+    const monthGroups = Array.from(document.querySelectorAll("[data-month-group]"));
+    const yearGroups = Array.from(document.querySelectorAll("[data-year-group]"));
+    const clearBtn = document.querySelector("[data-tag-clear]");
+    const emptyMsg = document.querySelector("[data-tag-empty]");
+    const toggleBtn = document.querySelector("[data-tag-toggle]");
+    const scrollBox = document.querySelector("[data-tag-scroll]");
+    const limit = Number(scrollBox?.getAttribute("data-visible-limit") || 10);
+
+    let expanded = false;
+
+    const apply = () => {
+      const selected = boxes.filter((b) => b.checked).map((b) => b.value);
+
+      // 1. Filter posts: a post must carry every selected tag
+      const availableTags = new Set<string>();
+      let visibleCount = 0;
+
+      postItems.forEach((item) => {
+        const tags = (item.getAttribute("data-post-tags") || "")
+          .split("|")
+          .filter(Boolean);
+        const match = selected.every((t) => tags.includes(t));
+        item.classList.toggle("hidden", !match);
+        if (match) {
+          visibleCount++;
+          tags.forEach((t) => availableTags.add(t));
+        }
+      });
+
+      // 2. Collapse empty month and year groups
+      monthGroups.forEach((group) => {
+        const has = group.querySelector("[data-post-tags]:not(.hidden)");
+        group.classList.toggle("hidden", !has);
+      });
+
+      yearGroups.forEach((group) => {
+        const has = group.querySelector("[data-month-group]:not(.hidden)");
+        group.classList.toggle("hidden", !has);
+      });
+
+      // 3. Drop tags with no remaining content, then re-window the top N
+      const available: { li: Element; box: HTMLInputElement }[] = [];
+
+      boxes.forEach((box) => {
+        const li = box.closest("li");
+        if (!li) return;
+        const isAvailable = box.checked || availableTags.has(box.value);
+        if (isAvailable) {
+          available.push({ li, box });
+        } else {
+          li.classList.add("hidden");
+        }
+      });
+
+      let hiddenAvailable = 0;
+      available.forEach((entry, i) => {
+        const within = expanded || entry.box.checked || i < limit;
+        entry.li.classList.toggle("hidden", !within);
+        if (!within) hiddenAvailable++;
+      });
+
+      // 4. Controls
+      if (toggleBtn) {
+        const showToggle = expanded ? available.length > limit : hiddenAvailable > 0;
+        toggleBtn.classList.toggle("hidden", !showToggle);
+        toggleBtn.textContent = expanded
+          ? "Show less"
+          : `Show ${hiddenAvailable} more`;
+      }
+
+      if (clearBtn) clearBtn.classList.toggle("hidden", selected.length === 0);
+      if (emptyMsg) emptyMsg.classList.toggle("hidden", visibleCount !== 0);
+    };
+
+    boxes.forEach((b) => b.addEventListener("change", apply));
+
+    if (toggleBtn) {
+      toggleBtn.addEventListener("click", () => {
+        expanded = !expanded;
+        apply();
+      });
+    }
+
+    if (clearBtn) {
+      clearBtn.addEventListener("click", () => {
+        boxes.forEach((b) => (b.checked = false));
+        apply();
+      });
+    }
+
+    apply();
+  }
+
+  initTagFilter();
+  document.addEventListener("astro:page-load", initTagFilter);
+</script>
