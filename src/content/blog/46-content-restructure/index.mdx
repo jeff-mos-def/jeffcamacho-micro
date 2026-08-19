@@ -10,6 +10,8 @@ Every content page on this site used to open with the same thing, a collapsible 
 
 So I moved navigation into those margins and gave each page a control set that matches what the page actually holds.
 
+Mobile navigation does not exist with these new features. Through a mobile device, this is a direct read for each section.
+
 ---
 
 ## Blog Redone
@@ -53,6 +55,19 @@ Work follows the same pattern with Work Experience, Entrepreneurial Experience, 
 
 ![Work section nav](/img/work-section-nav.png)
 *Work section nav*
+
+## Day After edits
+
+After I committed the changes and verified the Netlify build, I pulled up the live site and realized I had missed a page: the blog post itself. Every index page had its sidebar, but individual posts still opened with the collapsible Table of Contents box.
+
+The fix follows the same pattern as everywhere else. The post outline moves into the left margin as jump links, built from the h2 and h3 headings in the post, with h3 subheadings nested under their parent section. The Table of Contents box is gone.
+
+Two behaviors here that the other pages do not have. The current section highlights as you scroll, tracking the last heading that has passed the header line. And clicking a link pins that link as active until you scroll on your own, which keeps a late loading image from shifting the highlight onto the section above.
+
+One thing to note: I have not built a proper scroll to top control yet. There is a native one in the theme that renders inline at the end of each post, and it works, but it is not fixed or sticky, so you have to reach the bottom to use it. In the meantime the `Top` entry at the head of the outline points at `#top`, an id I put on the Back to blog wrapper, which takes the reader back to the top of the article from wherever they are.
+
+![Blog content sidebar nav](/img/blog-content-sidebar.png)
+*Blog sidebar nav*
 
 ---
 
