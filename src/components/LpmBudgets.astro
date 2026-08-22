@@ -1,0 +1,200 @@
+---
+import { HORIZON_LABELS, formatMoney, type PortfolioData } from "../types/lpm";
+
+interface Props {
+  data: PortfolioData;
+}
+
+const { data } = Astro.props;
+const horizons = [3, 2, 1, 0] as const;
+---
+
+<div data-lpm-panel="budgets" class="not-prose">
+  <p class="mb-4 text-sm text-neutral-600 dark:text-neutral-400">
+    A lean budget funds value streams, not projects. The guardrails are what keep
+    that from becoming a blank check. Move an allocation slider and the other
+    streams give up the difference, because the portfolio total does not move.
+  </p>
+
+  <div class="mb-5 flex items-baseline justify-between border-b border-neutral-200 pb-2 dark:border-neutral-800">
+    <span class="text-xs font-semibold uppercase tracking-wide text-neutral-700 dark:text-neutral-300">
+      Total lean budget
+    </span>
+    <span class="font-mono text-lg tabular-nums text-neutral-900 dark:text-neutral-100">
+      {formatMoney(data.totalBudget)}
+    </span>
+  </div>
+
+  {/* Guardrail 2: value stream allocation */}
+  <div class="mb-6">
+    <h4 class="mb-1 text-sm font-semibold text-neutral-900 dark:text-neutral-100">
+      Value stream allocation
+    </h4>
+    <p class="mb-3 text-[11px] text-neutral-500 dark:text-neutral-400">
+      Committed is the forecast spend of every epic currently in Implementing.
+      When committed exceeds the allocation, the stream is overdrawn.
+    </p>
+
+    <div
+      data-alloc-bar
+      class="mb-4 flex h-6 w-full overflow-hidden rounded-md border border-neutral-200 dark:border-neutral-700"
+    >
+      {
+        data.valueStreams.map((vs, i) => (
+          <div
+            data-alloc-seg={vs.id}
+            title={vs.name}
+            style={`width:${vs.allocation}%;background-color:var(--lpm-c${i + 1})`}
+            class="h-full transition-[width] duration-200"
+          />
+        ))
+      }
+    </div>
+
+    <div class="flex flex-col gap-3">
+      {
+        data.valueStreams.map((vs, i) => (
+          <div data-alloc-row={vs.id}>
+            <div class="mb-1 flex items-center gap-2">
+              <span
+                class="h-2.5 w-2.5 shrink-0 rounded-sm"
+                style={`background-color:var(--lpm-c${i + 1})`}
+              />
+              <span class="flex-1 text-sm text-neutral-900 dark:text-neutral-100">
+                {vs.name}
+              </span>
+              <span
+                data-alloc-committed
+                class="font-mono text-[11px] tabular-nums text-neutral-500 dark:text-neutral-400"
+              />
+              <span
+                data-alloc-amount
+                class="w-16 shrink-0 text-right font-mono text-xs tabular-nums text-neutral-900 dark:text-neutral-100"
+              />
+            </div>
+            <div class="flex items-center gap-2">
+              <input
+                type="range"
+                min="0"
+                max="100"
+                step="1"
+                value={vs.allocation}
+                data-alloc-input={vs.id}
+                aria-label={`Budget allocation for ${vs.name}, percent`}
+                class="h-1 flex-1 cursor-pointer appearance-none rounded bg-neutral-200 accent-sky-600 dark:bg-neutral-700"
+              />
+              <output
+                data-alloc-pct={vs.id}
+                class="w-10 shrink-0 text-right font-mono text-[11px] tabular-nums text-neutral-600 dark:text-neutral-400"
+              >
+                {vs.allocation}%
+              </output>
+            </div>
+          </div>
+        ))
+      }
+    </div>
+  </div>
+
+  {/* Guardrail 1: horizon mix */}
+  <div class="mb-6">
+    <h4 class="mb-1 text-sm font-semibold text-neutral-900 dark:text-neutral-100">
+      Investment mix by horizon
+    </h4>
+    <p class="mb-3 text-[11px] text-neutral-500 dark:text-neutral-400">
+      Measured across everything in the Portfolio Backlog and Implementing. Move
+      epics on the Kanban board and this shifts with them.
+    </p>
+    <div class="flex flex-col gap-2">
+      {
+        horizons.map((h) => (
+          <div data-horizon-row={h} class="grid grid-cols-[3rem_1fr_3rem] items-center gap-2">
+            <span class="font-mono text-[11px] text-neutral-600 dark:text-neutral-400">
+              H{h}
+            </span>
+            <div class="relative h-4 w-full rounded bg-neutral-100 dark:bg-neutral-800">
+              <div
+                data-horizon-fill
+                class="h-full rounded bg-sky-500/70 transition-[width] duration-200"
+                style="width:0%"
+              />
+              <div
+                data-horizon-target
+                class="absolute top-0 h-full w-px bg-neutral-900 dark:bg-neutral-100"
+                style={`left:${data.horizonTargets?.[String(h)] ?? 0}%`}
+                title={`Target ${data.horizonTargets?.[String(h)] ?? 0}%`}
+              />
+            </div>
+            <span
+              data-horizon-pct
+              class="text-right font-mono text-[11px] tabular-nums text-neutral-900 dark:text-neutral-100"
+            />
+            <span class="col-start-2 -mt-1 text-[10px] text-neutral-500 dark:text-neutral-500">
+              {HORIZON_LABELS[h]}
+            </span>
+          </div>
+        ))
+      }
+    </div>
+    <p class="mt-2 text-[10px] text-neutral-500 dark:text-neutral-500">
+      The vertical tick on each bar is the portfolio target.
+    </p>
+  </div>
+
+  {/* Capacity allocation */}
+  <div class="mb-6">
+    <h4 class="mb-1 text-sm font-semibold text-neutral-900 dark:text-neutral-100">
+      Business and enabler split
+    </h4>
+    <p class="mb-3 text-[11px] text-neutral-500 dark:text-neutral-400">
+      Target is {data.enablerTarget ?? 30}% enabler. Starve this and the
+      architectural runway runs out two PIs later, usually without warning.
+    </p>
+    <div class="flex h-6 w-full overflow-hidden rounded-md border border-neutral-200 dark:border-neutral-700">
+      <div
+        data-split-business
+        class="flex h-full items-center justify-center bg-sky-500/70 text-[10px] font-medium text-white transition-[width] duration-200"
+        style="width:70%"
+      >
+      </div>
+      <div
+        data-split-enabler
+        class="flex h-full items-center justify-center bg-amber-500/70 text-[10px] font-medium text-white transition-[width] duration-200"
+        style="width:30%"
+      >
+      </div>
+    </div>
+  </div>
+
+  {/* Guardrail 3: approval threshold */}
+  <div>
+    <h4 class="mb-1 text-sm font-semibold text-neutral-900 dark:text-neutral-100">
+      Epics needing LPM approval
+    </h4>
+    <p class="mb-3 text-[11px] text-neutral-500 dark:text-neutral-400">
+      Any epic forecast above {data.approvalThreshold ?? 10}% of the portfolio
+      budget, which is {formatMoney(
+        (data.totalBudget * (data.approvalThreshold ?? 10)) / 100,
+      )}, clears Lean Portfolio Management before it moves to Implementing.
+    </p>
+    <ul data-approval-list class="flex flex-col gap-1"></ul>
+  </div>
+</div>
+
+<style>
+  [data-alloc-row].is-overdrawn [data-alloc-committed] {
+    color: rgb(225 29 72);
+    font-weight: 600;
+  }
+  :global(.dark) [data-alloc-row].is-overdrawn [data-alloc-committed] {
+    color: rgb(253 164 175);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    [data-alloc-seg],
+    [data-horizon-fill],
+    [data-split-business],
+    [data-split-enabler] {
+      transition: none;
+    }
+  }
+</style>

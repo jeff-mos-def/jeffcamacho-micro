@@ -1,0 +1,185 @@
+---
+import {
+  STATE_ORDER,
+  STATE_LABELS,
+  STATE_HINTS,
+  HORIZON_LABELS,
+  wsjfScore,
+  formatScore,
+  formatMoney,
+  type PortfolioData,
+  type Epic,
+} from "../types/lpm";
+
+interface Props {
+  data: PortfolioData;
+}
+
+const { data } = Astro.props;
+
+const streamName = (id: string) =>
+  data.valueStreams.find((v) => v.id === id)?.name ?? id;
+
+const inState = (state: string): Epic[] => {
+  const list = data.epics.filter((e) => e.state === state);
+  return state === "backlog"
+    ? list.sort((a, b) => wsjfScore(b.wsjf) - wsjfScore(a.wsjf))
+    : list;
+};
+---
+
+<div data-lpm-panel="kanban" class="not-prose">
+  <p class="mb-4 max-w-2xl text-sm text-neutral-600 dark:text-neutral-400">
+    Drag an epic to move it, or focus a card and use the arrow buttons. States with
+    a WIP limit reject the drop when they are full. That rejection is the point:
+    the limit is what forces a portfolio to finish work before starting more.
+  </p>
+
+  <div class="flex gap-3 overflow-x-auto pb-3" data-board>
+    {
+      STATE_ORDER.map((state) => {
+        const epics = inState(state);
+        const limit = data.wipLimits?.[state];
+        return (
+          <section
+            data-column={state}
+            data-limit={limit ?? ""}
+            class="flex min-w-[13.5rem] flex-1 flex-col rounded-lg border border-neutral-200 bg-neutral-50 p-2 dark:border-neutral-800 dark:bg-neutral-900/50"
+          >
+            <div class="mb-2 px-1">
+              <div class="flex items-baseline justify-between gap-2">
+                <span class="text-xs font-semibold uppercase tracking-wide text-neutral-700 dark:text-neutral-300">
+                  {STATE_LABELS[state]}
+                </span>
+                <span
+                  data-count
+                  class="rounded px-1.5 py-0.5 font-mono text-xs text-neutral-600 dark:text-neutral-400"
+                >
+                  {limit ? `${epics.length}/${limit}` : epics.length}
+                </span>
+              </div>
+              <p class="mt-1 text-[11px] leading-snug text-neutral-500 dark:text-neutral-500">
+                {STATE_HINTS[state]}
+              </p>
+            </div>
+
+            <div data-dropzone class="flex min-h-24 flex-col gap-2 rounded-md p-1 transition-colors">
+              {epics.map((epic, i) => (
+                <article
+                  data-epic-id={epic.id}
+                  data-cost={epic.cost}
+                  draggable="true"
+                  tabindex="0"
+                  class="group cursor-grab rounded-md border border-neutral-200 bg-white p-2.5 shadow-sm transition focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-500 active:cursor-grabbing dark:border-neutral-700 dark:bg-neutral-800"
+                >
+                  <div class="flex items-start justify-between gap-2">
+                    <span class="text-sm font-medium leading-snug text-neutral-900 dark:text-neutral-100">
+                      {epic.title}
+                    </span>
+                    <span
+                      data-rank
+                      class="shrink-0 font-mono text-[11px] text-neutral-400 dark:text-neutral-500"
+                    >
+                      {state === "backlog" ? `#${i + 1}` : ""}
+                    </span>
+                  </div>
+
+                  <p class="mt-1 text-[11px] leading-snug text-neutral-500 dark:text-neutral-400">
+                    {streamName(epic.valueStream)}
+                  </p>
+
+                  <div class="mt-2 flex flex-wrap items-center gap-1">
+                    <span
+                      class:list={[
+                        "rounded px-1.5 py-0.5 text-[10px] font-medium",
+                        epic.type === "enabler"
+                          ? "bg-amber-100 text-amber-900 dark:bg-amber-950 dark:text-amber-200"
+                          : "bg-sky-100 text-sky-900 dark:bg-sky-950 dark:text-sky-200",
+                      ]}
+                    >
+                      {epic.type === "enabler" ? "Enabler" : "Business"}
+                    </span>
+                    <span class="rounded bg-neutral-100 px-1.5 py-0.5 font-mono text-[10px] text-neutral-600 dark:bg-neutral-700 dark:text-neutral-300">
+                      H{epic.horizon}
+                    </span>
+                    <span class="sr-only">{HORIZON_LABELS[epic.horizon]}</span>
+                    <span class="rounded bg-neutral-100 px-1.5 py-0.5 font-mono text-[10px] text-neutral-600 dark:bg-neutral-700 dark:text-neutral-300">
+                      {formatMoney(epic.cost)}
+                    </span>
+                    <span
+                      data-approval
+                      hidden
+                      class="rounded bg-rose-100 px-1.5 py-0.5 text-[10px] font-medium text-rose-900 dark:bg-rose-950 dark:text-rose-200"
+                    >
+                      Needs LPM approval
+                    </span>
+                  </div>
+
+                  <div class="mt-2 flex items-center justify-between border-t border-neutral-100 pt-2 dark:border-neutral-700">
+                    <span class="font-mono text-[11px] text-neutral-500 dark:text-neutral-400">
+                      WSJF <span data-score class="text-neutral-900 dark:text-neutral-100">{formatScore(wsjfScore(epic.wsjf))}</span>
+                    </span>
+                    <span class="flex gap-1 opacity-0 transition-opacity group-hover:opacity-100 group-focus-within:opacity-100">
+                      <button
+                        type="button"
+                        data-move="-1"
+                        aria-label={`Move ${epic.title} to the previous state`}
+                        class="rounded px-1.5 py-0.5 text-xs leading-none text-neutral-500 hover:bg-neutral-100 hover:text-neutral-900 focus-visible:ring-2 focus-visible:ring-sky-500 dark:hover:bg-neutral-700 dark:hover:text-neutral-100"
+                      >
+                        &larr;
+                      </button>
+                      <button
+                        type="button"
+                        data-move="1"
+                        aria-label={`Move ${epic.title} to the next state`}
+                        class="rounded px-1.5 py-0.5 text-xs leading-none text-neutral-500 hover:bg-neutral-100 hover:text-neutral-900 focus-visible:ring-2 focus-visible:ring-sky-500 dark:hover:bg-neutral-700 dark:hover:text-neutral-100"
+                      >
+                        &rarr;
+                      </button>
+                    </span>
+                  </div>
+                </article>
+              ))}
+            </div>
+          </section>
+        );
+      })
+    }
+  </div>
+
+  <p
+    data-board-message
+    role="status"
+    class="mt-2 min-h-5 text-xs font-medium text-rose-600 dark:text-rose-400"
+  >
+  </p>
+</div>
+
+<style>
+  [data-dropzone].is-over {
+    background-color: rgb(14 165 233 / 0.08);
+    outline: 2px dashed rgb(14 165 233 / 0.5);
+    outline-offset: -2px;
+  }
+  [data-dropzone].is-blocked {
+    background-color: rgb(244 63 94 / 0.08);
+    outline: 2px dashed rgb(244 63 94 / 0.5);
+    outline-offset: -2px;
+  }
+  [data-epic-id].is-dragging {
+    opacity: 0.4;
+  }
+  [data-column].is-full [data-count] {
+    background-color: rgb(244 63 94 / 0.15);
+    color: rgb(190 18 60);
+  }
+  :global(.dark) [data-column].is-full [data-count] {
+    color: rgb(253 164 175);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    [data-dropzone],
+    [data-epic-id] {
+      transition: none;
+    }
+  }
+</style>

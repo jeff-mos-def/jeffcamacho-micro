@@ -1,0 +1,639 @@
+---
+import LpmKanban from "./LpmKanban.astro";
+import LpmWsjf from "./LpmWsjf.astro";
+import LpmBudgets from "./LpmBudgets.astro";
+import type { PortfolioData } from "../types/lpm";
+import defaultData from "../data/lpm-portfolio.json";
+
+interface Props {
+  /** Portfolio data. Falls back to src/data/lpm-portfolio.json. */
+  items?: PortfolioData;
+  /** Namespaces localStorage so multiple instances do not collide. */
+  storageKey?: string;
+  /** Heading shown above the tabs. Pass null to hide it. */
+  title?: string | null;
+}
+
+const {
+  items = defaultData as unknown as PortfolioData,
+  storageKey = "lpm-portfolio",
+  title = items.name ?? "Lean Portfolio Management",
+} = Astro.props;
+
+const tabs = [
+  { id: "kanban", label: "Portfolio Kanban" },
+  { id: "wsjf", label: "WSJF ranking" },
+  { id: "budgets", label: "Lean budgets" },
+];
+
+const payload = JSON.stringify(items).replace(/</g, "\\u003c");
+---
+
+<div
+  data-lpm-root
+  data-storage-key={storageKey}
+  class="not-prose relative left-1/2 my-10 w-[min(96vw,84rem)] max-w-[min(96vw,84rem)] -translate-x-1/2 rounded-xl border border-neutral-200 bg-white p-4 dark:border-neutral-800 dark:bg-neutral-950 sm:p-6"
+>
+  <script type="application/json" data-lpm-payload set:html={payload} />
+
+  <div class="mb-4 flex flex-wrap items-center justify-between gap-3">
+    {
+      title && (
+        <h3 class="m-0 text-base font-semibold text-neutral-900 dark:text-neutral-100">
+          {title}
+        </h3>
+      )
+    }
+    <button
+      type="button"
+      data-lpm-reset
+      class="rounded-md border border-neutral-200 px-2.5 py-1 text-xs text-neutral-600 transition hover:bg-neutral-100 hover:text-neutral-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-500 dark:border-neutral-700 dark:text-neutral-400 dark:hover:bg-neutral-800 dark:hover:text-neutral-100"
+    >
+      Reset portfolio
+    </button>
+  </div>
+
+  <div
+    role="tablist"
+    aria-label="Lean portfolio views"
+    class="mb-5 flex w-full max-w-xl gap-1 rounded-lg bg-neutral-100 p-1 dark:bg-neutral-900"
+  >
+    {
+      tabs.map((tab, i) => (
+        <button
+          type="button"
+          role="tab"
+          id={`${storageKey}-tab-${tab.id}`}
+          aria-controls={`${storageKey}-panel-${tab.id}`}
+          aria-selected={i === 0 ? "true" : "false"}
+          tabindex={i === 0 ? 0 : -1}
+          data-lpm-tab={tab.id}
+          class="flex-1 rounded-md px-3 py-1.5 text-xs font-medium text-neutral-600 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-500 aria-selected:bg-white aria-selected:text-neutral-900 aria-selected:shadow-sm dark:text-neutral-400 dark:aria-selected:bg-neutral-800 dark:aria-selected:text-neutral-100"
+        >
+          {tab.label}
+        </button>
+      ))
+    }
+  </div>
+
+  <div
+    role="tabpanel"
+    id={`${storageKey}-panel-kanban`}
+    aria-labelledby={`${storageKey}-tab-kanban`}
+    data-lpm-tabpanel="kanban"
+  >
+    <LpmKanban data={items} />
+  </div>
+
+  <div
+    role="tabpanel"
+    id={`${storageKey}-panel-wsjf`}
+    aria-labelledby={`${storageKey}-tab-wsjf`}
+    data-lpm-tabpanel="wsjf"
+    hidden
+  >
+    <LpmWsjf data={items} />
+  </div>
+
+  <div
+    role="tabpanel"
+    id={`${storageKey}-panel-budgets`}
+    aria-labelledby={`${storageKey}-tab-budgets`}
+    data-lpm-tabpanel="budgets"
+    hidden
+  >
+    <LpmBudgets data={items} />
+  </div>
+</div>
+
+<style>
+  [data-lpm-root] {
+    --lpm-c1: #0ea5e9;
+    --lpm-c2: #6366f1;
+    --lpm-c3: #14b8a6;
+    --lpm-c4: #f59e0b;
+    --lpm-c5: #ec4899;
+    --lpm-c6: #84cc16;
+    --lpm-c7: #a855f7;
+    --lpm-c8: #ef4444;
+  }
+</style>
+
+<script>
+  import {
+    STATE_ORDER,
+    wsjfScore,
+    costOfDelay,
+    formatScore,
+    formatMoney,
+  } from "../types/lpm";
+
+  type Slider = "ubv" | "tc" | "rroe" | "jobSize";
+
+  function initRoot(root: HTMLElement) {
+    if (root.dataset.lpmReady === "true") return;
+    root.dataset.lpmReady = "true";
+
+    const payloadEl = root.querySelector<HTMLScriptElement>("[data-lpm-payload]");
+    if (!payloadEl?.textContent) return;
+
+    const seed = JSON.parse(payloadEl.textContent);
+    const storageKey = root.dataset.storageKey || "lpm-portfolio";
+
+    // ---- state ----------------------------------------------------------
+    const epics = new Map<string, any>(
+      seed.epics.map((e: any) => [e.id, { ...e, wsjf: { ...e.wsjf } }]),
+    );
+    const allocations = new Map<string, number>(
+      seed.valueStreams.map((v: any) => [v.id, v.allocation]),
+    );
+
+    const totalBudget: number = seed.totalBudget;
+    const approvalPct: number = seed.approvalThreshold ?? 10;
+    const approvalCutoff = (totalBudget * approvalPct) / 100;
+    const enablerTarget: number = seed.enablerTarget ?? 30;
+    const wipLimits: Record<string, number> = seed.wipLimits ?? {};
+
+    function save() {
+      try {
+        localStorage.setItem(
+          storageKey,
+          JSON.stringify({
+            epics: Object.fromEntries(
+              [...epics.values()].map((e) => [e.id, { state: e.state, wsjf: e.wsjf }]),
+            ),
+            allocations: Object.fromEntries(allocations),
+          }),
+        );
+      } catch {
+        /* storage unavailable, run in memory */
+      }
+    }
+
+    function restore() {
+      try {
+        const raw = localStorage.getItem(storageKey);
+        if (!raw) return;
+        const saved = JSON.parse(raw);
+        for (const [id, patch] of Object.entries<any>(saved.epics ?? {})) {
+          const epic = epics.get(id);
+          if (epic) Object.assign(epic, patch);
+        }
+        for (const [id, pct] of Object.entries<any>(saved.allocations ?? {})) {
+          if (allocations.has(id)) allocations.set(id, Number(pct));
+        }
+      } catch {
+        /* corrupt or unavailable, ignore and use seed */
+      }
+    }
+
+    // ---- element lookups ------------------------------------------------
+    const cards = new Map<string, HTMLElement>();
+    root.querySelectorAll<HTMLElement>("[data-epic-id]").forEach((el) => {
+      cards.set(el.dataset.epicId!, el);
+    });
+
+    const dropzones = new Map<string, HTMLElement>();
+    const columns = new Map<string, HTMLElement>();
+    root.querySelectorAll<HTMLElement>("[data-column]").forEach((col) => {
+      columns.set(col.dataset.column!, col);
+      dropzones.set(col.dataset.column!, col.querySelector("[data-dropzone]")!);
+    });
+
+    const boardMessage = root.querySelector<HTMLElement>("[data-board-message]");
+    const wsjfList = root.querySelector<HTMLElement>("[data-wsjf-list]");
+    const approvalList = root.querySelector<HTMLElement>("[data-approval-list]");
+
+    let messageTimer: number | undefined;
+    function flash(text: string) {
+      if (!boardMessage) return;
+      boardMessage.textContent = text;
+      window.clearTimeout(messageTimer);
+      messageTimer = window.setTimeout(() => {
+        boardMessage.textContent = "";
+      }, 3200);
+    }
+
+    // ---- renderers ------------------------------------------------------
+    function renderBoard() {
+      for (const state of STATE_ORDER) {
+        const zone = dropzones.get(state);
+        const column = columns.get(state);
+        if (!zone || !column) continue;
+
+        let list = [...epics.values()].filter((e) => e.state === state);
+        if (state === "backlog") {
+          list.sort((a, b) => wsjfScore(b.wsjf) - wsjfScore(a.wsjf));
+        }
+
+        list.forEach((epic, i) => {
+          const card = cards.get(epic.id);
+          if (!card) return;
+          zone.appendChild(card);
+          const rank = card.querySelector<HTMLElement>("[data-rank]");
+          if (rank) rank.textContent = state === "backlog" ? `#${i + 1}` : "";
+          const score = card.querySelector<HTMLElement>("[data-score]");
+          if (score) score.textContent = formatScore(wsjfScore(epic.wsjf));
+          const approval = card.querySelector<HTMLElement>("[data-approval]");
+          if (approval) {
+            approval.hidden = !(epic.cost > approvalCutoff && epic.state !== "implementing" && epic.state !== "done");
+          }
+        });
+
+        const limit = wipLimits[state] ?? 0;
+        const count = column.querySelector<HTMLElement>("[data-count]");
+        if (count) count.textContent = limit ? `${list.length}/${limit}` : `${list.length}`;
+        column.classList.toggle("is-full", limit > 0 && list.length >= limit);
+      }
+    }
+
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    function flashEl(el: Element | null) {
+      if (!el || reducedMotion) return;
+      el.classList.remove("lpm-flash");
+      void (el as HTMLElement).offsetWidth;
+      el.classList.add("lpm-flash");
+      window.setTimeout(() => el.classList.remove("lpm-flash"), 700);
+    }
+
+    function updateWsjfNumbers(flashRowId?: string) {
+      if (!wsjfList) return;
+      wsjfList.querySelectorAll<HTMLElement>("[data-wsjf-row]").forEach((row) => {
+        const epic = epics.get(row.dataset.wsjfRow!);
+        if (!epic) return;
+        const value = row.querySelector<HTMLElement>("[data-wsjf-value]");
+        const cod = row.querySelector<HTMLElement>("[data-wsjf-cod]");
+        const nextValue = formatScore(wsjfScore(epic.wsjf));
+        if (value && value.textContent !== nextValue) {
+          value.textContent = nextValue;
+          if (row.dataset.wsjfRow === flashRowId) flashEl(value);
+        }
+        if (cod) cod.textContent = String(costOfDelay(epic.wsjf));
+      });
+    }
+
+    function reorderWsjf(animate: boolean) {
+      if (!wsjfList) return;
+      const rows = [...wsjfList.querySelectorAll<HTMLElement>("[data-wsjf-row]")];
+      const panel = wsjfList.closest<HTMLElement>("[data-lpm-tabpanel]");
+      const visible = panel ? !panel.hidden : true;
+      const shouldAnimate = animate && visible && !reducedMotion;
+
+      const before = new Map<HTMLElement, number>();
+      if (shouldAnimate) {
+        rows.forEach((row) => before.set(row, row.getBoundingClientRect().top));
+      }
+
+      rows
+        .sort((a, b) => {
+          const ea = epics.get(a.dataset.wsjfRow!);
+          const eb = epics.get(b.dataset.wsjfRow!);
+          return wsjfScore(eb.wsjf) - wsjfScore(ea.wsjf);
+        })
+        .forEach((row, i) => {
+          wsjfList.appendChild(row);
+          const rank = row.querySelector<HTMLElement>("[data-wsjf-rank]");
+          if (rank) rank.textContent = String(i + 1).padStart(2, "0");
+        });
+
+      if (!shouldAnimate) return;
+
+      rows.forEach((row) => {
+        const delta = (before.get(row) ?? 0) - row.getBoundingClientRect().top;
+        if (!delta) return;
+        row.style.transition = "none";
+        row.style.transform = `translateY(${delta}px)`;
+      });
+      requestAnimationFrame(() => {
+        rows.forEach((row) => {
+          row.style.transition = "transform 340ms cubic-bezier(0.2, 0.8, 0.2, 1)";
+          row.style.transform = "";
+        });
+      });
+    }
+
+    function renderWsjf() {
+      updateWsjfNumbers();
+      reorderWsjf(false);
+    }
+
+    function renderBudgets() {
+      const active = [...epics.values()].filter(
+        (e) => e.state === "backlog" || e.state === "implementing",
+      );
+      const activeTotal = active.reduce((sum, e) => sum + e.cost, 0);
+
+      // value stream allocation
+      root.querySelectorAll<HTMLElement>("[data-alloc-seg]").forEach((seg) => {
+        seg.style.width = `${allocations.get(seg.dataset.allocSeg!) ?? 0}%`;
+      });
+
+      root.querySelectorAll<HTMLElement>("[data-alloc-row]").forEach((row) => {
+        const id = row.dataset.allocRow!;
+        const pct = allocations.get(id) ?? 0;
+        const budget = (totalBudget * pct) / 100;
+        const committed = [...epics.values()]
+          .filter((e) => e.valueStream === id && e.state === "implementing")
+          .reduce((sum, e) => sum + e.cost, 0);
+
+        const pctOut = row.querySelector<HTMLOutputElement>(`[data-alloc-pct="${id}"]`);
+        if (pctOut) pctOut.textContent = `${pct}%`;
+        const amount = row.querySelector<HTMLElement>("[data-alloc-amount]");
+        if (amount) amount.textContent = formatMoney(Math.round(budget));
+        const committedEl = row.querySelector<HTMLElement>("[data-alloc-committed]");
+        if (committedEl) {
+          committedEl.textContent = `${formatMoney(committed)} committed`;
+        }
+        row.classList.toggle("is-overdrawn", committed > budget);
+
+        const input = row.querySelector<HTMLInputElement>("[data-alloc-input]");
+        if (input && Number(input.value) !== pct) input.value = String(pct);
+      });
+
+      // horizon mix, weighted by forecast spend
+      root.querySelectorAll<HTMLElement>("[data-horizon-row]").forEach((row) => {
+        const h = Number(row.dataset.horizonRow);
+        const spend = active
+          .filter((e) => e.horizon === h)
+          .reduce((sum, e) => sum + e.cost, 0);
+        const pct = activeTotal ? (spend / activeTotal) * 100 : 0;
+        const fill = row.querySelector<HTMLElement>("[data-horizon-fill]");
+        if (fill) fill.style.width = `${pct}%`;
+        const out = row.querySelector<HTMLElement>("[data-horizon-pct]");
+        if (out) out.textContent = `${Math.round(pct)}%`;
+      });
+
+      // business and enabler split
+      const enablerSpend = active
+        .filter((e) => e.type === "enabler")
+        .reduce((sum, e) => sum + e.cost, 0);
+      const enablerPct = activeTotal ? (enablerSpend / activeTotal) * 100 : 0;
+      const businessEl = root.querySelector<HTMLElement>("[data-split-business]");
+      const enablerEl = root.querySelector<HTMLElement>("[data-split-enabler]");
+      if (businessEl) {
+        businessEl.style.width = `${100 - enablerPct}%`;
+        businessEl.textContent = `Business ${Math.round(100 - enablerPct)}%`;
+      }
+      if (enablerEl) {
+        enablerEl.style.width = `${enablerPct}%`;
+        enablerEl.textContent = `Enabler ${Math.round(enablerPct)}%`;
+        enablerEl.title =
+          enablerPct < enablerTarget
+            ? `Below the ${enablerTarget}% target`
+            : `At or above the ${enablerTarget}% target`;
+      }
+
+      // approval threshold
+      if (approvalList) {
+        const flagged = [...epics.values()]
+          .filter((e) => e.cost > approvalCutoff && e.state !== "done")
+          .sort((a, b) => b.cost - a.cost);
+        approvalList.replaceChildren();
+        if (!flagged.length) {
+          const li = document.createElement("li");
+          li.className = "text-xs text-neutral-500 dark:text-neutral-400";
+          li.textContent = "Nothing above the threshold right now.";
+          approvalList.appendChild(li);
+          return;
+        }
+        for (const epic of flagged) {
+          const li = document.createElement("li");
+          li.className =
+            "flex items-center justify-between gap-2 rounded-md border border-neutral-200 px-2.5 py-1.5 text-xs dark:border-neutral-800";
+          const name = document.createElement("span");
+          name.className = "truncate text-neutral-900 dark:text-neutral-100";
+          name.textContent = epic.title;
+          const cost = document.createElement("span");
+          cost.className =
+            "shrink-0 font-mono tabular-nums text-neutral-600 dark:text-neutral-400";
+          cost.textContent = `${formatMoney(epic.cost)} · ${Math.round((epic.cost / totalBudget) * 100)}%`;
+          li.append(name, cost);
+          approvalList.appendChild(li);
+        }
+      }
+    }
+
+    function renderAll() {
+      renderBoard();
+      renderWsjf();
+      renderBudgets();
+    }
+
+    // ---- move logic -----------------------------------------------------
+    function canAccept(state: string, movingId: string): boolean {
+      const limit = wipLimits[state];
+      if (!limit) return true;
+      const count = [...epics.values()].filter(
+        (e) => e.state === state && e.id !== movingId,
+      ).length;
+      return count < limit;
+    }
+
+    function moveEpic(id: string, state: string): boolean {
+      const epic = epics.get(id);
+      if (!epic || epic.state === state) return false;
+      if (!canAccept(state, id)) {
+        flash(`${state} is at its WIP limit of ${wipLimits[state]}. Finish something first.`);
+        return false;
+      }
+      epic.state = state;
+      renderAll();
+      save();
+      return true;
+    }
+
+    // ---- kanban wiring --------------------------------------------------
+    let draggingId: string | null = null;
+
+    cards.forEach((card, id) => {
+      card.addEventListener("dragstart", (event) => {
+        draggingId = id;
+        card.classList.add("is-dragging");
+        event.dataTransfer?.setData("text/plain", id);
+        if (event.dataTransfer) event.dataTransfer.effectAllowed = "move";
+      });
+      card.addEventListener("dragend", () => {
+        draggingId = null;
+        card.classList.remove("is-dragging");
+        dropzones.forEach((z) => z.classList.remove("is-over", "is-blocked"));
+      });
+      card.querySelectorAll<HTMLButtonElement>("[data-move]").forEach((button) => {
+        button.addEventListener("click", () => {
+          const epic = epics.get(id);
+          if (!epic) return;
+          const next = STATE_ORDER.indexOf(epic.state) + Number(button.dataset.move);
+          if (next < 0 || next >= STATE_ORDER.length) return;
+          if (moveEpic(id, STATE_ORDER[next])) {
+            cards.get(id)?.focus();
+          }
+        });
+      });
+    });
+
+    dropzones.forEach((zone, state) => {
+      zone.addEventListener("dragover", (event) => {
+        event.preventDefault();
+        if (!draggingId) return;
+        const ok = canAccept(state, draggingId);
+        zone.classList.toggle("is-over", ok);
+        zone.classList.toggle("is-blocked", !ok);
+        if (event.dataTransfer) event.dataTransfer.dropEffect = ok ? "move" : "none";
+      });
+      zone.addEventListener("dragleave", () => {
+        zone.classList.remove("is-over", "is-blocked");
+      });
+      zone.addEventListener("drop", (event) => {
+        event.preventDefault();
+        zone.classList.remove("is-over", "is-blocked");
+        const id = event.dataTransfer?.getData("text/plain") || draggingId;
+        if (id) moveEpic(id, state);
+      });
+    });
+
+    // ---- wsjf wiring ----------------------------------------------------
+    let reorderTimer: number | undefined;
+
+    root.querySelectorAll<HTMLElement>("[data-wsjf-row]").forEach((row) => {
+      const id = row.dataset.wsjfRow!;
+      row.querySelectorAll<HTMLInputElement>("[data-wsjf-input]").forEach((input) => {
+        const commit = (reorderNow: boolean) => {
+          const epic = epics.get(id);
+          if (!epic) return;
+          const raw = Math.round(Number(input.value));
+          if (!Number.isFinite(raw) || raw < 1) return;
+          const next = Math.min(20, raw);
+          const field = input.dataset.wsjfInput as Slider;
+          if (epic.wsjf[field] === next) return;
+
+          epic.wsjf[field] = next;
+          flashEl(input);
+          updateWsjfNumbers(id);
+          renderBoard();
+          renderBudgets();
+          save();
+
+          window.clearTimeout(reorderTimer);
+          if (reorderNow) {
+            reorderWsjf(true);
+          } else {
+            reorderTimer = window.setTimeout(() => reorderWsjf(true), 400);
+          }
+        };
+
+        input.addEventListener("input", () => commit(false));
+        input.addEventListener("change", () => {
+          const clamped = Math.min(20, Math.max(1, Math.round(Number(input.value) || 1)));
+          input.value = String(clamped);
+          commit(true);
+          reorderWsjf(true);
+        });
+      });
+    });
+
+    // ---- budget wiring --------------------------------------------------
+    root.querySelectorAll<HTMLInputElement>("[data-alloc-input]").forEach((input) => {
+      input.addEventListener("input", () => {
+        const id = input.dataset.allocInput!;
+        const next = Number(input.value);
+        const others = [...allocations.keys()].filter((k) => k !== id);
+        const othersTotal = others.reduce((sum, k) => sum + (allocations.get(k) ?? 0), 0);
+        const remaining = 100 - next;
+
+        allocations.set(id, next);
+        if (othersTotal === 0) {
+          others.forEach((k) => allocations.set(k, remaining / others.length));
+        } else {
+          others.forEach((k) =>
+            allocations.set(k, ((allocations.get(k) ?? 0) / othersTotal) * remaining),
+          );
+        }
+
+        // round to whole percents and push any drift onto the largest neighbour
+        let drift = 100 - next;
+        others.forEach((k) => {
+          const rounded = Math.round(allocations.get(k) ?? 0);
+          allocations.set(k, rounded);
+          drift -= rounded;
+        });
+        if (drift !== 0 && others.length) {
+          const biggest = others.reduce((a, b) =>
+            (allocations.get(a) ?? 0) >= (allocations.get(b) ?? 0) ? a : b,
+          );
+          allocations.set(biggest, Math.max(0, (allocations.get(biggest) ?? 0) + drift));
+        }
+
+        renderBudgets();
+        save();
+      });
+    });
+
+    // ---- tabs -----------------------------------------------------------
+    const tabButtons = [...root.querySelectorAll<HTMLButtonElement>("[data-lpm-tab]")];
+    function selectTab(id: string, focus = false) {
+      tabButtons.forEach((button) => {
+        const active = button.dataset.lpmTab === id;
+        button.setAttribute("aria-selected", String(active));
+        button.tabIndex = active ? 0 : -1;
+        if (active && focus) button.focus();
+      });
+      root.querySelectorAll<HTMLElement>("[data-lpm-tabpanel]").forEach((panel) => {
+        panel.hidden = panel.dataset.lpmTabpanel !== id;
+      });
+    }
+
+    tabButtons.forEach((button, i) => {
+      button.addEventListener("click", () => selectTab(button.dataset.lpmTab!));
+      button.addEventListener("keydown", (event) => {
+        const delta = event.key === "ArrowRight" ? 1 : event.key === "ArrowLeft" ? -1 : 0;
+        if (!delta) return;
+        event.preventDefault();
+        const next = (i + delta + tabButtons.length) % tabButtons.length;
+        selectTab(tabButtons[next].dataset.lpmTab!, true);
+      });
+    });
+
+    // ---- reset ----------------------------------------------------------
+    root.querySelector<HTMLButtonElement>("[data-lpm-reset]")?.addEventListener(
+      "click",
+      () => {
+        try {
+          localStorage.removeItem(storageKey);
+        } catch {
+          /* ignore */
+        }
+        seed.epics.forEach((e: any) =>
+          epics.set(e.id, { ...e, wsjf: { ...e.wsjf } }),
+        );
+        seed.valueStreams.forEach((v: any) => allocations.set(v.id, v.allocation));
+        root.querySelectorAll<HTMLInputElement>("[data-wsjf-input]").forEach((input) => {
+          const row = input.closest<HTMLElement>("[data-wsjf-row]");
+          const epic = row && epics.get(row.dataset.wsjfRow!);
+          if (epic) input.value = String(epic.wsjf[input.dataset.wsjfInput as Slider]);
+        });
+        renderBoard();
+        renderBudgets();
+        updateWsjfNumbers();
+        reorderWsjf(true);
+      },
+    );
+
+    restore();
+    // reflect restored values back into the number inputs before the first render
+    root.querySelectorAll<HTMLInputElement>("[data-wsjf-input]").forEach((input) => {
+      const row = input.closest<HTMLElement>("[data-wsjf-row]");
+      const epic = row && epics.get(row.dataset.wsjfRow!);
+      if (epic) input.value = String(epic.wsjf[input.dataset.wsjfInput as Slider]);
+    });
+    renderAll();
+  }
+
+  function init() {
+    document
+      .querySelectorAll<HTMLElement>("[data-lpm-root]")
+      .forEach((root) => initRoot(root));
+  }
+
+  document.addEventListener("DOMContentLoaded", init);
+  document.addEventListener("astro:page-load", init);
+</script>

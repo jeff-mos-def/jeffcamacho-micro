@@ -11,6 +11,14 @@ const { entry } = Astro.props as {
 };
 
 const isProject = entry.collection === "projects";
+const formattedDate = isProject
+  ? null
+  : entry.data.date.toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+      timeZone: "UTC",
+    });
 ---
 
 <a
@@ -29,6 +37,11 @@ const isProject = entry.collection === "projects";
     <div class="text-sm">
       {entry.data.description}
     </div>
+    {formattedDate && (
+      <div class="text-xs opacity-60">
+        {formattedDate}
+      </div>
+    )}
   </div>
   <svg
     xmlns="http://www.w3.org/2000/svg"

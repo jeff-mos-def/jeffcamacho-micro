@@ -6,10 +6,9 @@ import FormattedDate from "@components/FormattedDate.astro";
 import { readingTime } from "@lib/utils";
 import BackToPrevious from "@components/BackToPrevious.astro";
 import Link from "@components/Link.astro";
-import TableOfContents from "@components/TableOfContents.astro";
 import Giscus from "@components/Giscus.astro";
 import Lightbox from "@components/Lightbox.astro";
-import StatusBadge from "@components/StatusBadge.astro"; // Import StatusBadge
+import StatusBadge from "@components/StatusBadge.astro";
 
 export async function getStaticPaths() {
   const projects = (await getCollection("projects"))
@@ -24,11 +23,36 @@ type Props = CollectionEntry<"projects">;
 
 const project = Astro.props;
 const { Content, headings } = await render(project);
+
+// Build a two level outline: h2 sections with their h3 subheadings
+type TocHeading = {
+  depth: number;
+  slug: string;
+  text: string;
+  subheadings: TocHeading[];
+};
+
+function buildToc(raw: { depth: number; slug: string; text: string }[]) {
+  const toc: TocHeading[] = [];
+  let current: TocHeading | null = null;
+
+  for (const h of raw ?? []) {
+    if (h.depth === 2) {
+      current = { ...h, subheadings: [] };
+      toc.push(current);
+    } else if (h.depth === 3 && current) {
+      current.subheadings.push({ ...h, subheadings: [] });
+    }
+  }
+  return toc;
+}
+
+const toc = buildToc(headings);
 ---
 
 <Layout title={project.data.title} description={project.data.description}>
   <Container>
-    <div class="animate">
+    <div class="animate" id="top">
       <BackToPrevious href="/projects">Back to projects</BackToPrevious>
     </div>
     <div class="animate my-10 space-y-1">
@@ -76,13 +100,188 @@ const { Content, headings } = await render(project);
         <StatusBadge status={project.data.status} />
       </div>
     </div>
-    <TableOfContents headings={headings} />
-    <article class="animate blog-content"> <!-- Added blog-content class -->
-      <Content />
-    </article>
-    <div class="mt-24">
-      <Giscus />
+
+    <div class="relative w-full">
+
+      {toc.length > 0 && (
+        <aside class="animate hidden lg:block lg:absolute lg:top-0 lg:bottom-0 lg:-left-60 lg:w-48" data-pagefind-ignore>
+          <nav class="lg:sticky lg:top-24 h-fit lg:max-h-[calc(100vh-8rem)] flex flex-col space-y-2 pr-4">
+            <h2 class="text-xs font-bold uppercase tracking-wider text-neutral-500 dark:text-neutral-500 mb-4">
+              Contents
+            </h2>
+            <div class="overflow-y-auto overscroll-contain pr-1 toc-scroll">
+              <ul class="space-y-3">
+                <li>
+                  <a
+                    href="#top"
+                    data-toc-link
+                    class="block text-sm text-neutral-500 dark:text-neutral-400 hover:text-blue-500 dark:hover:text-blue-400 transition-colors"
+                  >
+                    Top
+                  </a>
+                </li>
+                {toc.map((heading) => (
+                  <li class="space-y-1.5">
+                    <a
+                      href={`#${heading.slug}`}
+                      data-toc-link
+                      class="block text-sm text-neutral-700 dark:text-neutral-300 hover:text-blue-500 dark:hover:text-blue-400 transition-colors"
+                    >
+                      {heading.text}
+                    </a>
+                    {heading.subheadings.length > 0 && (
+                      <ul class="pl-3 space-y-1.5 border-l border-neutral-200 dark:border-neutral-800">
+                        {heading.subheadings.map((sub) => (
+                          <li>
+                            <a
+                              href={`#${sub.slug}`}
+                              data-toc-link
+                              class="block text-xs text-neutral-500 dark:text-neutral-400 hover:text-blue-500 dark:hover:text-blue-400 transition-colors"
+                            >
+                              {sub.text}
+                            </a>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </nav>
+        </aside>
+      )}
+
+      <article class="animate blog-content">
+        <Content />
+      </article>
+
+      <div class="mt-24">
+        <Giscus />
+      </div>
+
     </div>
-    <Lightbox /> <!-- Added Lightbox component -->
+    <Lightbox />
   </Container>
 </Layout>
+
+<style>
+  /* Keep anchor jumps clear of the sticky header */
+  .blog-content :global(h2),
+  .blog-content :global(h3) {
+    scroll-margin-top: 6rem;
+  }
+
+  .toc-scroll {
+    scrollbar-width: thin;
+    scrollbar-color: rgb(212 212 212) transparent;
+  }
+  :global(.dark) .toc-scroll {
+    scrollbar-color: rgb(64 64 64) transparent;
+  }
+  .toc-scroll::-webkit-scrollbar {
+    width: 6px;
+  }
+  .toc-scroll::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .toc-scroll::-webkit-scrollbar-thumb {
+    background-color: rgb(212 212 212);
+    border-radius: 9999px;
+  }
+  :global(.dark) .toc-scroll::-webkit-scrollbar-thumb {
+    background-color: rgb(64 64 64);
+  }
+
+  .toc-active {
+    color: rgb(59 130 246);
+    font-weight: 600;
+  }
+</style>
+
+<script>
+  function initPostToc() {
+    const links = Array.from(
+      document.querySelectorAll("[data-toc-link]")
+    ) as HTMLAnchorElement[];
+    if (!links.length) return;
+
+    const entries: { link: HTMLAnchorElement; target: HTMLElement }[] = [];
+
+    links.forEach((link) => {
+      const id = decodeURIComponent(link.hash.slice(1));
+      const target = document.getElementById(id);
+      if (target) entries.push({ link, target });
+    });
+
+    if (!entries.length) return;
+
+    let active: HTMLAnchorElement | null = null;
+    let ticking = false;
+    let pinned = false;
+
+    const setActive = (link: HTMLAnchorElement | null) => {
+      if (link === active) return;
+      active?.classList.remove("toc-active");
+      link?.classList.add("toc-active");
+      active = link;
+    };
+
+    const update = () => {
+      ticking = false;
+      if (pinned) return;
+
+      // Bottom of the page always belongs to the last section
+      const atBottom =
+        window.innerHeight + window.scrollY >= document.body.scrollHeight - 2;
+      if (atBottom) {
+        setActive(entries[entries.length - 1].link);
+        return;
+      }
+
+      // Otherwise the last target whose top has passed the header line
+      let current: HTMLAnchorElement | null = null;
+      for (const entry of entries) {
+        if (entry.target.getBoundingClientRect().top <= 110) {
+          current = entry.link;
+        } else {
+          break;
+        }
+      }
+
+      setActive(current);
+    };
+
+    const onScroll = () => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(update);
+    };
+
+    // A click wins over scroll math until the reader moves on their own,
+    // so late layout shifts cannot hand the highlight to the section above.
+    const release = () => {
+      if (!pinned) return;
+      pinned = false;
+      onScroll();
+    };
+
+    entries.forEach(({ link }) => {
+      link.addEventListener("click", () => {
+        pinned = true;
+        setActive(link);
+      });
+    });
+
+    window.addEventListener("wheel", release, { passive: true });
+    window.addEventListener("touchmove", release, { passive: true });
+    window.addEventListener("keydown", release);
+
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll, { passive: true });
+    update();
+  }
+
+  initPostToc();
+  document.addEventListener("astro:page-load", initPostToc);
+</script>

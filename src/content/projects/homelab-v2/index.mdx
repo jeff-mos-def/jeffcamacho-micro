@@ -8,17 +8,22 @@ status: "Doing"
 draft: false  
 ---
 
+import Roadmap from '../../../components/Roadmap.astro';
+import items from '../../../data/proxmox-cluster.json';
+
+---
+
 First off, I'm not a network guy. I'm seriously just building this out to host my site... and host my music... and host my movies... and host my files...
 
 I may have created a lot of work for myself... Time for Day 0!
 
-# What Is Day 0?
+## What Is Day 0?
 
 Day 0 is the planning phase before any hardware is racked or any software is installed. It locks in requirements, architecture decisions, hardware selection, and the rationale behind every major choice. A clean Day 0 means Day 1 deployment goes smoothly, because the hard questions are already answered on paper. This document concentrates on the design and the equipment, with the Node 1 CPU choice treated as the open decision still in progress.
 
 ---
 
-# Design Principles
+## Design Principles
 
 These principles drive every equipment and placement decision below:
 
@@ -31,11 +36,11 @@ These principles drive every equipment and placement decision below:
 
 ---
 
-# Equipment
+## Equipment
 
 Three nodes form a Proxmox VE 9.2 cluster. Each carries a role chosen to match its hardware, not the other way around.
 
-## Node 1, GPU Compute Node
+### Node 1, GPU Compute Node
 
 **Dell OptiPlex 7070 MT**
 
@@ -63,7 +68,7 @@ The 500W ATX PSU, fitted through the existing adapter, solves the proprietary De
 
 This node runs a single VM for the AI and media stack, so the workload is bound by the GPU. The CPU mostly feeds data to the card and carries OS overhead.
 
-## Node 2, Primary Services Node
+### Node 2, Primary Services Node
 
 **HP EliteDesk 800 G4 Mini, 64GB**
 
@@ -76,7 +81,7 @@ This node runs a single VM for the AI and media stack, so the workload is bound 
 
 This node carries the most critical and most memory hungry services: Nginx Proxy Manager, Cloudflare Tunnel, Gitea, the Gitea Actions runner, and the Astro site. The 64GB of RAM keeps CI/CD builds clear of memory pressure and leaves room for generous Docker build caching. The 12 threads handle concurrent Git operations, build steps, and proxied connections without contention. 1GbE is enough, since inter node traffic is limited to small ZFS snapshot deltas and Corosync heartbeats.
 
-## Node 3, Supporting Services and Quorum 
+### Node 3, Supporting Services and Quorum 
 
 **HP EliteDesk 800 G4 Mini, 16GB**
 
@@ -89,17 +94,17 @@ This node carries the most critical and most memory hungry services: Nginx Proxy
 
 This node supplies the third vote for cluster quorum, without which the cluster cannot reach consensus and HA will not function. It hosts the lighter services: Pi-hole, Uptime Kuma, Homepage, Diun, Vaultwarden, and Paperless-ngx. DNS lives here on purpose, not on Node 1. This is a build out phase decision, not a claim that a GPU node is inherently unstable. While you are still configuring passthrough, swapping drivers, and trying AI models, Node 1 gets rebooted often, and losing DNS on every one of those reboots would disrupt the whole network. Once the GPU configuration is stable, that concern largely goes away. Putting DNS on a low churn node is still good practice regardless, so it stays here.
 
-## Shared Infrastructure
+### Shared Infrastructure
 
 A single switch with one 2.5GbE port and several 1GbE ports connects all three nodes. Node 1 runs at its full 2.5GbE; Nodes 2 and 3 use 1GbE. For light inter node traffic this is sufficient. A pre existing adapter on Node 1 converts the OptiPlex proprietary 6 pin motherboard power connector to standard ATX, which is what enables the 500W PSU swap. This is a known working solution from a prior build.
 
 ---
 
-# The CPU Decision (Node 1)
+## The CPU Decision (Node 1)
 
 This is the only open equipment question. The node currently runs an i9-9900. The goal is a more power efficient chip, with the i5-9400 and i5-8500 as the two candidates, constrained by the OptiPlex 7070 motherboard.
 
-## Compatibility, confirmed
+### Compatibility, confirmed
 
 The 7070 MT uses the Q370 chipset on an LGA1151 socket and officially supports both 8th Gen (Coffee Lake) and 9th Gen (Coffee Lake Refresh) Core processors. Dell's own supported processor table for the 7070 Tower lists all three relevant chips:
 
@@ -111,7 +116,7 @@ The 7070 MT uses the Q370 chipset on an LGA1151 socket and officially supports b
 
 Because both i5 options sit on Dell's official list, the BIOS already carries the microcode for either one. There is no BIOS gamble in either direction. Drop it in and it boots.
 
-## Where the efficiency actually comes from
+### Where the efficiency actually comes from
 
 A point worth being precise about: all three chips, including the i9-9900, share the same 65 W TDP rating. So the efficiency gain does not come from the TDP number on the box. It comes from two things:
 
@@ -120,7 +125,7 @@ A point worth being precise about: all three chips, including the i9-9900, share
 
 In short, the i5 trades away cores this node never uses for a lower power ceiling, with no practical hit to its actual job.
 
-## i5-9400 versus i5-8500
+### i5-9400 versus i5-8500
 
 These two are close to interchangeable for this build:
 
@@ -130,19 +135,19 @@ These two are close to interchangeable for this build:
 
 The decision comes down to price and availability. Buy whichever is the better deal. If prices are equal, the i5-9400 gets a slight nod, since the 7070 shipped with 9th Gen and the newer stepping is what the platform was tuned around, but this is a tie breaker, not a real performance gap.
 
-## The one gotcha: avoid the F SKU
+### The one gotcha: avoid the F SKU
 
 Do not buy the i5-9400F. The F variant drops the integrated UHD 630 entirely. This design depends on the iGPU for two things: the Quick Sync fallback for Jellyfin, and the permanent host console after the Quadro P4000 is passed through to the VM. An F chip breaks both. There is no i5-8500F, so the i5-8500 is safe by default. For the 9th Gen option, confirm the listing is the plain i5-9400 with graphics, not the 9400F.
 
 If a good deal happens to surface on an i5-9500 (4.4 GHz boost) or i5-8600 (4.3 GHz), both are also on Dell's supported list, both are 65 W, and both keep the UHD 630. They are fine equivalents in the same class if the pricing beats the 9400 and 8500.
 
-## Recommendation
+### Recommendation
 
 Either the i5-9400 (non F) or the i5-8500 satisfies every requirement on this node. Both are officially supported, both keep the iGPU the design relies on, and both cut sustained power versus the i9-9900 while losing nothing the GPU bound workload needs. Treat them as equivalent and let price decide, while steering clear of the 9400F.
 
 ---
 
-# Software and Virtualization
+## Software and Virtualization
 
 Equipment is the focus, so this is kept brief.
 
@@ -154,7 +159,7 @@ External access is Cloudflare Tunnel only, an outbound connection from Node 2 to
 
 ---
 
-# Architecture Diagram (Logical Design)
+## Architecture Diagram (Logical Design)
 
 ```mermaid
 flowchart TD
@@ -186,7 +191,7 @@ flowchart TD
 
 ---
 
-# Day 0 Equipment Decisions Summary
+## Day 0 Equipment Decisions Summary
 
 | Decision | Choice | Rationale |
 | :--- | :--- | :--- |
@@ -207,3 +212,11 @@ flowchart TD
 This document captures the equipment selection and the design rationale behind the cluster, with the Node 1 CPU swap identified as the single open decision. Once a deal lands on a plain i5-9400 or an i5-8500, this Day 0 is fully resolved and Day 1 can proceed.
 
 - Jeff
+
+---
+
+## Full Roadmap
+
+<Roadmap title="Proxmox cluster roadmap" items={items} />
+
+---

@@ -1,0 +1,67 @@
+{
+  "product": "Intake dashboard",
+  "customer": "Regional operations lead",
+  "increments": [
+    {
+      "id": 1,
+      "milestone": "Intake volume view",
+      "baseline": "Show weekly intake volume on a single dashboard page.",
+      "revised": "Show weekly intake volume, filterable by region, with region held between sessions.",
+      "reaction": "The total is right, but I run three regions and I can only see one number. I still open the spreadsheet to split it.",
+      "delivery": 20,
+      "value": 26,
+      "baselineFit": 0.35
+    },
+    {
+      "id": 2,
+      "milestone": "Nightly data refresh",
+      "baseline": "Refresh the underlying data set once nightly.",
+      "revised": "Refresh nightly and stamp each figure with the cutoff time it reflects.",
+      "reaction": "Nightly is fine. What I cannot tell is whether Monday's number includes Friday's late entries, so I do not quote it in the stand up.",
+      "delivery": 18,
+      "value": 12,
+      "baselineFit": 0.7
+    },
+    {
+      "id": 3,
+      "milestone": "Role based access",
+      "baseline": "Restrict dashboard access by user role.",
+      "revised": "Restrict by case type, since the sensitivity lives in the record, not the job title.",
+      "reaction": "Roles do not map to what has to stay private. Two people with the same role need different halves of this.",
+      "delivery": 16,
+      "value": 18,
+      "baselineFit": 0.25
+    },
+    {
+      "id": 4,
+      "milestone": "CSV export",
+      "baseline": "Let users export the current view to CSV.",
+      "revised": "Send the Monday summary to the ops lead automatically, no export step.",
+      "reaction": "I do not want a file. I want the number to arrive where the conversation already happens.",
+      "delivery": 14,
+      "value": 10,
+      "baselineFit": 0.2
+    },
+    {
+      "id": 5,
+      "milestone": "Historical trend",
+      "baseline": "Chart the last twelve months of intake volume.",
+      "revised": "Chart each month against the same month last year, since the work is seasonal.",
+      "reaction": "A rolling twelve months tells me nothing. August is always slow. I need August against last August.",
+      "delivery": 16,
+      "value": 20,
+      "baselineFit": 0.4
+    },
+    {
+      "id": 6,
+      "milestone": "Mobile layout",
+      "baseline": "Make the dashboard usable on a phone screen.",
+      "revised": "Optimize for the shared display in the ops room, where it is actually read.",
+      "reaction": "Nobody opens this on a phone. It lives on the screen in the corner of the ops room all day.",
+      "delivery": 16,
+      "value": 14,
+      "baselineFit": 0.5
+    }
+  ],
+  "costCurve": [1, 1.5, 2.2, 3, 4, 5.5]
+}

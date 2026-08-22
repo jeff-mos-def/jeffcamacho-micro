@@ -1,0 +1,116 @@
+---
+title: "Looking at a Map vs Living in the World"
+description: "Roadmaps of products and customer feedback"
+date: "2026-08-21"
+tags: ["Product Ownership", "Customer Feedback", "Roadmaps", "Value Delivery", "Requirements"]
+draft: false
+---
+
+import RoadmapDrift from "../../../components/RoadmapDrift.astro";
+
+> "The map is not the territory."
+- *Alfred Korzybski, 1931*
+ 
+Korzybski was making a point about language and reality. Product owners rediscover it every PI with a product roadmap.
+ 
+A roadmap is a map. It is drawn from a distance, at a moment in time, by people who were standing somewhere else when they drew it. It is useful the way any map is useful. It tells you the direction of travel and it lets a large group move together without renegotiating the route every morning.
+ 
+What it does not do is tell you what the ground feels like once you are standing on it. That is the part product owners keep learning the hard way.
+
+---
+
+## What the Map Is For
+
+The roadmap earns its place as a coordination instrument. Engineering needs to know what is coming so they can shape the architecture. Leadership needs to know what to fund. Dependent teams need to know when the interface they are waiting on shows up. Without the map, all of that becomes fifty separate conversations that produce fifty slightly different understandings.
+
+So the artifact is not the problem. The problem is what happens to it after it is published.
+
+A roadmap gets built during a planning cycle, and planning cycles have a way of turning best current guesses into settled commitments. The document leaves the room as a hypothesis and arrives at the team as a contract. Once that shift happens, every milestone on it stops being a question about customer value and starts being a question about schedule compliance.
+
+---
+
+## Checkboxing the Delivery
+
+Here is the failure I keep running into. The team delivers the milestone. The acceptance criteria are met. The demo runs clean, the box gets checked, and the roadmap turns another square green.
+
+Then the customer uses it, and they are not happy.
+
+Nothing went wrong in the sense that anyone can point to. The team built what was written down. The product owner accepted what was written down. The status report was accurate at every step. What went wrong is that the written down thing was authored months earlier by people who could not have known everything at the start, and nobody went back to check whether it was still the right thing.
+
+That is the difference between output and outcome. Output is the feature existing. Outcome is the customer's problem being smaller than it was before. A checked box proves output. It says nothing at all about outcome, and it is very easy to run an entire program measuring only the first one because the first one is the one that fits in a status column.
+
+The gap does not announce itself while it is forming. It surfaces at the end, at the point in the cycle where correcting it is most expensive, and it surfaces as a surprise to everyone except the customer.
+
+---
+
+## The Requirement Underneath the Milestone
+
+Trace a green square back far enough and you land on a requirement. That is where the disconnect actually starts.
+
+[I have written before about the ask not being the requirement](/blog/45-double-diamond). A customer hands you a sentence that sounds finished. Build us a dashboard. Automate the intake process. Replace the legacy system. That sentence is a starting point, and the working parts underneath it, who opens the thing and on what day, what decision they are making when they do, what they are doing today instead, what happens when the number is wrong, are discoverable only by going wide before you narrow.
+
+The roadmap is downstream of that work. Every milestone on it inherits whatever requirement was written at the time the map was drawn. If the requirement was really just the original ask with a due date attached, then the milestone is a schedule commitment to build something nobody interrogated, and checking the box confirms only that the team was efficient about it.
+
+So requirements management is not documentation hygiene. It is the mechanism that decides whether delivering the plan produces value or just produces artifacts.
+
+Two failures show up over and over. The first is a requirement written so agreeably that nobody can push back on it. A requirement nobody can disagree with is too vague to build from and too vague to be wrong, which means it will pass every review and fail at the demo. Specificity is what makes a requirement testable against reality.
+
+The second is the frozen baseline. The requirement gets captured, approved, and then treated as fixed for the life of the delivery, while the customer's understanding of their own problem keeps moving. Change control exists to protect the schedule, and it does that job well, but it also raises the cost of admitting something new was learned. Once it costs a product owner a change request, a justification, and a board meeting to say we now know more than we did, the honest answer stops getting raised. The requirement stays clean on paper and stale in practice, and the team delivers precisely against a description of a problem that no longer exists.
+
+The alternative is to treat requirements the way the second diamond treats work, as something that gets demonstrated and revised rather than accepted and archived. Every increment the customer reacts to is a requirements event. The comment about filtering by region is not scope creep, it is the requirement becoming accurate. A product owner who can absorb that into the backlog inside a sprint is managing requirements. A product owner who has to defend the baseline against it is managing a document.
+
+---
+
+## The Customer Is Not a Reviewer
+
+The usual response to that surprise is to add more review. More detailed acceptance criteria, a longer sign off chain, a stakeholder demo at the end of every increment.
+
+That treats the customer as an inspector, someone who shows up at the gate to approve or reject a finished thing. Inspection at the gate can only catch what is already built. It cannot change what gets built next, because by the time the inspection happens the next thing is already committed on the map.
+
+The customer needs to be inside the cycle, not at the end of it. That means they see the work while it is still forming and still cheap to change. It means they are looking at something rough and reacting to it, not evaluating something polished and deciding whether to accept it.
+
+The reaction is what you are after. A customer who sees a working screen and says the number is correct but it needs to be filtered by region has just given you something no requirements review would have produced. They could not have told you that in the kickoff. They needed something in front of them to react to. Every cycle where they get something to react to is a cycle where the map gets corrected against the ground.
+
+That is what turns a delivered product into a living one. The living product has a loop. Something learned in the world changes the plan, and it changes it in days rather than after the release.
+
+---
+
+## Teaching Product Owners to Be Open
+
+This is where the training matters, and it is not a tooling problem or a ceremony problem. It is a behavior problem, and the behavior is uncomfortable.
+
+Being open with a customer means showing them uncertainty. It means saying we are not sure this is right, here is what we have so far, tell us where it is wrong. Most product owners are implicitly taught not to do that. Exposing unfinished thinking invites scope pressure, hard questions, and the appearance of not having a handle on things. Showing a clean plan and reporting green is the safer career move in almost every organization I have worked in.
+
+So the training has to go in two directions at once. The product owner has to learn the practice, which is regular customer contact, working software in front of real users, and questions asked in a way that invites disagreement rather than confirmation. A customer who can only agree with you is not giving you information.
+
+And the organization has to give that product owner cover. If openness gets punished, if a yellow status generates more attention than a silent problem, then no amount of training changes anything. The product owner will do what the environment rewards, and the environment will keep rewarding the map over the ground.
+
+---
+
+## When the Map Becomes the Product
+
+The tell is a roadmap that has not changed in two quarters while the team has shipped continuously.
+
+Either the original plan was perfect, which has never happened, or nothing the team learned in six months of contact with real users made it back into the plan. The map is being maintained as a record of intent rather than used as a working instrument. It looks credible in a steering review. It is decorative in every other sense.
+
+The same tell works one level down. If the requirements behind those milestones read exactly as they did at baseline, the team has not been learning, or it has been learning in conversations that never reached the documents anyone plans from. Both versions produce the same outcome.
+
+Once that sets in, the roadmap quietly becomes the thing being delivered. The team optimizes for turning squares green. The product owner optimizes for the accuracy of the forecast rather than the value of the increment. The customer becomes an audience for the report instead of a participant in the work. Everyone is busy, everyone is on schedule, and the product is drifting away from the problem it was meant to solve.
+
+---
+
+## Test Case
+
+This is the same six increment product delivered two ways. In check the box mode you accept each milestone against the requirement as written, and the roadmap finishes at one hundred percent. In run the loop mode you demo each increment first, hear what the customer says about it, and choose whether to rewrite the requirement now, defer it at a rising cost, or hold the baseline and move on.
+
+<RoadmapDrift />
+
+---
+
+## Final Thought
+
+I am not arguing against roadmaps. A team without a map wanders, and wandering is not the same as being responsive.
+
+The argument is about what the map is for. It is a coordination instrument and a set of current best guesses, and it holds that value only as long as it stays connected to what the people using the product are actually experiencing. The moment it stops being corrected against the ground, it stops describing anything real, and delivering against it stops meaning anything.
+
+Look at the map. Then go live in the world for a while, and come back and redraw it.

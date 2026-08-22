@@ -1,0 +1,341 @@
+[
+  {
+    "id": "day0-requirements",
+    "status": "completed",
+    "track": "Planning",
+    "sortKey": "2026-06-17",
+    "end": "2026-06-24",
+    "title": "Lock Day 0 Design Principles",
+    "summary": "Fixed the six principles every later decision is measured against, before any hardware was racked.",
+    "details": [
+      "No open ports on the home router, all external access outbound only",
+      "Network critical services kept off the high churn GPU node",
+      "ZFS replication with a bounded data loss window instead of shared storage",
+      "GPU passed through to a VM for both inference and transcoding",
+      "Services isolated in LXCs with Docker inside where needed",
+      "Website deployments immutable, SHA tagged images from CI/CD"
+    ],
+    "tags": [
+      "Day 0",
+      "Architecture",
+      "Requirements"
+    ]
+  },
+  {
+    "id": "day0-topology",
+    "status": "completed",
+    "track": "Planning",
+    "sortKey": "2026-06-22",
+    "end": "2026-07-01",
+    "title": "Three Node Topology and Role Assignment",
+    "summary": "Assigned each node a role matched to its hardware rather than fitting hardware to a predetermined role.",
+    "details": [
+      "Node 1 as GPU compute on the OptiPlex 7070 MT",
+      "Node 2 as primary services on the 64GB EliteDesk",
+      "Node 3 as supporting services plus the third quorum vote",
+      "DNS placed on Node 3 to survive Node 1 reboot churn during passthrough work",
+      "Logical architecture diagram drafted"
+    ],
+    "tags": [
+      "Day 0",
+      "Topology",
+      "Quorum"
+    ]
+  },
+  {
+    "id": "cpu-decision",
+    "status": "in-progress",
+    "track": "Planning",
+    "sortKey": "2026-06-28",
+    "end": "2026-07-20",
+    "title": "Node 1 CPU Selection",
+    "summary": "The single open equipment decision. Replace the i9-9900 with a 6C/6T part to cut sustained power on a GPU bound workload.",
+    "details": [
+      "Candidates narrowed to i5-9400 non F and i5-8500, both on Dell's supported list",
+      "Confirmed Q370 and LGA1151 carry microcode for either, so no BIOS gamble",
+      "Established that the gain comes from fewer cores, not the shared 65W TDP rating",
+      "Ruled out the 9400F, which drops the UHD 630 the design depends on",
+      "Decision deferred to price and availability"
+    ],
+    "tags": [
+      "Open Decision",
+      "CPU",
+      "Power"
+    ]
+  },
+  {
+    "id": "n1-psu",
+    "status": "planned",
+    "track": "Node 1",
+    "sortKey": "2026-07-06",
+    "end": "2026-07-15",
+    "title": "500W PSU Swap via ATX Adapter",
+    "summary": "Replace the stock 260W Dell unit, which cannot feed the Quadro P4000 under combined CPU and GPU load.",
+    "details": [
+      "Fit the proprietary 6 pin to standard ATX adapter already on hand",
+      "Install the 500W ATX supply in the 7070 MT chassis",
+      "Verify rail stability under simultaneous CPU and GPU load"
+    ],
+    "tags": [
+      "Hardware",
+      "Power",
+      "OptiPlex"
+    ]
+  },
+  {
+    "id": "n1-cpu-swap",
+    "status": "planned",
+    "track": "Node 1",
+    "sortKey": "2026-07-20",
+    "end": "2026-07-27",
+    "title": "Install Replacement CPU",
+    "summary": "Drop in whichever of the two candidate i5 parts wins on price, then confirm the platform boots clean.",
+    "details": [
+      "Verify the part is the plain SKU with UHD 630, not an F variant",
+      "Reseat cooler and confirm POST without a BIOS update",
+      "Baseline idle and sustained package power against the i9-9900"
+    ],
+    "tags": [
+      "Hardware",
+      "CPU"
+    ]
+  },
+  {
+    "id": "n1-passthrough",
+    "status": "planned",
+    "track": "Node 1",
+    "sortKey": "2026-07-27",
+    "end": "2026-08-14",
+    "title": "Quadro P4000 PCIe Passthrough",
+    "summary": "Bind the workstation card to a VM while keeping the integrated UHD 630 driving the host console.",
+    "details": [
+      "Enable VT-d and configure IOMMU groups on the Proxmox host",
+      "Blacklist host drivers and bind the P4000 to vfio-pci",
+      "Confirm the UHD 630 still provides a permanent host console after handoff",
+      "Validate no Code 43 or reset behaviour, the reason a workstation card was chosen"
+    ],
+    "tags": [
+      "Passthrough",
+      "IOMMU",
+      "GPU"
+    ]
+  },
+  {
+    "id": "n2-proxmox",
+    "status": "planned",
+    "track": "Node 2",
+    "sortKey": "2026-07-10",
+    "end": "2026-07-22",
+    "title": "Proxmox VE 9.2 Base Install",
+    "summary": "Stand up the primary services node first, since it anchors ingress and CI/CD for everything else.",
+    "details": [
+      "Install Proxmox VE 9.2 on Debian 13 Trixie",
+      "Create the local ZFS pool",
+      "Configure 1GbE networking and host naming"
+    ],
+    "tags": [
+      "Proxmox",
+      "ZFS",
+      "Base Install"
+    ]
+  },
+  {
+    "id": "n2-ingress",
+    "status": "planned",
+    "track": "Node 2",
+    "sortKey": "2026-08-03",
+    "end": "2026-08-21",
+    "title": "Cloudflare Tunnel and Reverse Proxy",
+    "summary": "Establish the only external access path, an outbound tunnel with zero forwarded ports on the router.",
+    "details": [
+      "Deploy Nginx Proxy Manager in an LXC",
+      "Bring up the Cloudflare Tunnel connector as outbound only",
+      "Route proxied traffic through to Node 1 and Node 3",
+      "Confirm the router still has no inbound port forwards"
+    ],
+    "tags": [
+      "Cloudflare",
+      "NPM",
+      "Zero Ports"
+    ]
+  },
+  {
+    "id": "n2-cicd",
+    "status": "planned",
+    "track": "Node 2",
+    "sortKey": "2026-08-24",
+    "end": "2026-09-11",
+    "title": "Gitea, Actions Runner, and Astro Deploy",
+    "summary": "Immutable site deployments built in CI and shipped as SHA tagged images, using the node's 64GB of headroom.",
+    "details": [
+      "Deploy Gitea and register the Actions runner",
+      "Build the Astro site in CI and tag images by commit SHA",
+      "Size Docker build cache against available memory",
+      "Verify concurrent Git operations and builds do not contend"
+    ],
+    "tags": [
+      "Gitea",
+      "CI/CD",
+      "Astro",
+      "Immutable"
+    ]
+  },
+  {
+    "id": "n3-quorum",
+    "status": "planned",
+    "track": "Node 3",
+    "sortKey": "2026-07-22",
+    "end": "2026-08-03",
+    "title": "Cluster Join and Third Quorum Vote",
+    "summary": "Without the third vote the cluster cannot reach consensus and HA will not function.",
+    "details": [
+      "Install Proxmox VE 9.2 and join the existing cluster",
+      "Verify Corosync heartbeat across all three nodes",
+      "Confirm quorum survives a single node reboot"
+    ],
+    "tags": [
+      "Quorum",
+      "Corosync",
+      "HA"
+    ]
+  },
+  {
+    "id": "n3-dns",
+    "status": "planned",
+    "track": "Node 3",
+    "sortKey": "2026-08-05",
+    "end": "2026-08-19",
+    "title": "Pi-hole DNS on the Low Churn Node",
+    "summary": "DNS deliberately lands here so Node 1 reboots during passthrough work never take the whole network down.",
+    "details": [
+      "Deploy Pi-hole in an LXC for DNS level ad blocking",
+      "Leave DHCP on the router to avoid a dual DHCP conflict",
+      "Point cluster hosts at the new resolver"
+    ],
+    "tags": [
+      "Pi-hole",
+      "DNS",
+      "Availability"
+    ]
+  },
+  {
+    "id": "n3-support",
+    "status": "planned",
+    "track": "Node 3",
+    "sortKey": "2026-08-19",
+    "end": "2026-09-08",
+    "title": "Supporting Service Stack",
+    "summary": "The lighter services that fit comfortably in 16GB alongside the quorum role.",
+    "details": [
+      "Uptime Kuma for availability monitoring",
+      "Homepage as the service dashboard",
+      "Diun for container image update notifications",
+      "Vaultwarden for credential storage",
+      "Paperless-ngx for document management"
+    ],
+    "tags": [
+      "Services",
+      "LXC",
+      "Monitoring"
+    ]
+  },
+  {
+    "id": "fabric-switch",
+    "status": "planned",
+    "track": "Fabric",
+    "sortKey": "2026-07-01",
+    "end": "2026-07-10",
+    "title": "Switch and 2.5GbE Uplink",
+    "summary": "One switch carrying a single 2.5GbE port for Node 1 and 1GbE for the two EliteDesks.",
+    "details": [
+      "Install the 2.5GbE PCIe NIC in Node 1",
+      "Cable all three nodes and confirm negotiated link speeds",
+      "Accept 1GbE on Nodes 2 and 3, sufficient for snapshot deltas and heartbeats"
+    ],
+    "tags": [
+      "Networking",
+      "2.5GbE",
+      "Switch"
+    ]
+  },
+  {
+    "id": "fabric-replication",
+    "status": "planned",
+    "track": "Fabric",
+    "sortKey": "2026-09-01",
+    "end": "2026-09-18",
+    "title": "ZFS Replication Between Nodes",
+    "summary": "Local pools per node with scheduled snapshot replication, trading a bounded data loss window for avoiding Ceph.",
+    "details": [
+      "Configure replication jobs and set the interval",
+      "Document the resulting data loss window explicitly",
+      "Test cold migration between nodes",
+      "Verify HA restart behaviour on simulated node failure"
+    ],
+    "tags": [
+      "ZFS",
+      "Replication",
+      "HA"
+    ]
+  },
+  {
+    "id": "workload-ai",
+    "status": "planned",
+    "track": "Workloads",
+    "sortKey": "2026-08-14",
+    "end": "2026-09-04",
+    "title": "Ollama and Open WebUI on the Passthrough VM",
+    "summary": "The reason the P4000 was chosen: 8GB of VRAM fits a 7B to 8B model at Q4_K_M with context headroom.",
+    "details": [
+      "Build the AI and media VM with the P4000 attached",
+      "Deploy Ollama and pull a 7B to 8B model at Q4_K_M quantization",
+      "Front it with Open WebUI",
+      "Confirm VRAM headroom under real conversation context"
+    ],
+    "tags": [
+      "Ollama",
+      "LLM",
+      "Quadro P4000"
+    ]
+  },
+  {
+    "id": "workload-media",
+    "status": "planned",
+    "track": "Workloads",
+    "sortKey": "2026-09-04",
+    "end": "2026-09-25",
+    "title": "Jellyfin with Dual Transcode Paths",
+    "summary": "NVENC on the passed through Quadro, with the iGPU Quick Sync block held as the fallback path.",
+    "details": [
+      "Deploy Jellyfin on the same VM as the AI stack",
+      "Validate NVENC hardware transcoding through the P4000",
+      "Confirm the UHD 630 Quick Sync fallback path works",
+      "Mount media storage from the replicated ZFS pool"
+    ],
+    "tags": [
+      "Jellyfin",
+      "NVENC",
+      "Quick Sync"
+    ]
+  },
+  {
+    "id": "day1-cutover",
+    "status": "planned",
+    "track": "Workloads",
+    "sortKey": "2026-09-25",
+    "end": "2026-09-30",
+    "title": "Day 1 Cutover Complete",
+    "summary": "All three nodes in quorum, every service reachable through the tunnel, and Day 0 fully resolved.",
+    "details": [
+      "Verify every service resolves through the Cloudflare Tunnel",
+      "Confirm no inbound ports remain open on the router",
+      "Run a full failover drill across the cluster",
+      "Close out the open Node 1 CPU decision in the Day 0 record"
+    ],
+    "tags": [
+      "Milestone",
+      "Cutover",
+      "Day 1"
+    ]
+  }
+]

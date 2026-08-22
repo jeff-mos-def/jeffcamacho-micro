@@ -76,11 +76,15 @@ const items = sortItems((providedItems ?? defaultItems) as RoadmapItem[]);
     background: var(--hr-bg);
     color: var(--hr-text);
 
-    /* Break out of a narrow prose column up to a capped width, centred.
-       Falls back to plain full width where max() on margins misbehaves. */
-    width: min(72rem, 100vw - 2rem);
-    max-width: 100vw;
-    margin-inline: calc(50% - min(36rem, 50vw - 1rem));
+    /* Breaks out to the right only. The contents nav sits in the left
+       margin, so leftward bleed is capped at the margin that actually
+       exists: 2rem on desktop, and nothing on a phone where the column
+       already spans the screen. Without the cap the block would hang off
+       the left edge and give the page a horizontal scrollbar. */
+    --hr-bleed-left: min(2rem, (100vw - 100%) / 2);
+    width: min(72rem, calc(50vw + 50% - 1rem + var(--hr-bleed-left)));
+    margin-left: calc(-1 * var(--hr-bleed-left));
+    margin-right: 0;
   }
 
   /* Only box-sizing is forced globally. Everything else is left to each

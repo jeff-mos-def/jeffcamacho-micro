@@ -1,0 +1,410 @@
+---
+import data from "../data/roadmap-drift.json";
+---
+
+<div class="roadmap-drift-host" data-roadmap-drift data-config={JSON.stringify(data)}></div>
+
+<script>
+  type Increment = {
+    id: number;
+    milestone: string;
+    baseline: string;
+    revised: string;
+    reaction: string;
+    delivery: number;
+    value: number;
+    baselineFit: number;
+  };
+
+  type Config = {
+    product: string;
+    customer: string;
+    increments: Increment[];
+    costCurve: number[];
+  };
+
+  type Mode = "checkbox" | "living";
+  type Phase = "ready" | "demo" | "done";
+  type Run = { delivery: number; value: number };
+
+  const STYLES = `
+    :host {
+      display: block;
+      margin: 2.5rem 0;
+      --ink: #1a1d21;
+      --mute: #5f6873;
+      --line: #dfe3e8;
+      --panel: #f7f8fa;
+      --card: #ffffff;
+      --green: #1f7a4d;
+      --amber: #a86412;
+      --red: #a33a32;
+      --blue: #2f5fa8;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    }
+    :host(.is-dark) {
+      --ink: #e8eaed;
+      --mute: #98a1ad;
+      --line: #2c3138;
+      --panel: #14171b;
+      --card: #1a1e23;
+      --green: #3fbc80;
+      --amber: #e8a33d;
+      --red: #e07a70;
+      --blue: #6f9fe0;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    ol { list-style: none; }
+    button { font: inherit; }
+
+    .rd {
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: var(--panel);
+      color: var(--ink);
+      padding: 1.5rem;
+      font-family: inherit;
+      font-size: 0.95rem;
+      line-height: 1.55;
+    }
+
+    .eyebrow, .label, .metric, .logtitle, .num {
+      font-family: var(--mono);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--mute);
+    }
+    .eyebrow { font-size: 0.7rem; }
+    .title { font-size: 1.35rem; line-height: 1.2; font-weight: 700; margin: 0.4rem 0 0.5rem; }
+    .sub, .note { color: var(--mute); max-width: 60ch; }
+    .note { margin-top: 0.7rem; font-size: 0.85rem; }
+
+    .modes { display: flex; gap: 0.5rem; margin-top: 1.1rem; flex-wrap: wrap; }
+    .btn {
+      font-size: 0.85rem;
+      padding: 0.45rem 0.9rem;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: var(--card);
+      color: var(--ink);
+      cursor: pointer;
+      transition: background 0.15s ease, border-color 0.15s ease;
+    }
+    .btn:hover { border-color: var(--mute); }
+    .btn.on, .btn.primary { background: var(--ink); color: var(--panel); border-color: var(--ink); }
+    .btn:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
+
+    .meters { display: grid; gap: 0.9rem; margin: 1.6rem 0 1.3rem; padding-top: 1.4rem; border-top: 1px solid var(--line); }
+    .meterhead { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 0.35rem; }
+    .metric { font-size: 0.72rem; letter-spacing: 0.1em; }
+    .readout { font-variant-numeric: tabular-nums; font-weight: 700; font-size: 1.05rem; color: var(--ink); }
+    .track { height: 9px; border-radius: 5px; background: var(--line); overflow: hidden; }
+    .fill { height: 100%; width: 0; border-radius: 5px; transition: width 0.5s cubic-bezier(0.2, 0.8, 0.2, 1); }
+    .fill.delivery { background: var(--green); }
+    .fill.value { background: var(--amber); }
+
+    .chips { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-bottom: 1.3rem; }
+    .chip {
+      display: flex; align-items: center; gap: 0.4rem;
+      padding: 0.3rem 0.6rem;
+      border: 1px solid var(--line); border-radius: 5px;
+      background: var(--card); font-size: 0.78rem; color: var(--mute);
+    }
+    .chip .n { font-family: var(--mono); font-size: 0.7rem; }
+    .chip.now { border-color: var(--ink); color: var(--ink); }
+    .chip.done { border-color: var(--green); color: var(--green); }
+    .chip.gap { border-color: var(--green); color: var(--green); border-style: dashed; }
+    .chip.revised { border-color: var(--amber); color: var(--amber); }
+    .chip.deferred { border-color: var(--blue); color: var(--blue); }
+
+    .card { border: 1px solid var(--line); border-radius: 8px; background: var(--card); padding: 1.2rem; }
+    .cardhead { display: flex; align-items: baseline; gap: 0.7rem; font-weight: 700; margin-bottom: 0.9rem; }
+    .num { font-size: 0.7rem; font-weight: 400; letter-spacing: 0.08em; }
+    .label { font-size: 0.68rem; margin-bottom: 0.35rem; }
+    .req { max-width: 62ch; }
+    .req.revised { color: var(--amber); }
+    .flag { margin-top: 0.35rem; font-size: 0.78rem; color: var(--mute); font-style: italic; }
+    .quote { border-left: 2px solid var(--amber); padding-left: 0.9rem; max-width: 62ch; }
+    .cost { margin-top: 0.9rem; font-size: 0.85rem; color: var(--mute); }
+    .actions { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 1.2rem; }
+
+    .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.8rem; margin-bottom: 1rem; }
+    .stat { display: flex; flex-direction: column; font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--mute); }
+    .stat b { font-size: 1.5rem; letter-spacing: 0; color: var(--ink); text-transform: none; }
+    .verdict { max-width: 62ch; }
+    .compare { margin-top: 1.2rem; padding-top: 1rem; border-top: 1px solid var(--line); }
+    .comparerow { display: flex; justify-content: space-between; gap: 1rem; font-size: 0.85rem; padding: 0.2rem 0; }
+    .comparerow span:first-child { color: var(--mute); }
+
+    .log { margin-top: 1.3rem; padding-top: 1.2rem; border-top: 1px solid var(--line); }
+    .logtitle { font-size: 0.68rem; margin-bottom: 0.5rem; }
+    .logitems { display: grid; gap: 0.3rem; }
+    .logitem { font-size: 0.85rem; padding-left: 0.8rem; border-left: 2px solid var(--line); color: var(--mute); }
+    .logitem.done { border-color: var(--green); }
+    .logitem.gap { border-color: var(--red); }
+    .logitem.revised { border-color: var(--amber); }
+    .logitem.deferred { border-color: var(--blue); }
+
+    @media (max-width: 640px) {
+      .rd { padding: 1.1rem; }
+      .stats { grid-template-columns: repeat(2, 1fr); }
+      .actions .btn { flex: 1 1 auto; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .fill { transition: none; }
+    }
+  `;
+
+  const SHELL = `
+    <div class="rd">
+      <p class="eyebrow">Six increments, one product</p>
+      <p class="title">Deliver the map, or live in the world</p>
+      <p class="sub">You are the product owner on an intake dashboard. Pick how you want to run the delivery, then work through the increments and watch both meters.</p>
+      <div class="modes">
+        <button type="button" class="btn on" data-mode="checkbox">Check the box</button>
+        <button type="button" class="btn" data-mode="living">Run the loop</button>
+      </div>
+      <p class="note" data-note></p>
+      <div class="meters">
+        <div>
+          <div class="meterhead"><span class="metric">Roadmap delivered</span><span class="readout" data-dval>0%</span></div>
+          <div class="track"><div class="fill delivery" data-dbar></div></div>
+        </div>
+        <div>
+          <div class="meterhead"><span class="metric">Value realized</span><span class="readout" data-vval>0%</span></div>
+          <div class="track"><div class="fill value" data-vbar></div></div>
+        </div>
+      </div>
+      <ol class="chips" data-chips></ol>
+      <div data-stage aria-live="polite"></div>
+      <div class="log">
+        <p class="logtitle">Decision record</p>
+        <ol class="logitems" data-log></ol>
+      </div>
+    </div>
+  `;
+
+  const NOTES: Record<Mode, string> = {
+    checkbox: "Accept each milestone against the requirement as written. Nothing goes back to the customer until the end.",
+    living: "Build each increment, demo it, and decide what to do with what you hear.",
+  };
+
+  document.querySelectorAll<HTMLElement>("[data-roadmap-drift]").forEach((host) => {
+    if (host.shadowRoot) return;
+
+    const cfg: Config = JSON.parse(host.dataset.config || "{}");
+    const items: Increment[] = cfg.increments || [];
+    const curve: number[] = cfg.costCurve || [];
+    const runs: Partial<Record<Mode, Run>> = {};
+
+    const shadow = host.attachShadow({ mode: "open" });
+    shadow.innerHTML = "<style>" + STYLES + "</style>" + SHELL;
+
+    const q = (sel: string) => shadow.querySelector(sel) as HTMLElement;
+    const el = {
+      modes: shadow.querySelectorAll<HTMLElement>("[data-mode]"),
+      note: q("[data-note]"),
+      dBar: q("[data-dbar]"),
+      vBar: q("[data-vbar]"),
+      dVal: q("[data-dval]"),
+      vVal: q("[data-vval]"),
+      chips: q("[data-chips]"),
+      stage: q("[data-stage]"),
+      log: q("[data-log]"),
+    };
+
+    const syncTheme = () => {
+      const root = document.documentElement;
+      const dark =
+        root.classList.contains("dark") ||
+        root.dataset.theme === "dark" ||
+        document.body.classList.contains("dark") ||
+        (!root.classList.contains("light") &&
+          root.dataset.theme !== "light" &&
+          window.matchMedia("(prefers-color-scheme: dark)").matches);
+      host.classList.toggle("is-dark", dark);
+    };
+    syncTheme();
+    new MutationObserver(syncTheme).observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["class", "data-theme"],
+    });
+
+    let mode: Mode = "checkbox";
+    let index = 0;
+    let phase: Phase = "ready";
+    let delivery = 0;
+    let value = 0;
+    let drift = 0;
+    let debt = 0;
+    let states: string[] = [];
+    let texts: string[] = [];
+
+    const pct = (n: number) => Math.min(100, Math.round(n));
+
+    function reset(next: Mode) {
+      mode = next;
+      index = 0;
+      phase = "ready";
+      delivery = 0;
+      value = 0;
+      drift = 0;
+      debt = 0;
+      states = items.map(() => "");
+      texts = items.map((it) => it.baseline);
+      el.log.innerHTML = "";
+      el.modes.forEach((b) => b.classList.toggle("on", b.dataset.mode === next));
+      el.note.textContent = NOTES[next];
+      render();
+    }
+
+    function render() {
+      el.dBar.style.width = pct(delivery) + "%";
+      el.vBar.style.width = pct(value) + "%";
+      el.dVal.textContent = pct(delivery) + "%";
+      el.vVal.textContent = pct(value) + "%";
+
+      el.chips.innerHTML = items
+        .map((it, i) => {
+          const now = i === index && phase !== "done" ? " now" : "";
+          return '<li class="chip ' + states[i] + now + '"><span class="n">' + it.id + "</span>" + it.milestone + "</li>";
+        })
+        .join("");
+
+      if (phase === "done") summary();
+      else card();
+    }
+
+    function card() {
+      const it = items[index];
+      const revised = texts[index] !== it.baseline;
+      const mult = curve[index] || 1;
+      let body = "";
+      let actions = "";
+
+      if (mode === "living" && phase === "demo") {
+        body =
+          '<p class="label">' + cfg.customer + ", in the demo</p>" +
+          '<blockquote class="quote">' + it.reaction + "</blockquote>" +
+          '<p class="cost">Cost to fix this later: <b>' + mult + "x</b></p>";
+        actions =
+          '<button type="button" class="btn primary" data-act="absorb">Absorb it now</button>' +
+          '<button type="button" class="btn" data-act="defer">Defer to the backlog</button>' +
+          '<button type="button" class="btn" data-act="dismiss">Hold the baseline</button>';
+      } else {
+        body =
+          '<p class="label">Requirement</p>' +
+          '<p class="req' + (revised ? " revised" : "") + '">' + texts[index] + "</p>" +
+          (revised ? '<p class="flag">Rewritten after the last demo</p>' : "");
+        actions =
+          mode === "checkbox"
+            ? '<button type="button" class="btn primary" data-act="accept">Accept milestone</button>'
+            : '<button type="button" class="btn primary" data-act="build">Build it, then demo</button>';
+      }
+
+      el.stage.innerHTML =
+        '<div class="card"><p class="cardhead"><span class="num">' +
+        it.id + " of " + items.length + "</span>" + it.milestone + "</p>" +
+        body + '<div class="actions">' + actions + "</div></div>";
+
+      el.stage.querySelectorAll<HTMLElement>("[data-act]").forEach((b) => {
+        b.addEventListener("click", () => act(b.dataset.act || ""));
+      });
+    }
+
+    function log(text: string, tone: string) {
+      const li = document.createElement("li");
+      li.className = "logitem " + tone;
+      li.textContent = text;
+      el.log.appendChild(li);
+    }
+
+    function act(kind: string) {
+      const it = items[index];
+      const mult = curve[index] || 1;
+      const gap = 1 - it.baselineFit;
+
+      if (kind === "build") {
+        phase = "demo";
+        render();
+        return;
+      }
+
+      if (kind === "accept") {
+        delivery += it.delivery;
+        value += it.value * it.baselineFit;
+        states[index] = gap > 0.4 ? "gap" : "done";
+        if (gap > 0.4) drift += 1;
+        log(it.milestone + ": accepted as written. Never shown to the customer.", gap > 0.4 ? "gap" : "done");
+      } else if (kind === "absorb") {
+        delivery += Math.round(it.delivery * 0.65);
+        value += it.value;
+        texts[index] = it.revised;
+        states[index] = "revised";
+        log(it.milestone + ": requirement rewritten in the same cycle. Schedule slipped, product corrected.", "revised");
+      } else if (kind === "defer") {
+        delivery += it.delivery;
+        value += it.value * (it.baselineFit + gap * 0.5);
+        states[index] = "deferred";
+        debt += it.value * gap * mult * 0.1;
+        log(it.milestone + ": logged for later at " + mult + "x the cost to fix.", "deferred");
+      } else {
+        delivery += it.delivery;
+        value += it.value * it.baselineFit;
+        states[index] = "gap";
+        drift += 1;
+        log(it.milestone + ": baseline held. The feedback was heard and dropped.", "gap");
+      }
+
+      index += 1;
+      phase = index >= items.length ? "done" : "ready";
+      render();
+    }
+
+    function summary() {
+      runs[mode] = { delivery: pct(delivery), value: pct(value) };
+      const spread = pct(delivery) - pct(value);
+
+      let verdict;
+      if (mode === "checkbox") {
+        verdict =
+          "Every square is green and the customer is holding a product that solves " +
+          pct(value) + " percent of the problem. Nothing in the status column ever said so.";
+      } else if (spread <= 0) {
+        verdict = "The map came in short and the product came in right. That trade only looks bad in a report that counts squares.";
+      } else {
+        verdict = "You kept the schedule and carried the corrections forward. The debt is real work, priced at the cycle you deferred it in.";
+      }
+
+      const compare =
+        runs.checkbox && runs.living
+          ? '<div class="compare"><p class="label">Both runs, same six increments</p>' +
+            '<p class="comparerow"><span>Check the box</span><span>' + runs.checkbox.delivery + "% delivered, " + runs.checkbox.value + "% realized</span></p>" +
+            '<p class="comparerow"><span>Run the loop</span><span>' + runs.living.delivery + "% delivered, " + runs.living.value + "% realized</span></p></div>"
+          : "";
+
+      el.stage.innerHTML =
+        '<div class="card"><p class="cardhead"><span class="num">Done</span>Where the product landed</p>' +
+        '<div class="stats">' +
+        '<p class="stat"><b>' + pct(delivery) + "%</b>roadmap delivered</p>" +
+        '<p class="stat"><b>' + pct(value) + "%</b>value realized</p>" +
+        '<p class="stat"><b>' + drift + "</b>silent gaps</p>" +
+        '<p class="stat"><b>' + Math.round(debt) + "</b>rework debt</p></div>" +
+        '<p class="verdict">' + verdict + "</p>" + compare +
+        '<div class="actions">' +
+        '<button type="button" class="btn primary" data-replay="' + (mode === "checkbox" ? "living" : "checkbox") + '">Replay the other way</button>' +
+        '<button type="button" class="btn" data-replay="' + mode + '">Run it again</button>' +
+        "</div></div>";
+
+      el.stage.querySelectorAll<HTMLElement>("[data-replay]").forEach((b) => {
+        b.addEventListener("click", () => reset(b.dataset.replay as Mode));
+      });
+    }
+
+    el.modes.forEach((b) => {
+      b.addEventListener("click", () => reset(b.dataset.mode as Mode));
+    });
+
+    reset("checkbox");
+  });
+</script>

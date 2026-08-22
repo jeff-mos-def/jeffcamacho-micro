@@ -1,0 +1,194 @@
+---
+import {
+  STATE_LABELS,
+  wsjfScore,
+  costOfDelay,
+  formatScore,
+  type PortfolioData,
+} from "../types/lpm";
+
+interface Props {
+  data: PortfolioData;
+}
+
+const { data } = Astro.props;
+
+const scored = data.epics
+  .filter((e) => e.state !== "done")
+  .sort((a, b) => wsjfScore(b.wsjf) - wsjfScore(a.wsjf));
+
+const inputs = [
+  { key: "ubv", short: "UBV", label: "User and business value" },
+  { key: "tc", short: "TC", label: "Time criticality" },
+  { key: "rroe", short: "RR|OE", label: "Risk reduction and opportunity enablement" },
+  { key: "jobSize", short: "Size", label: "Job size" },
+] as const;
+
+const streamName = (id: string) =>
+  data.valueStreams.find((v) => v.id === id)?.name ?? id;
+
+const grid =
+  "grid grid-cols-[2.5rem_minmax(14rem,1fr)_repeat(4,4.75rem)_4.5rem_5rem] items-center gap-x-3";
+---
+
+<div data-lpm-panel="wsjf" class="not-prose">
+  <div class="mb-4 flex flex-wrap items-start justify-between gap-4">
+    <p class="max-w-2xl text-sm text-neutral-600 dark:text-neutral-400">
+      Weighted Shortest Job First is cost of delay divided by job size. Type a new
+      number and the row reranks itself. The lesson lands fastest on job size: the
+      cheapest way to climb the backlog is almost always to make the job smaller,
+      not to argue that it matters more.
+    </p>
+    <p class="shrink-0 rounded-md border border-neutral-200 px-3 py-2 text-center font-mono text-xs text-neutral-700 dark:border-neutral-800 dark:text-neutral-300">
+      WSJF = ( UBV + TC + RR|OE ) &divide; Size
+    </p>
+  </div>
+
+  <div class="overflow-x-auto">
+    <div class="min-w-[52rem]">
+      <div
+        class:list={[
+          grid,
+          "border-b border-neutral-200 px-2 pb-2 dark:border-neutral-800",
+        ]}
+      >
+        <span class="text-[10px] font-semibold uppercase tracking-wide text-neutral-500">
+          Rank
+        </span>
+        <span class="text-[10px] font-semibold uppercase tracking-wide text-neutral-500">
+          Epic
+        </span>
+        {
+          inputs.map((input) => (
+            <span
+              title={input.label}
+              class="text-center text-[10px] font-semibold uppercase tracking-wide text-neutral-500"
+            >
+              {input.short}
+            </span>
+          ))
+        }
+        <span class="text-center text-[10px] font-semibold uppercase tracking-wide text-neutral-500">
+          CoD
+        </span>
+        <span class="text-right text-[10px] font-semibold uppercase tracking-wide text-neutral-500">
+          WSJF
+        </span>
+      </div>
+
+      <ol data-wsjf-list class="flex flex-col">
+        {
+          scored.map((epic, i) => (
+            <li
+              data-wsjf-row={epic.id}
+              class:list={[
+                grid,
+                "rounded-md px-2 py-2.5 odd:bg-neutral-50 dark:odd:bg-neutral-900/40",
+              ]}
+            >
+              <span
+                data-wsjf-rank
+                class="font-mono text-xs tabular-nums text-neutral-400 dark:text-neutral-500"
+              >
+                {String(i + 1).padStart(2, "0")}
+              </span>
+
+              <span class="min-w-0">
+                <span class="block truncate text-sm font-medium text-neutral-900 dark:text-neutral-100">
+                  {epic.title}
+                </span>
+                <span class="block truncate text-[11px] text-neutral-500 dark:text-neutral-400">
+                  {streamName(epic.valueStream)} &middot; {STATE_LABELS[epic.state]}
+                </span>
+              </span>
+
+              {inputs.map((input) => (
+                <input
+                  type="number"
+                  min="1"
+                  max="20"
+                  step="1"
+                  inputmode="numeric"
+                  value={epic.wsjf[input.key]}
+                  data-wsjf-input={input.key}
+                  aria-label={`${input.label} for ${epic.title}`}
+                  class="h-8 w-full rounded-md border border-neutral-300 bg-white text-center font-mono text-sm tabular-nums text-neutral-900 transition-colors focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-100"
+                />
+              ))}
+
+              <span
+                data-wsjf-cod
+                class="text-center font-mono text-sm tabular-nums text-neutral-500 dark:text-neutral-400"
+              >
+                {costOfDelay(epic.wsjf)}
+              </span>
+
+              <span
+                data-wsjf-value
+                class="rounded px-1 text-right font-mono text-base font-semibold tabular-nums text-neutral-900 transition-colors dark:text-neutral-100"
+              >
+                {formatScore(wsjfScore(epic.wsjf))}
+              </span>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </div>
+
+  <p class="mt-3 text-[11px] text-neutral-500 dark:text-neutral-500">
+    Seeded with the modified Fibonacci scale SAFe recommends, 1 2 3 5 8 13 20, but
+    any whole number from 1 to 20 is accepted.
+  </p>
+</div>
+
+<style>
+  [data-wsjf-row] {
+    will-change: transform;
+  }
+  .lpm-flash {
+    animation: lpm-flash 620ms ease-out;
+  }
+  @keyframes lpm-flash {
+    0% {
+      background-color: rgb(14 165 233 / 0.35);
+      color: rgb(3 105 161);
+    }
+    100% {
+      background-color: transparent;
+    }
+  }
+  :global(.dark) .lpm-flash {
+    animation: lpm-flash-dark 620ms ease-out;
+  }
+  @keyframes lpm-flash-dark {
+    0% {
+      background-color: rgb(14 165 233 / 0.35);
+      color: rgb(186 230 253);
+    }
+    100% {
+      background-color: transparent;
+    }
+  }
+  input[type="number"].lpm-flash {
+    animation-name: lpm-flash-input;
+  }
+  @keyframes lpm-flash-input {
+    0% {
+      border-color: rgb(14 165 233);
+      box-shadow: 0 0 0 3px rgb(14 165 233 / 0.25);
+    }
+    100% {
+      box-shadow: 0 0 0 0 rgb(14 165 233 / 0);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .lpm-flash,
+    input[type="number"].lpm-flash {
+      animation: none;
+    }
+    [data-wsjf-row] {
+      transition: none !important;
+    }
+  }
+</style>
