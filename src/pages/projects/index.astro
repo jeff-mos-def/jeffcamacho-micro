@@ -37,10 +37,10 @@ const activeStatuses = Object.entries(groupedProjects).filter(
         Projects
       </div>
 
-      <div class="relative w-full">
+      <div class="min-[1024px]:grid min-[1024px]:grid-cols-[minmax(0,1fr)_11rem] min-[1024px]:gap-8 min-[1340px]:block min-[1340px]:relative min-[1340px]:w-full">
 
-        <aside class="animate hidden lg:block lg:absolute lg:top-0 lg:bottom-0 lg:-right-60 lg:w-48">
-          <nav class="lg:sticky lg:top-24 h-fit lg:max-h-[calc(100vh-8rem)] flex flex-col space-y-2 pl-4">
+        <aside class="animate hidden min-[1024px]:block min-[1024px]:col-start-2 min-[1024px]:row-start-1 min-[1340px]:absolute min-[1340px]:top-0 min-[1340px]:bottom-0 min-[1340px]:-right-60 min-[1340px]:w-48">
+          <nav class="min-[1024px]:sticky min-[1024px]:top-24 h-fit min-[1024px]:max-h-[calc(100vh-8rem)] flex flex-col space-y-2 pl-4">
             <h2 class="text-xs font-bold uppercase tracking-wider text-neutral-500 dark:text-neutral-500 mb-4">
               Status
             </h2>
@@ -78,7 +78,7 @@ const activeStatuses = Object.entries(groupedProjects).filter(
           </nav>
         </aside>
 
-        <div class="space-y-8">
+        <div class="space-y-8 min-w-0 min-[1024px]:col-start-1 min-[1024px]:row-start-1">
           {Object.entries(groupedProjects).map(([status, statusProjects], index) => (
             <div
               id={slug(status)}
@@ -111,7 +111,7 @@ const activeStatuses = Object.entries(groupedProjects).filter(
 
                     <ul class="space-y-2 mt-2">
                       {blogs
-                        .filter((blog) => blog.data.linkedProject === project.id)
+                        .filter((blog) => blog?.data?.linkedProject === project.id)
                         .map((blog) => (
                           <li>
                             <a href={`/blog/${blog.id}`} class="text-blue-500 underline">

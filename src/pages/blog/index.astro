@@ -49,10 +49,10 @@ const hiddenTagCount = Math.max(0, sortedTags.length - VISIBLE_TAG_LIMIT);
         Blog
       </div>
       
-      <div class="relative w-full">
+      <div class="min-[1024px]:grid min-[1024px]:grid-cols-[11rem_minmax(0,1fr)] min-[1024px]:gap-8 min-[1340px]:block min-[1340px]:relative min-[1340px]:w-full">
         
-        <aside class="animate hidden lg:block lg:absolute lg:top-0 lg:bottom-0 lg:-left-60 lg:w-48">
-          <nav class="lg:sticky lg:top-24 h-fit space-y-2 pr-4">
+        <aside class="animate hidden min-[1024px]:block min-[1340px]:absolute min-[1340px]:top-0 min-[1340px]:bottom-0 min-[1340px]:-left-60 min-[1340px]:w-48">
+          <nav class="min-[1024px]:sticky min-[1024px]:top-24 h-fit space-y-2 pr-4">
             <h2 class="text-xs font-bold uppercase tracking-wider text-neutral-500 dark:text-neutral-500 mb-4">
               Archive Navigation
             </h2>
@@ -83,8 +83,8 @@ const hiddenTagCount = Math.max(0, sortedTags.length - VISIBLE_TAG_LIMIT);
           </nav>
         </aside>
 
-        <aside class="animate hidden lg:block lg:absolute lg:top-0 lg:bottom-0 lg:-right-60 lg:w-48">
-          <nav class="lg:sticky lg:top-24 h-fit lg:max-h-[calc(100vh-8rem)] flex flex-col space-y-2 pl-4">
+        <aside class="animate hidden min-[1340px]:block min-[1340px]:absolute min-[1340px]:top-0 min-[1340px]:bottom-0 min-[1340px]:-right-60 min-[1340px]:w-48">
+          <nav class="min-[1340px]:sticky min-[1340px]:top-24 h-fit min-[1340px]:max-h-[calc(100vh-8rem)] flex flex-col space-y-2 pl-4">
             <h2 class="text-xs font-bold uppercase tracking-wider text-neutral-500 dark:text-neutral-500 mb-4">
               Tags
             </h2>
@@ -145,7 +145,7 @@ const hiddenTagCount = Math.max(0, sortedTags.length - VISIBLE_TAG_LIMIT);
           </nav>
         </aside>
 
-        <div class="space-y-16">
+        <div class="space-y-16 min-w-0">
           {sortedYears.map(([year, months]) => (
             <div class="animate space-y-10 scroll-mt-24" id={`arch-${year}`} data-year-group>
               <h2 class="text-3xl font-bold text-black dark:text-white mt-6 border-b-2 border-neutral-200 dark:border-neutral-800 pb-2">
