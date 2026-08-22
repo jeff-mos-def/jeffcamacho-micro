@@ -151,7 +151,7 @@ const lanes = trackNames.map((name) => {
       data-days="off"
       data-month-span={monthSpan}
       data-now={nowInDomain ? nowLeft : undefined}
-      style="--zoom:1"
+      style={`--zoom:1;--month-span:${monthSpan}`}
     >
       <div class="rm__axis" aria-hidden="true">
         {dayMarks.length > 0 && (
@@ -220,7 +220,7 @@ const lanes = trackNames.map((name) => {
 
   <p class="rm__hint">Select a bar for detail.</p>
 
-  <div class="rm__details">
+  <div class="rm__details" data-details>
     {items.map((item) => (
       <div class="rm__detail" data-detail={item.id} hidden>
         <RoadmapCard item={item} />
@@ -496,31 +496,59 @@ const lanes = trackNames.map((name) => {
     display: none;
   }
 
-  /* Narrow containers cannot carry a time axis. Fall back to a plain
-     chronological list rather than an unreadable one. */
-  @container roadmap (max-width: 46rem) {
-    .rm__scroll,
-    .rm__toolbar,
-    .rm__hint {
-      display: none;
+  /* The chart renders at every width. Below the readable threshold it
+     stops trying to fit the container and switches to a fixed pixels per
+     month rate, so bars keep their labels and the reader pans sideways
+     instead of squinting at a compressed axis. */
+  @media (max-width: 46rem) {
+    .rm {
+      --lane-gutter: 5.5rem;
     }
 
-    .rm__detail[hidden] {
-      display: block;
+    .rm__inner {
+      /* 46px per month at 1x keeps a one month bar legible on a phone. */
+      width: calc(var(--lane-gutter) + (var(--month-span, 12) * 46px) * var(--zoom, 1));
+      min-width: 100%;
     }
 
-    .rm__details {
-      display: flex;
-      flex-direction: column;
-      gap: 0.9rem;
+    .rm__scroll {
+      /* Momentum panning, and the chart is the one thing that scrolls
+         horizontally rather than the page. */
+      -webkit-overflow-scrolling: touch;
+      overscroll-behavior-x: contain;
+    }
+
+    .rm__lane-name {
+      font-size: 0.66rem;
+      letter-spacing: 0.06em;
+    }
+
+    .rm__bar {
+      font-size: 0.74rem;
+    }
+
+    .rm__toolbar {
+      flex-wrap: wrap;
+    }
+
+    .rm__zoom-range {
+      max-width: none;
     }
   }
+
 </style>
 
 <script>
   const MIN_ZOOM = 1;
   const MAX_ZOOM = 8;
   const STEP = 0.5;
+
+  /* Narrow screens open zoomed in and centred on Now. At 1x a phone shows
+     the whole span at 46px per month, which is too dense to read, so the
+     useful starting view is a few months either side of today. Matches the
+     46rem threshold the stylesheet uses. */
+  const NARROW_QUERY = '(max-width: 46rem)';
+  const NARROW_INITIAL_ZOOM = 6;
 
   function initRoadmapChart(root: HTMLElement) {
     const bars = Array.from(root.querySelectorAll<HTMLButtonElement>('[data-bar]'));
@@ -533,6 +561,15 @@ const lanes = trackNames.map((name) => {
     const zoomOut = root.querySelector<HTMLButtonElement>('[data-zoom-out]');
     const readout = root.querySelector<HTMLElement>('[data-zoom-value]');
     if (bars.length === 0 || !scroll || !inner) return;
+
+    /**
+     * True when the chart is actually laid out. In the narrow fallback the
+     * scroll area is display:none, so it has no box, and the zoom and
+     * centring maths would divide by zero and throw.
+     */
+    function chartVisible(): boolean {
+      return scroll!.offsetParent !== null && scroll!.offsetWidth > 0;
+    }
 
     function select(id: string | null) {
       bars.forEach((bar) => {
@@ -575,21 +612,30 @@ const lanes = trackNames.map((name) => {
       const now = inner!.dataset.now;
       if (now !== undefined) return Number(now) / 100;
 
-      const gutter = inner!.offsetWidth - plotWidth();
+      const width = plotWidth();
+      if (width <= 0) return 0;
+
+      const gutter = inner!.offsetWidth - width;
       const centre = scroll!.scrollLeft + scroll!.clientWidth / 2 - gutter;
-      return Math.min(Math.max(centre / plotWidth(), 0), 1);
+      return Math.min(Math.max(centre / width, 0), 1);
     }
 
     function centreOn(fraction: number) {
-      const gutter = inner!.offsetWidth - plotWidth();
-      const target = gutter + fraction * plotWidth();
+      const width = plotWidth();
+      if (width <= 0) return;
+
+      const gutter = inner!.offsetWidth - width;
+      const target = gutter + fraction * width;
       scroll!.scrollLeft = target - scroll!.clientWidth / 2;
     }
 
     /** Denser ticks only appear once there is room to read them. */
     function updateTickDensity() {
+      const width = plotWidth();
+      if (width <= 0) return;
+
       const months = Number(inner!.dataset.monthSpan) || 1;
-      const pxPerMonth = plotWidth() / months;
+      const pxPerMonth = width / months;
       inner!.dataset.ticks =
         pxPerMonth >= 44 ? 'month' : pxPerMonth >= 16 ? 'quarter' : 'year';
 
@@ -601,7 +647,7 @@ const lanes = trackNames.map((name) => {
 
     function applyZoom(next: number, recentre = true) {
       const zoom = Math.min(Math.max(next, MIN_ZOOM), MAX_ZOOM);
-      const fraction = recentre ? anchorFraction() : null;
+      const fraction = recentre && chartVisible() ? anchorFraction() : null;
 
       inner!.style.setProperty('--zoom', String(zoom));
       if (range) range.value = String(zoom);
@@ -611,6 +657,7 @@ const lanes = trackNames.map((name) => {
 
       // Layout has to settle before the new plot width can be measured.
       requestAnimationFrame(() => {
+        if (!chartVisible()) return;
         updateTickDensity();
         sizeGridlines();
         if (fraction !== null) centreOn(fraction);
@@ -638,13 +685,22 @@ const lanes = trackNames.map((name) => {
       }
     });
 
+    // Rotating a phone into landscape can cross the fallback threshold in
+    // either direction, so the chart is re-measured whenever its box changes.
     const observer = new ResizeObserver(() => {
+      if (!chartVisible()) return;
       updateTickDensity();
       sizeGridlines();
     });
     observer.observe(inner);
 
-    applyZoom(MIN_ZOOM, false);
+    const narrow =
+      typeof window.matchMedia === 'function' &&
+      window.matchMedia(NARROW_QUERY).matches;
+
+    // recentre is on for the narrow case so the first paint lands on Now
+    // rather than at the start of the domain.
+    applyZoom(narrow ? NARROW_INITIAL_ZOOM : MIN_ZOOM, narrow);
     select(null);
   }
 
