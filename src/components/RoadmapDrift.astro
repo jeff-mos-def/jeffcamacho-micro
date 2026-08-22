@@ -2,7 +2,9 @@
 import data from "../data/roadmap-drift.json";
 ---
 
-<div class="roadmap-drift-host" data-roadmap-drift data-config={JSON.stringify(data)}></div>
+<div class="roadmap-drift-host" data-roadmap-drift data-config={JSON.stringify(data)}>
+  <noscript>This walkthrough needs JavaScript. The point it makes: the same six increments can finish at 100 percent delivered and 39 percent realized, or 64 percent delivered and 100 percent realized, depending only on whether the customer saw anything before the end.</noscript>
+</div>
 
 <script>
   type Increment = {
@@ -189,222 +191,231 @@ import data from "../data/roadmap-drift.json";
     living: "Build each increment, demo it, and decide what to do with what you hear.",
   };
 
-  document.querySelectorAll<HTMLElement>("[data-roadmap-drift]").forEach((host) => {
-    if (host.shadowRoot) return;
+  function mountRoadmapDrift() {
+    document.querySelectorAll<HTMLElement>("[data-roadmap-drift]").forEach((host) => {
+      if (host.shadowRoot) return;
 
-    const cfg: Config = JSON.parse(host.dataset.config || "{}");
-    const items: Increment[] = cfg.increments || [];
-    const curve: number[] = cfg.costCurve || [];
-    const runs: Partial<Record<Mode, Run>> = {};
+      const cfg: Config = JSON.parse(host.dataset.config || "{}");
+      const items: Increment[] = cfg.increments || [];
+      const curve: number[] = cfg.costCurve || [];
+      const runs: Partial<Record<Mode, Run>> = {};
 
-    const shadow = host.attachShadow({ mode: "open" });
-    shadow.innerHTML = "<style>" + STYLES + "</style>" + SHELL;
+      const shadow = host.attachShadow({ mode: "open" });
+      shadow.innerHTML = "<style>" + STYLES + "</style>" + SHELL;
 
-    const q = (sel: string) => shadow.querySelector(sel) as HTMLElement;
-    const el = {
-      modes: shadow.querySelectorAll<HTMLElement>("[data-mode]"),
-      note: q("[data-note]"),
-      dBar: q("[data-dbar]"),
-      vBar: q("[data-vbar]"),
-      dVal: q("[data-dval]"),
-      vVal: q("[data-vval]"),
-      chips: q("[data-chips]"),
-      stage: q("[data-stage]"),
-      log: q("[data-log]"),
-    };
+      const q = (sel: string) => shadow.querySelector(sel) as HTMLElement;
+      const el = {
+        modes: shadow.querySelectorAll<HTMLElement>("[data-mode]"),
+        note: q("[data-note]"),
+        dBar: q("[data-dbar]"),
+        vBar: q("[data-vbar]"),
+        dVal: q("[data-dval]"),
+        vVal: q("[data-vval]"),
+        chips: q("[data-chips]"),
+        stage: q("[data-stage]"),
+        log: q("[data-log]"),
+      };
 
-    const syncTheme = () => {
-      const root = document.documentElement;
-      const dark =
-        root.classList.contains("dark") ||
-        root.dataset.theme === "dark" ||
-        document.body.classList.contains("dark") ||
-        (!root.classList.contains("light") &&
-          root.dataset.theme !== "light" &&
-          window.matchMedia("(prefers-color-scheme: dark)").matches);
-      host.classList.toggle("is-dark", dark);
-    };
-    syncTheme();
-    new MutationObserver(syncTheme).observe(document.documentElement, {
-      attributes: true,
-      attributeFilter: ["class", "data-theme"],
-    });
-
-    let mode: Mode = "checkbox";
-    let index = 0;
-    let phase: Phase = "ready";
-    let delivery = 0;
-    let value = 0;
-    let drift = 0;
-    let debt = 0;
-    let states: string[] = [];
-    let texts: string[] = [];
-
-    const pct = (n: number) => Math.min(100, Math.round(n));
-
-    function reset(next: Mode) {
-      mode = next;
-      index = 0;
-      phase = "ready";
-      delivery = 0;
-      value = 0;
-      drift = 0;
-      debt = 0;
-      states = items.map(() => "");
-      texts = items.map((it) => it.baseline);
-      el.log.innerHTML = "";
-      el.modes.forEach((b) => b.classList.toggle("on", b.dataset.mode === next));
-      el.note.textContent = NOTES[next];
-      render();
-    }
-
-    function render() {
-      el.dBar.style.width = pct(delivery) + "%";
-      el.vBar.style.width = pct(value) + "%";
-      el.dVal.textContent = pct(delivery) + "%";
-      el.vVal.textContent = pct(value) + "%";
-
-      el.chips.innerHTML = items
-        .map((it, i) => {
-          const now = i === index && phase !== "done" ? " now" : "";
-          return '<li class="chip ' + states[i] + now + '"><span class="n">' + it.id + "</span>" + it.milestone + "</li>";
-        })
-        .join("");
-
-      if (phase === "done") summary();
-      else card();
-    }
-
-    function card() {
-      const it = items[index];
-      const revised = texts[index] !== it.baseline;
-      const mult = curve[index] || 1;
-      let body = "";
-      let actions = "";
-
-      if (mode === "living" && phase === "demo") {
-        body =
-          '<p class="label">' + cfg.customer + ", in the demo</p>" +
-          '<blockquote class="quote">' + it.reaction + "</blockquote>" +
-          '<p class="cost">Cost to fix this later: <b>' + mult + "x</b></p>";
-        actions =
-          '<button type="button" class="btn primary" data-act="absorb">Absorb it now</button>' +
-          '<button type="button" class="btn" data-act="defer">Defer to the backlog</button>' +
-          '<button type="button" class="btn" data-act="dismiss">Hold the baseline</button>';
-      } else {
-        body =
-          '<p class="label">Requirement</p>' +
-          '<p class="req' + (revised ? " revised" : "") + '">' + texts[index] + "</p>" +
-          (revised ? '<p class="flag">Rewritten after the last demo</p>' : "");
-        actions =
-          mode === "checkbox"
-            ? '<button type="button" class="btn primary" data-act="accept">Accept milestone</button>'
-            : '<button type="button" class="btn primary" data-act="build">Build it, then demo</button>';
-      }
-
-      el.stage.innerHTML =
-        '<div class="card"><p class="cardhead"><span class="num">' +
-        it.id + " of " + items.length + "</span>" + it.milestone + "</p>" +
-        body + '<div class="actions">' + actions + "</div></div>";
-
-      el.stage.querySelectorAll<HTMLElement>("[data-act]").forEach((b) => {
-        b.addEventListener("click", () => act(b.dataset.act || ""));
+      const syncTheme = () => {
+        const root = document.documentElement;
+        const dark =
+          root.classList.contains("dark") ||
+          root.dataset.theme === "dark" ||
+          document.body.classList.contains("dark") ||
+          (!root.classList.contains("light") &&
+            root.dataset.theme !== "light" &&
+            window.matchMedia("(prefers-color-scheme: dark)").matches);
+        host.classList.toggle("is-dark", dark);
+      };
+      syncTheme();
+      new MutationObserver(syncTheme).observe(document.documentElement, {
+        attributes: true,
+        attributeFilter: ["class", "data-theme"],
       });
-    }
 
-    function log(text: string, tone: string) {
-      const li = document.createElement("li");
-      li.className = "logitem " + tone;
-      li.textContent = text;
-      el.log.appendChild(li);
-    }
+      let mode: Mode = "checkbox";
+      let index = 0;
+      let phase: Phase = "ready";
+      let delivery = 0;
+      let value = 0;
+      let drift = 0;
+      let debt = 0;
+      let states: string[] = [];
+      let texts: string[] = [];
 
-    function act(kind: string) {
-      const it = items[index];
-      const mult = curve[index] || 1;
-      const gap = 1 - it.baselineFit;
+      const pct = (n: number) => Math.min(100, Math.round(n));
 
-      if (kind === "build") {
-        phase = "demo";
+      function reset(next: Mode) {
+        mode = next;
+        index = 0;
+        phase = "ready";
+        delivery = 0;
+        value = 0;
+        drift = 0;
+        debt = 0;
+        states = items.map(() => "");
+        texts = items.map((it) => it.baseline);
+        el.log.innerHTML = "";
+        el.modes.forEach((b) => b.classList.toggle("on", b.dataset.mode === next));
+        el.note.textContent = NOTES[next];
         render();
-        return;
       }
 
-      if (kind === "accept") {
-        delivery += it.delivery;
-        value += it.value * it.baselineFit;
-        states[index] = gap > 0.4 ? "gap" : "done";
-        if (gap > 0.4) drift += 1;
-        log(it.milestone + ": accepted as written. Never shown to the customer.", gap > 0.4 ? "gap" : "done");
-      } else if (kind === "absorb") {
-        delivery += Math.round(it.delivery * 0.65);
-        value += it.value;
-        texts[index] = it.revised;
-        states[index] = "revised";
-        log(it.milestone + ": requirement rewritten in the same cycle. Schedule slipped, product corrected.", "revised");
-      } else if (kind === "defer") {
-        delivery += it.delivery;
-        value += it.value * (it.baselineFit + gap * 0.5);
-        states[index] = "deferred";
-        debt += it.value * gap * mult * 0.1;
-        log(it.milestone + ": logged for later at " + mult + "x the cost to fix.", "deferred");
-      } else {
-        delivery += it.delivery;
-        value += it.value * it.baselineFit;
-        states[index] = "gap";
-        drift += 1;
-        log(it.milestone + ": baseline held. The feedback was heard and dropped.", "gap");
+      function render() {
+        el.dBar.style.width = pct(delivery) + "%";
+        el.vBar.style.width = pct(value) + "%";
+        el.dVal.textContent = pct(delivery) + "%";
+        el.vVal.textContent = pct(value) + "%";
+
+        el.chips.innerHTML = items
+          .map((it, i) => {
+            const now = i === index && phase !== "done" ? " now" : "";
+            return '<li class="chip ' + states[i] + now + '"><span class="n">' + it.id + "</span>" + it.milestone + "</li>";
+          })
+          .join("");
+
+        if (phase === "done") summary();
+        else card();
       }
 
-      index += 1;
-      phase = index >= items.length ? "done" : "ready";
-      render();
-    }
+      function card() {
+        const it = items[index];
+        const revised = texts[index] !== it.baseline;
+        const mult = curve[index] || 1;
+        let body = "";
+        let actions = "";
 
-    function summary() {
-      runs[mode] = { delivery: pct(delivery), value: pct(value) };
-      const spread = pct(delivery) - pct(value);
+        if (mode === "living" && phase === "demo") {
+          body =
+            '<p class="label">' + cfg.customer + ", in the demo</p>" +
+            '<blockquote class="quote">' + it.reaction + "</blockquote>" +
+            '<p class="cost">Cost to fix this later: <b>' + mult + "x</b></p>";
+          actions =
+            '<button type="button" class="btn primary" data-act="absorb">Absorb it now</button>' +
+            '<button type="button" class="btn" data-act="defer">Defer to the backlog</button>' +
+            '<button type="button" class="btn" data-act="dismiss">Hold the baseline</button>';
+        } else {
+          body =
+            '<p class="label">Requirement</p>' +
+            '<p class="req' + (revised ? " revised" : "") + '">' + texts[index] + "</p>" +
+            (revised ? '<p class="flag">Rewritten after the last demo</p>' : "");
+          actions =
+            mode === "checkbox"
+              ? '<button type="button" class="btn primary" data-act="accept">Accept milestone</button>'
+              : '<button type="button" class="btn primary" data-act="build">Build it, then demo</button>';
+        }
 
-      let verdict;
-      if (mode === "checkbox") {
-        verdict =
-          "Every square is green and the customer is holding a product that solves " +
-          pct(value) + " percent of the problem. Nothing in the status column ever said so.";
-      } else if (spread <= 0) {
-        verdict = "The map came in short and the product came in right. That trade only looks bad in a report that counts squares.";
-      } else {
-        verdict = "You kept the schedule and carried the corrections forward. The debt is real work, priced at the cycle you deferred it in.";
+        el.stage.innerHTML =
+          '<div class="card"><p class="cardhead"><span class="num">' +
+          it.id + " of " + items.length + "</span>" + it.milestone + "</p>" +
+          body + '<div class="actions">' + actions + "</div></div>";
+
+        el.stage.querySelectorAll<HTMLElement>("[data-act]").forEach((b) => {
+          b.addEventListener("click", () => act(b.dataset.act || ""));
+        });
       }
 
-      const compare =
-        runs.checkbox && runs.living
-          ? '<div class="compare"><p class="label">Both runs, same six increments</p>' +
-            '<p class="comparerow"><span>Check the box</span><span>' + runs.checkbox.delivery + "% delivered, " + runs.checkbox.value + "% realized</span></p>" +
-            '<p class="comparerow"><span>Run the loop</span><span>' + runs.living.delivery + "% delivered, " + runs.living.value + "% realized</span></p></div>"
-          : "";
+      function log(text: string, tone: string) {
+        const li = document.createElement("li");
+        li.className = "logitem " + tone;
+        li.textContent = text;
+        el.log.appendChild(li);
+      }
 
-      el.stage.innerHTML =
-        '<div class="card"><p class="cardhead"><span class="num">Done</span>Where the product landed</p>' +
-        '<div class="stats">' +
-        '<p class="stat"><b>' + pct(delivery) + "%</b>roadmap delivered</p>" +
-        '<p class="stat"><b>' + pct(value) + "%</b>value realized</p>" +
-        '<p class="stat"><b>' + drift + "</b>silent gaps</p>" +
-        '<p class="stat"><b>' + Math.round(debt) + "</b>rework debt</p></div>" +
-        '<p class="verdict">' + verdict + "</p>" + compare +
-        '<div class="actions">' +
-        '<button type="button" class="btn primary" data-replay="' + (mode === "checkbox" ? "living" : "checkbox") + '">Replay the other way</button>' +
-        '<button type="button" class="btn" data-replay="' + mode + '">Run it again</button>' +
-        "</div></div>";
+      function act(kind: string) {
+        const it = items[index];
+        const mult = curve[index] || 1;
+        const gap = 1 - it.baselineFit;
 
-      el.stage.querySelectorAll<HTMLElement>("[data-replay]").forEach((b) => {
-        b.addEventListener("click", () => reset(b.dataset.replay as Mode));
+        if (kind === "build") {
+          phase = "demo";
+          render();
+          return;
+        }
+
+        if (kind === "accept") {
+          delivery += it.delivery;
+          value += it.value * it.baselineFit;
+          states[index] = gap > 0.4 ? "gap" : "done";
+          if (gap > 0.4) drift += 1;
+          log(it.milestone + ": accepted as written. Never shown to the customer.", gap > 0.4 ? "gap" : "done");
+        } else if (kind === "absorb") {
+          delivery += Math.round(it.delivery * 0.65);
+          value += it.value;
+          texts[index] = it.revised;
+          states[index] = "revised";
+          log(it.milestone + ": requirement rewritten in the same cycle. Schedule slipped, product corrected.", "revised");
+        } else if (kind === "defer") {
+          delivery += it.delivery;
+          value += it.value * (it.baselineFit + gap * 0.5);
+          states[index] = "deferred";
+          debt += it.value * gap * mult * 0.1;
+          log(it.milestone + ": logged for later at " + mult + "x the cost to fix.", "deferred");
+        } else {
+          delivery += it.delivery;
+          value += it.value * it.baselineFit;
+          states[index] = "gap";
+          drift += 1;
+          log(it.milestone + ": baseline held. The feedback was heard and dropped.", "gap");
+        }
+
+        index += 1;
+        phase = index >= items.length ? "done" : "ready";
+        render();
+      }
+
+      function summary() {
+        runs[mode] = { delivery: pct(delivery), value: pct(value) };
+        const spread = pct(delivery) - pct(value);
+
+        let verdict;
+        if (mode === "checkbox") {
+          verdict =
+            "Every square is green and the customer is holding a product that solves " +
+            pct(value) + " percent of the problem. Nothing in the status column ever said so.";
+        } else if (spread <= 0) {
+          verdict = "The map came in short and the product came in right. That trade only looks bad in a report that counts squares.";
+        } else {
+          verdict = "You kept the schedule and carried the corrections forward. The debt is real work, priced at the cycle you deferred it in.";
+        }
+
+        const compare =
+          runs.checkbox && runs.living
+            ? '<div class="compare"><p class="label">Both runs, same six increments</p>' +
+              '<p class="comparerow"><span>Check the box</span><span>' + runs.checkbox.delivery + "% delivered, " + runs.checkbox.value + "% realized</span></p>" +
+              '<p class="comparerow"><span>Run the loop</span><span>' + runs.living.delivery + "% delivered, " + runs.living.value + "% realized</span></p></div>"
+            : "";
+
+        el.stage.innerHTML =
+          '<div class="card"><p class="cardhead"><span class="num">Done</span>Where the product landed</p>' +
+          '<div class="stats">' +
+          '<p class="stat"><b>' + pct(delivery) + "%</b>roadmap delivered</p>" +
+          '<p class="stat"><b>' + pct(value) + "%</b>value realized</p>" +
+          '<p class="stat"><b>' + drift + "</b>silent gaps</p>" +
+          '<p class="stat"><b>' + Math.round(debt) + "</b>rework debt</p></div>" +
+          '<p class="verdict">' + verdict + "</p>" + compare +
+          '<div class="actions">' +
+          '<button type="button" class="btn primary" data-replay="' + (mode === "checkbox" ? "living" : "checkbox") + '">Replay the other way</button>' +
+          '<button type="button" class="btn" data-replay="' + mode + '">Run it again</button>' +
+          "</div></div>";
+
+        el.stage.querySelectorAll<HTMLElement>("[data-replay]").forEach((b) => {
+          b.addEventListener("click", () => reset(b.dataset.replay as Mode));
+        });
+      }
+
+      el.modes.forEach((b) => {
+        b.addEventListener("click", () => reset(b.dataset.mode as Mode));
       });
-    }
 
-    el.modes.forEach((b) => {
-      b.addEventListener("click", () => reset(b.dataset.mode as Mode));
+      reset("checkbox");
     });
+  }
 
-    reset("checkbox");
-  });
+  mountRoadmapDrift();
+  document.addEventListener("astro:page-load", mountRoadmapDrift);
+  document.addEventListener("astro:after-swap", mountRoadmapDrift);
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", mountRoadmapDrift);
+  }
 </script>
