@@ -1,0 +1,155 @@
+---
+title: "The Ironies of Automation"
+description: "What AI tooling does to PM skill"
+date: "2026-09-10"
+tags: ["Automation", "Deskilling", "Judgment", "Tooling", "Human Factors"]
+draft: false
+---
+
+import VigilanceDecay from "../../../components/VigilanceDecay.astro";
+
+## The Ironies of Automation
+
+Lisanne Bainbridge published "<a href="https://ckrybus.com/static/papers/Bainbridge_1983_Automatica.pdf" target="_blank" rel="noopener noreferrer">Ironies of Automation</a>" in *Automatica* in 1983. It runs five pages. She was writing about chemical plants and power generation, about control rooms where a computer ran the process and a person sat watching it. Nothing in it mentions software delivery. It describes what AI tooling is doing to project management anyway.
+ 
+Her argument has two parts.
+
+![Automation residual](/img/automation-residual.svg)
+ 
+The first is that the designer who removes the operator because humans are unreliable is also a human. Their errors do not disappear. They get compiled into the automation, where they are harder to see and much harder to correct.
+ 
+The second part matters more here. The designer automates everything they know how to automate, and what is left for the person is the residue, the tasks nobody could figure out how to automate, which are the hardest ones by definition. That same person is then told to monitor the automation for failure. So we hand someone the two things people are worst at, sustained vigilance and unpracticed emergency intervention, and we remove the activity that would have kept them capable of either.
+ 
+---
+ 
+## The mechanisms
+ 
+She is specific about how the degradation happens, and the mechanisms transfer to delivery work with almost no translation.
+ 
+<u>**Manual skill decays without exercise.**</u> Skilled control is more than reflex. It is calibrated knowledge of how the system responds, built by acting on it and watching what happens. Take away the acting and the calibration stops refreshing.
+ 
+<u>**Cognitive skill goes the same way.**</u> Knowledge that is never applied does not vanish. It gets slow to retrieve, which under time pressure amounts to the same thing.
+ 
+<u>**Context is the third loss.**</u> Diagnosing a fault requires knowing how the system reached its current state, and passive monitoring does not build that picture. When the person finally has to take over, they spend the first stretch getting into the loop, and a developing failure does not grant them that time.
+ 
+<u>**Vigilance fails on a schedule.**</u> The research she draws on shows detection dropping off in monitors within about half an hour on rare-signal tasks. Reliable automation makes the signals rarer, so the monitoring gets worse as the system gets better.
+ 
+<u>**Trust miscalibrates in both directions.**</u> High reliability produces complacency and the checking stops being real. Low reliability produces rejection, where the operator overrides correct actions and throws away the benefit. There is no stable middle setting an operator can find on their own.
+ 
+She also flags a trap. If the computer produces a recommendation and the human is expected to evaluate it, that evaluation calls for exactly the expertise the arrangement is eroding.
+ 
+---
+ 
+## What this looks like on a delivery team
+ 
+The AI-assisted version of this job is good at artifact production. It will draft the epic and decompose it. It will write the acceptance criteria. It will produce a prioritized backlog from whatever you feed it, summarize the retro, generate the risk register, draft the dependency map, and write the readout for the steering committee. Every one of those outputs is plausible, and most of them are fine.
+ 
+What erodes first is the judgment that tells you an artifact is fake.
+ 
+A PM who has sat through a planning session that came apart has a pattern library for it. They know the shape of a commitment nobody in the room believes. They can hear the difference between a team that has thought about a dependency and a team that has written one down. They know which risks are real because they have been on the wrong end of the ones nobody managed. That library gets built by doing the work badly, watching it fail, and adjusting.
+ 
+The tool produces a plausible-looking plan every time. Plausibility is the thing a degraded judgment can no longer tell apart from soundness.
+ 
+---
+ 
+## The reps being replaced
+ 
+The artifact is a small part of the job. Most of it is a large number of small judgment calls, made daily, most of which do not matter much on their own.
+ 
+You estimate a piece of work and turn out to be wrong. You break something down and find at implementation that the seam was in the wrong place. You write a risk nobody acts on, and then a different one lands. You decide what a set of ambiguous signals means before the status goes out on Thursday, choose which version of bad news a stakeholder can absorb, and sit in a room while two teams discover a dependency neither of them had written down.
+ 
+None of those outputs are worth much on their own. An estimate is a number that turns out wrong. A decomposition gets revised. Most risks never fire. They were worth doing because each one was a rep, and the reps are how the pattern library gets built.
+ 
+Every one of them now has a tool that will produce an acceptable output without the person having done the reasoning. That is the substitution, and it is what gets missed when this is discussed as an efficiency story. The tools are taking over the parts of the work that were building the judgment.
+ 
+The same thing is happening one level over, to engineering managers. Reading a diff closely enough to know whether the design holds, sitting with a codebase long enough to feel where it is brittle, hearing an estimate and knowing from the way it was said that nobody has looked at the hard part yet: all of that comes from repetition, and all of it now has a summarizer attached.
+ 
+The trade looks clean because the outputs come out close to equivalent. An estimate a tool produced and an estimate a team argued about for twenty minutes can be the same number, and only one of them leaves anything behind in the people who produced it.
+ 
+---
+ 
+## The successes are what hide it
+ 
+Because the tool produces the artifact, the measure of competence shifts to the quality of the artifact, and artifact quality no longer says anything about the person in the role. The board looks clean. The reports go out on time. The planning materials are more complete than they were three years ago. Every visible indicator improves while the underlying capability thins out.
+ 
+No performance review catches this. Nothing surfaces until the situation goes off the tool's distribution, and then the residual lands on someone who never built the capacity to catch it.
+ 
+### How the chart is calculated
+ 
+The chart is a model. None of its numbers describe a real system, and it is there to show a relationship.
+
+<VigilanceDecay />
+ 
+Reliability is the slider input, the share of cycles the automation handles without failing. Failures follow from it directly. At reliability R, over 1,000 cycles:
+ 
+```
+failures = (1 - R) * 1000
+```
+ 
+That line is definitional and claims nothing.
+ 
+The detection curve carries the assumptions. It applies a finding from the vigilance literature, that monitors detect rare signals worse than frequent ones, which runs from Mackworth's radar-operator work in the 1940s through the research Bainbridge cites. Writing the failure rate as `f = 1 - R`:
+ 
+```
+detection = 0.95 * (f / 0.1) ^ 0.3
+```
+ 
+The ceiling of 0.95 puts detection at 95 percent when failures are common. The exponent of 0.3 sets how steeply detection falls as failures get rare. I chose both values rather than fitting them. They give a curve with the shape the literature describes, and no published dataset stands behind either number.
+ 
+Undetected failures follow from the first two:
+ 
+```
+undetected = failures * (1 - detection)
+```
+ 
+The third line is where it gets interesting. Failures fall steeply and monotonically as reliability rises, and undetected failures do not. They rise across the lower part of the range before falling, because the detection term degrades while the failure term shrinks. Somewhere in the middle the two effects trade places.
+ 
+Where that peak sits depends on the parameters I picked. That there is a peak at all survives any reasonable choice of parameters, and it is the only claim the chart makes. Read it for the shape rather than the values.
+ 
+---
+ 
+## Two different failures
+ 
+Bainbridge was describing decay from a peak. Her operators had manual careers behind them. They had run the plant by hand for years before the computer arrived, and what she documents is the erosion of something that already existed.
+ 
+That is one of the two populations in our field, and it is the less serious one. A PM with fifteen years of manual reps who now leans on tooling has something to decay back toward. The skill is slow to retrieve rather than absent, and deliberate practice restores it.
+ 
+The other population entered the field after the tools were standard. There is no peak and no prior competence to decay from, so there is nothing for a refresher to refresh. Every remedy Bainbridge proposed assumes a skill exists to be maintained, and applied to someone who never acquired it, maintenance is the wrong word and the wrong intervention.
+ 
+Organizations are not managing these as separate problems, mostly because the artifacts coming out of both groups look identical.
+ 
+---
+ 
+## The obvious objection
+ 
+Nobody is upset about deferring long division. Deskilling is not automatically a cost, and an argument that treats it that way is arguing against calculators and automated systems.
+ 
+Losing a skill matters under specific conditions. The tool becomes unavailable. The situation falls outside what the tool handles well. Or the person needs to move into a role that runs on the underlying capability rather than the output.
+ 
+All three apply here, and the third gets the least attention. The skills being displaced at the PM level are the input to every role above it. Portfolio decisions, funding calls, and organizational design run on judgment that was supposed to get built during the years someone spent doing delivery work by hand. Automate that construction period away and the shortage shows up later, maybe a decade later, at a level where nobody is watching for it.
+ 
+---
+ 
+## What she recommended
+ 
+Bainbridge was not against automation. Her proposals were about deployment, and they cost something on purpose.
+ 
+Manual operation on a schedule, done to keep the skill alive, with the productivity hit accepted as the price. Frequent practice on abnormal conditions rather than normal ones, since the automation already handles the normal ones. A computer designed as advisor rather than replacement, so the human stays in the decision path. Displays that show what the automation is doing and why, instead of only the readings.
+ 
+She warned specifically against the reflex fix, which is to add a monitoring layer that watches the automation. That relocates the problem and leaves it intact.
+ 
+The translation is not complicated. Some planning gets done by hand, on purpose, at a real cost in cycle time. Some estimation happens without the tool. Newer PMs get put in front of situations the tool handles badly, deliberately, while someone experienced is still around to debrief it afterward. All of it is inefficient by design. That inefficiency is what builds the capability, and the efficient path does not build it.
+ 
+---
+ 
+## The paradox
+ 
+The more reliable the automation becomes, the more thoroughly it degrades the capability needed to catch it when it is wrong.
+ 
+Skill is maintained by use, and nothing else maintains it. Every piece of the job handed to a tool is a rep that no longer happens, and the judgment that rep was building stops getting built. The loss shows up as nothing at all. The plans still ship, the reports still land, and the person signing them understands a little less of what they are signing each quarter than they did the quarter before.
+ 
+The tools will keep improving. The people running them will keep getting less practice, and practice was the only thing that ever produced the judgment to tell when one of those plans is wrong.
+ 
+---
+ 
+Source: Lisanne Bainbridge, "Ironies of Automation," *Automatica* 19(6), 1983, pp. 775-779. <a href="https://ckrybus.com/static/papers/Bainbridge_1983_Automatica.pdf" target="_blank" rel="noopener noreferrer">Read the paper</a>

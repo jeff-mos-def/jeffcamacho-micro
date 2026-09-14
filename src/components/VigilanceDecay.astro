@@ -1,0 +1,327 @@
+---
+---
+
+<div class="vigilance" data-vigilance>
+  <div class="vigilance-head">
+    <span class="vigilance-title">Reliability, detection, and what gets through</span>
+    <span class="vigilance-sub">Move the slider to set how reliable the automation is.</span>
+  </div>
+
+  <div class="chart-wrap">
+    <canvas data-vigilance-canvas></canvas>
+  </div>
+
+  <div class="vigilance-control">
+    <label data-vigilance-label>Automation reliability: 99.0%</label>
+    <input type="range" min="0" max="40" value="20" step="1" data-vigilance-slider />
+  </div>
+
+  <div class="vigilance-stats">
+    <div class="stat">
+      <span class="stat-value" data-stat-failures>10.0</span>
+      <span class="stat-label">Failures per 1,000 cycles</span>
+    </div>
+    <div class="stat">
+      <span class="stat-value" data-stat-detection>47.6%</span>
+      <span class="stat-label">Detected by the monitor</span>
+    </div>
+    <div class="stat">
+      <span class="stat-value" data-stat-undetected>5.24</span>
+      <span class="stat-label">Undetected per 1,000 cycles</span>
+    </div>
+  </div>
+
+  <p class="vigilance-note" data-vigilance-note>
+    Failures fall steeply as reliability rises. Undetected failures do not.
+  </p>
+</div>
+
+<style>
+  .vigilance {
+    border: 1px solid #333333;
+    border-radius: 8px;
+    padding: 1.25rem;
+    margin: 2rem 0;
+    background: #14161a;
+  }
+  .vigilance-head {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    margin-bottom: 1rem;
+  }
+  .vigilance-title {
+    color: #ffffff;
+    font-weight: 600;
+    font-size: 0.95rem;
+  }
+  .vigilance-sub {
+    color: #aaaaaa;
+    font-size: 0.8rem;
+  }
+  .chart-wrap {
+    position: relative;
+    height: 320px;
+    width: 100%;
+  }
+  .vigilance-control {
+    margin-top: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  .vigilance-control label {
+    color: #cccccc;
+    font-size: 0.85rem;
+  }
+  .vigilance-control input[type='range'] {
+    width: 100%;
+    accent-color: #d9a441;
+  }
+  .vigilance-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.75rem;
+    margin-top: 1.25rem;
+  }
+  .stat {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    padding: 0.6rem;
+    border: 1px solid #2a2d33;
+    border-radius: 6px;
+  }
+  .stat-value {
+    color: #ffffff;
+    font-size: 1.1rem;
+    font-weight: 600;
+  }
+  .stat-label {
+    color: #aaaaaa;
+    font-size: 0.7rem;
+    line-height: 1.3;
+  }
+  .vigilance-note {
+    color: #dddddd;
+    font-size: 0.82rem;
+    margin: 1rem 0 0 0;
+  }
+  @media (max-width: 520px) {
+    .vigilance-stats {
+      grid-template-columns: 1fr;
+    }
+    .chart-wrap {
+      height: 260px;
+    }
+  }
+</style>
+
+<script>
+  import Chart from 'chart.js/auto';
+
+  type Point = {
+    label: string;
+    failures: number;
+    detection: number;
+    undetected: number;
+  };
+
+  function buildPoints(): Point[] {
+    const out: Point[] = [];
+    const steps = 41;
+    for (let i = 0; i < steps; i++) {
+      const t = i / (steps - 1);
+      const base = 0.1 * Math.pow(0.01, t);
+      const reliability = 1 - base;
+      const failures = base * 1000;
+      const detection = 0.95 * Math.pow(base / 0.1, 0.3);
+      const undetected = failures * (1 - detection);
+      out.push({
+        label: (reliability * 100).toFixed(base < 0.01 ? 2 : 1) + '%',
+        failures,
+        detection: detection * 100,
+        undetected,
+      });
+    }
+    return out;
+  }
+
+  function initVigilance(): void {
+    const roots = document.querySelectorAll<HTMLElement>('[data-vigilance]');
+    roots.forEach((root) => {
+      if (root.dataset.initialized === 'true') return;
+      root.dataset.initialized = 'true';
+
+      const canvas = root.querySelector<HTMLCanvasElement>('[data-vigilance-canvas]');
+      const slider = root.querySelector<HTMLInputElement>('[data-vigilance-slider]');
+      const label = root.querySelector<HTMLElement>('[data-vigilance-label]');
+      const statFailures = root.querySelector<HTMLElement>('[data-stat-failures]');
+      const statDetection = root.querySelector<HTMLElement>('[data-stat-detection]');
+      const statUndetected = root.querySelector<HTMLElement>('[data-stat-undetected]');
+      const note = root.querySelector<HTMLElement>('[data-vigilance-note]');
+      if (!canvas || !slider) return;
+
+      const points = buildPoints();
+      const labels = points.map((p) => p.label);
+
+      const markerFailures: (number | null)[] = labels.map(() => null);
+      const markerDetection: (number | null)[] = labels.map(() => null);
+      const markerUndetected: (number | null)[] = labels.map(() => null);
+
+      const chart = new Chart(canvas, {
+        type: 'line',
+        data: {
+          labels,
+          datasets: [
+            {
+              label: 'Failures per 1,000',
+              data: points.map((p) => p.failures),
+              borderColor: '#4f8ac9',
+              backgroundColor: '#4f8ac9',
+              borderWidth: 2,
+              pointRadius: 0,
+              tension: 0.25,
+              yAxisID: 'yCount',
+            },
+            {
+              label: 'Undetected per 1,000',
+              data: points.map((p) => p.undetected),
+              borderColor: '#c0504d',
+              backgroundColor: '#c0504d',
+              borderWidth: 2,
+              pointRadius: 0,
+              tension: 0.25,
+              yAxisID: 'yCount',
+            },
+            {
+              label: 'Detection rate',
+              data: points.map((p) => p.detection),
+              borderColor: '#d9a441',
+              backgroundColor: '#d9a441',
+              borderWidth: 2,
+              borderDash: [5, 4],
+              pointRadius: 0,
+              tension: 0.25,
+              yAxisID: 'yPct',
+            },
+            {
+              label: 'Operating point',
+              data: markerFailures,
+              borderColor: '#ffffff',
+              backgroundColor: '#4f8ac9',
+              pointRadius: 5,
+              pointBorderWidth: 2,
+              showLine: false,
+              yAxisID: 'yCount',
+            },
+            {
+              label: 'hidden-marker-undetected',
+              data: markerUndetected,
+              borderColor: '#ffffff',
+              backgroundColor: '#c0504d',
+              pointRadius: 5,
+              pointBorderWidth: 2,
+              showLine: false,
+              yAxisID: 'yCount',
+            },
+            {
+              label: 'hidden-marker-detection',
+              data: markerDetection,
+              borderColor: '#ffffff',
+              backgroundColor: '#d9a441',
+              pointRadius: 5,
+              pointBorderWidth: 2,
+              showLine: false,
+              yAxisID: 'yPct',
+            },
+          ],
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          interaction: { mode: 'index', intersect: false },
+          plugins: {
+            legend: {
+              labels: {
+                color: '#cccccc',
+                boxWidth: 12,
+                filter: (item) => !String(item.text).startsWith('hidden-marker'),
+              },
+            },
+            tooltip: {
+              filter: (item) => !String(item.dataset.label).startsWith('hidden-marker'),
+            },
+          },
+          scales: {
+            x: {
+              title: { display: true, text: 'Automation reliability', color: '#cccccc' },
+              ticks: { color: '#aaaaaa', maxTicksLimit: 8 },
+              grid: { color: '#2a2d33' },
+            },
+            yCount: {
+              type: 'logarithmic',
+              position: 'left',
+              min: 0.4,
+              max: 150,
+              title: { display: true, text: 'Per 1,000 cycles', color: '#cccccc' },
+              ticks: { color: '#aaaaaa' },
+              grid: { color: '#2a2d33' },
+            },
+            yPct: {
+              type: 'linear',
+              position: 'right',
+              min: 0,
+              max: 100,
+              title: { display: true, text: 'Detection rate', color: '#cccccc' },
+              ticks: { color: '#aaaaaa', callback: (v) => v + '%' },
+              grid: { drawOnChartArea: false },
+            },
+          },
+        },
+      });
+
+      const update = (index: number): void => {
+        const p = points[index];
+        if (!p) return;
+
+        for (let i = 0; i < labels.length; i++) {
+          markerFailures[i] = null;
+          markerDetection[i] = null;
+          markerUndetected[i] = null;
+        }
+        markerFailures[index] = p.failures;
+        markerDetection[index] = p.detection;
+        markerUndetected[index] = p.undetected;
+
+        chart.data.datasets[3].data = markerFailures;
+        chart.data.datasets[4].data = markerUndetected;
+        chart.data.datasets[5].data = markerDetection;
+        chart.update('none');
+
+        if (label) label.textContent = 'Automation reliability: ' + p.label;
+        if (statFailures) statFailures.textContent = p.failures.toFixed(1);
+        if (statDetection) statDetection.textContent = p.detection.toFixed(1) + '%';
+        if (statUndetected) statUndetected.textContent = p.undetected.toFixed(2);
+
+        if (note) {
+          const first = points[0];
+          const failureDrop = first.failures / p.failures;
+          const undetectedDrop = first.undetected / p.undetected;
+          note.textContent =
+            'Compared with 90% reliability, failures are down ' +
+            failureDrop.toFixed(1) +
+            'x while undetected failures are down only ' +
+            undetectedDrop.toFixed(1) +
+            'x. The gap is the monitor losing the ability to see a signal that has become rare.';
+        }
+      };
+
+      slider.addEventListener('input', () => update(Number(slider.value)));
+      update(Number(slider.value));
+    });
+  }
+
+  document.addEventListener('astro:page-load', initVigilance);
+  document.addEventListener('DOMContentLoaded', initVigilance);
+</script>
