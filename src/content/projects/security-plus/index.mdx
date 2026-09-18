@@ -1,0 +1,96 @@
+---
+title: "CompTIA Security+ SY0-701: Six Week Accelerated Plan"
+description: "Finishing three domains and sitting the exam by November."
+date: "09/17/2026"
+startDate: "09/21/2026"
+endDate: "11/01/2026"
+status: "Doing"
+draft: false
+---
+
+import Roadmap from '../../../components/Roadmap.astro';
+import items from '../../../data/security-plus.json';
+
+---
+
+I'm running the CompTIA Security+ SY0-701 objectives one domain per week starting September 21, and sitting the exam in the week of October 26. This post sets out the goal, the intent behind it, and the scope of each week.
+
+---
+ 
+## The goal
+ 
+Become a security focused RTE and program manager. Concretely, that means three things by the first week of November.
+ 
+<u>**Hold the certification.**</u> Security+ appears as required or strongly preferred on program and delivery roles, including ones where the work is planning rather than engineering, and it's the credential that clears that line.
+ 
+<u>**Speak the language security teams plan in.**</u> Control categories, risk registers, accreditation vocabulary, identity and access models. Enough to read a security requirement and price it in schedule terms.
+ 
+<u>**Have five published pieces.**</u> Show the connection between security constraints and delivery outcomes, written while the material is fresh rather than reconstructed later.
+
+---
+ 
+## The intent
+ 
+Security and compliance are the binding constraint on more and more delivery work, and schedules slip in the space between the two groups who have to cooperate on it. The people who understand the controls usually don't run a train. The people who run trains usually can't plan around an accreditation boundary.
+ 
+Most of what separates those two groups is vocabulary. I want to hear a security lead describe a control requirement in a planning session and know roughly what it costs in sequencing and time, enough to push back on an estimate and hold the date. Writing the implementation is someone else's job.
+ 
+That's the version of the role I'm building toward: an RTE who runs trains where security is the constraint that governs the plan, and treats it as a planning input like any other dependency.
+ 
+---
+
+## Scope by domain
+ 
+The exam is a maximum of 90 questions in 90 minutes, multiple choice and performance based. The five domains carry different weight, and each one still gets a full week here, so the lighter domains finish early and the heavy ones don't get crammed into a Thursday.
+ 
+### Domain 1
+
+**Week 1, September 21 to 27**: General Security Concepts, 12 percent of the exam. Control categories and control types, the CIA triad, non-repudiation, AAA, gap analysis, zero trust across the control plane and data plane, physical security, and deception technology. Objective 1.3 is change management and its security impact, which maps onto program work more directly than anything else in the domain. Objective 1.4 runs cryptographic solutions from PKI through certificates.
+ 
+### Domain 2
+
+**Week 2, September 28 to October 4**: Threats, Vulnerabilities, and Mitigations, 22 percent. Threat actors and their motivations, threat vectors and attack surfaces, the vulnerability catalogue across application, OS, web, hardware, virtualization, cloud, and supply chain, indicators of malicious activity, and the mitigation techniques used to secure an enterprise.
+
+### Domain 3
+
+**Week 3, October 5 to 11**: Security Architecture, 18 percent. Architecture models and their security implications, securing enterprise infrastructure, data protection strategies, and resilience and recovery. Architecture choices show up as delivery constraints more plainly here than anywhere else on the exam.
+
+### Domain 4
+
+**Week 4, October 12 to 18**: Security Operations, 28 percent. The biggest domain and the widest, nine objectives covering secure baselines and hardening, asset management, vulnerability management, alerting and monitoring, enterprise capability changes, identity and access management, automation and orchestration, incident response, and investigative data sources.
+ 
+### Domain 5
+
+**Week 5, October 19 to 25**: Security Program Management and Oversight, 20 percent. Governance, the risk management process, third party risk, compliance, audits and assessments, and security awareness practices. The exam vocabulary and the program vocabulary already overlap in this one, so it should be the easiest week of the five.
+ 
+The exam itself is the week of 26 October.
+
+---
+
+## Practice and checkpoints
+ 
+Reading the objectives and answering against them under a clock are different skills, so the testing runs alongside the study weeks instead of piling up at the end.
+ 
+The seat gets booked in Week 1. Scheduling first fixes the end date before there's any room to slip it.
+ 
+Week 3 closes with a timed sectional covering the first three domains, 90 minutes, and I want 80 percent per domain before moving on. Misses go into a flashcard deck, rebuilt from the misses only.
+ 
+Week 4 is performance based question drills. PBQs punish people who only read: firewall rule ordering, ACL construction, log correlation to identify an attack type from raw entries, and control mapping across the four categories. Under four minutes per question, and anything scoring under 90 percent gets repeated after a 48 hour gap.
+ 
+Week 5 is four full length timed exams, 90 questions in 90 minutes with no reference material, on Monday, Wednesday, Friday, and Saturday, run under testing center conditions. The gate for sitting the real exam is 85 percent or better on two consecutive attempts. A scoring log tracks the trend, and average time per question catches pacing problems early.
+ 
+---
+
+## Publishing alongside
+ 
+One post per week, drawn from whichever domain I'm in that week. Each one takes an idea from the material and works out what it means for someone sequencing delivery rather than implementing controls: change management as a control category, vulnerability severity as a backlog input, architecture models as sequencing constraints, identity and access work inside a value stream, audit cadence against planning cadence. A closing post follows the exam.
+ 
+Writing it weekly keeps me honest about what I've actually retained. If I can restate it for a reader in my own terms, I have it.
+
+---
+
+## Full Roadmap
+
+<Roadmap title="Security+ roadmap" items={items} />
+
+---

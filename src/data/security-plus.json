@@ -1,17 +1,17 @@
 [
   {
     "id": "domain-1",
-    "status": "completed",
+    "status": "planned",
     "track": "Study",
-    "sortKey": "2026-06-01",
-    "end": "2026-07-01",
-    "title": "General Security Concepts",
-    "summary": "Foundational vocabulary for SY0-701, covering control types, the CIA triad, zero trust, and change management.",
+    "sortKey": "2026-09-21",
+    "end": "2026-09-27",
+    "title": "Week 1 — General Security Concepts",
+    "summary": "Domain 1, 12 percent of the exam. Objectives 1.1 through 1.4.",
     "details": [
-      "Compared preventive, deterrent, detective, corrective, compensating, and directive controls across technical, managerial, operational, and physical categories",
-      "Mapped zero trust control plane and data plane components including policy engine, policy administrator, and policy enforcement point",
-      "Documented AAA, gap analysis, and the role of change management in security posture",
-      "Built a lab PKI with a private CA and issued certificates to Caddy on forge"
+      "1.1 compare and contrast security control categories and types: technical, managerial, operational, and physical, against preventive, deterrent, detective, corrective, compensating, and directive",
+      "1.2 fundamental concepts: CIA, non-repudiation, AAA, gap analysis, zero trust control plane and data plane, physical security, and deception technology",
+      "1.3 change management processes and their security impact: approval, ownership, impact analysis, backout plans, maintenance windows, and version control",
+      "1.4 cryptographic solutions: PKI, encryption levels, TPM and HSM, obfuscation, hashing, salting, digital signatures, key stretching, and the certificate objectives"
     ],
     "tags": [
       "SY0-701",
@@ -21,19 +21,58 @@
     ]
   },
   {
-    "id": "domain-2",
-    "status": "completed",
-    "track": "Study",
-    "sortKey": "2026-07-01",
-    "end": "2026-08-01",
-    "title": "Threats, Vulnerabilities, and Mitigations",
-    "summary": "Threat actor profiles, attack surfaces, and the mitigation techniques that reduce exposure on a two-host lab.",
+    "id": "exam-schedule",
+    "status": "planned",
+    "track": "Exam",
+    "sortKey": "2026-09-21",
+    "end": "2026-09-27",
+    "title": "Schedule SY0-701 Exam",
+    "summary": "Book the seat in week 1 so the rest of the plan has a fixed end date.",
     "details": [
-      "Classified threat actors by motivation, resources, and internal versus external origin",
-      "Worked through social engineering vectors including phishing, pretexting, watering hole, and business email compromise",
-      "Reviewed application attacks such as injection, buffer overflow, replay, and privilege escalation",
-      "Deployed CrowdSec on both nodes and reviewed decisions against live SSH and HTTP probe traffic",
-      "Ran a Nessus Essentials scan against the lab subnet and triaged findings by CVSS score"
+      "Reserve a morning seat at a San Antonio Pearson VUE testing center for the week of October 26",
+      "Confirm identification requirements and testing center policies",
+      "Block the two days prior for final review only"
+    ],
+    "tags": [
+      "SY0-701",
+      "Scheduling",
+      "Pearson VUE",
+      "Logistics"
+    ]
+  },
+  {
+    "id": "publish-01",
+    "status": "planned",
+    "track": "Publish",
+    "sortKey": "2026-09-21",
+    "end": "2026-09-27",
+    "title": "Post 1 — Change Management Is the Security Control",
+    "summary": "Drawn from objectives 1.1 and 1.3. Control categories and the approval process as program vocabulary.",
+    "details": [
+      "400 to 600 words on why change management sits in a security exam at all, using the 1.3 objective list",
+      "Map approval process, impact analysis, backout plan, and maintenance window onto how a release train already runs",
+      "Use the four control categories and six control types as the framing device rather than a glossary"
+    ],
+    "tags": [
+      "Publishing",
+      "Change Management",
+      "Security Controls"
+    ]
+  },
+  {
+    "id": "domain-2",
+    "status": "planned",
+    "track": "Study",
+    "sortKey": "2026-09-28",
+    "end": "2026-10-04",
+    "title": "Week 2 — Threats, Vulnerabilities, and Mitigations",
+    "summary": "Domain 2, 22 percent of the exam. Objectives 2.1 through 2.5.",
+    "details": [
+      "2.1 threat actors and motivations, and actor attributes of origin, funding, and sophistication",
+      "2.2 threat vectors and attack surfaces: message, image, file, voice, removable device, unsecure networks, supply chain, and the human and social engineering vectors",
+      "2.3 vulnerability types across application, OS, web, hardware, virtualization, cloud, supply chain, cryptographic, misconfiguration, mobile, and zero-day",
+      "2.4 indicators of malicious activity: malware, physical, network, application, cryptographic, and password attacks, plus the indicators list",
+      "2.5 mitigation techniques: segmentation, access control, allow lists, isolation, patching, encryption, monitoring, least privilege, configuration enforcement, decommissioning, and hardening"
     ],
     "tags": [
       "SY0-701",
@@ -43,127 +82,56 @@
     ]
   },
   {
-    "id": "domain-3",
-    "status": "in-progress",
-    "track": "Study",
-    "sortKey": "2026-08-01",
-    "end": "2026-09-01",
-    "title": "Security Architecture",
-    "summary": "Architecture models, secure network design, and data protection strategies applied to the forge and watch hosts.",
+    "id": "publish-02",
+    "status": "planned",
+    "track": "Publish",
+    "sortKey": "2026-09-28",
+    "end": "2026-10-04",
+    "title": "Post 2 — Vulnerability Management as a Backlog Problem",
+    "summary": "Drawn from objectives 2.3 and 2.5. How severity and remediation deadlines get sequenced against feature work.",
     "details": [
-      "Compared on premises, cloud, hybrid, IaC, serverless, and microservice architecture tradeoffs",
-      "Segmented the lab network into VLANs and enforced east west rules at the host firewall",
-      "Configured Pi-hole with upstream DNS over TLS and documented the resolution path",
-      "Implemented full disk encryption and evaluated tokenization versus masking for the Directus datastore",
-      "Drafted a resilience plan covering RTO, RPO, MTTR, and Borgmatic backup verification"
+      "400 to 600 words on severity-driven prioritization colliding with PI planning and committed objectives",
+      "Cover the 2.5 mitigation techniques as the menu a team actually negotiates from"
+    ],
+    "tags": [
+      "Publishing",
+      "Vulnerability Management",
+      "PI Planning"
+    ]
+  },
+  {
+    "id": "domain-3",
+    "status": "planned",
+    "track": "Study",
+    "sortKey": "2026-10-05",
+    "end": "2026-10-11",
+    "title": "Week 3 — Security Architecture",
+    "summary": "Domain 3, 18 percent of the exam. Objectives 3.1 through 3.4.",
+    "details": [
+      "3.1 architecture models: cloud responsibility matrix, IaC, serverless, microservices, network infrastructure, on-premises, containerization, ICS and SCADA, RTOS, embedded systems, and high availability, with the considerations list",
+      "3.2 securing enterprise infrastructure: device placement, security zones, failure modes, network appliances, port security, firewall types, and secure communication including VPN, tunneling, SD-WAN, and SASE",
+      "3.3 data protection: data types, classifications, data states, sovereignty, and the geographic restriction, encryption, masking, tokenization, and permission restriction methods",
+      "3.4 resilience and recovery: load balancing versus clustering, hot, warm, and cold sites, platform diversity, capacity planning, testing, backups, and power",
+      "Verify the drafted resilience plan against the RTO, RPO, MTTR, and MTBF definitions as the objectives state them"
     ],
     "tags": [
       "SY0-701",
       "Architecture",
-      "Segmentation",
+      "Data Protection",
       "Resilience"
     ]
   },
   {
-    "id": "domain-4",
-    "status": "planned",
-    "track": "Study",
-    "sortKey": "2026-09-01",
-    "end": "2026-10-01",
-    "title": "Security Operations",
-    "summary": "The largest exam domain, covering hardening, monitoring, incident response, and identity management.",
-    "details": [
-      "Apply CIS Benchmark hardening to Ubuntu Server and record the delta from the default build",
-      "Centralize logs with Alloy and Loki, then build Grafana panels for authentication failures and firewall drops",
-      "Practice the incident response lifecycle from preparation through lessons learned using a simulated compromise",
-      "Configure SSO, MFA, and least privilege role assignments across lab services",
-      "Write automation scripts for user provisioning and deprovisioning"
-    ],
-    "tags": [
-      "SY0-701",
-      "SecOps",
-      "Loki",
-      "Grafana",
-      "Incident Response"
-    ]
-  },
-  {
-    "id": "domain-5",
-    "status": "planned",
-    "track": "Study",
-    "sortKey": "2026-10-01",
-    "end": "2026-11-01",
-    "title": "Security Program Management and Oversight",
-    "summary": "Governance, risk, third party assessment, and compliance reporting concepts.",
-    "details": [
-      "Build a risk register with likelihood, impact, risk appetite, and treatment decisions",
-      "Compare quantitative risk formulas including SLE, ARO, and ALE against qualitative heat maps",
-      "Review vendor assessment artifacts such as SLA, MOU, MSA, and BPA",
-      "Summarize NIST CSF, ISO 27001, and RMF alignment for a federal delivery context",
-      "Outline a security awareness training plan with phishing campaign metrics"
-    ],
-    "tags": [
-      "SY0-701",
-      "GRC",
-      "Risk Management",
-      "Compliance"
-    ]
-  },
-  {
-    "id": "exam-prep",
-    "status": "planned",
-    "track": "Study",
-    "sortKey": "2026-11-01",
-    "end": "2026-12-01",
-    "title": "Exam Preparation and Performance Based Questions",
-    "summary": "Final review cycle focused on timed practice exams and performance based question drills.",
-    "details": [
-      "Complete three full length timed practice exams with a target score above 85 percent",
-      "Drill port numbers, protocol pairings, and cryptographic algorithm selection from flashcards",
-      "Work performance based questions on firewall rule ordering and log analysis",
-      "Rebuild weak area notes into a single page reference sheet",
-      "Schedule the SY0-701 exam at a Pearson VUE testing center"
-    ],
-    "tags": [
-      "SY0-701",
-      "Practice Exams",
-      "PBQ",
-      "Certification"
-    ]
-  },
-  {
-    "id": "practice-baseline",
-    "status": "completed",
-    "track": "Exam",
-    "sortKey": "2026-06-18",
-    "end": "2026-07-10",
-    "title": "Baseline Practice Exam",
-    "summary": "Cold diagnostic run taken before formal study to establish a starting score and identify weak domains.",
-    "details": [
-      "Scored 612 of 900 on an untimed diagnostic covering all five domains",
-      "Strongest performance in Security Operations, weakest in Security Program Management and Oversight",
-      "Missed the majority of questions involving cryptographic algorithm selection",
-      "Logged every missed question into a spreadsheet tagged by exam objective"
-    ],
-    "tags": [
-      "SY0-701",
-      "Practice Exam",
-      "Diagnostic",
-      "Baseline"
-    ]
-  },
-  {
     "id": "practice-midpoint",
-    "status": "in-progress",
+    "status": "planned",
     "track": "Exam",
-    "sortKey": "2026-07-20",
-    "end": "2026-08-12",
+    "sortKey": "2026-10-05",
+    "end": "2026-10-11",
     "title": "Domain 1 to 3 Checkpoint Exam",
-    "summary": "Timed sectional exam limited to the first three domains to verify retention before moving into Security Operations.",
+    "summary": "Timed sectional exam limited to the first three domains, taken after Week 3.",
     "details": [
       "90 minute timed run restricted to General Security Concepts, Threats, and Architecture",
       "Target threshold of 80 percent per domain before advancing",
-      "Review incorrect answers against lab notes rather than course video rewatch",
       "Rebuild flashcard deck from missed items only"
     ],
     "tags": [
@@ -174,11 +142,57 @@
     ]
   },
   {
+    "id": "publish-03",
+    "status": "planned",
+    "track": "Publish",
+    "sortKey": "2026-10-05",
+    "end": "2026-10-11",
+    "title": "Post 3 — Architecture Decisions as Delivery Constraints",
+    "summary": "Drawn from objectives 3.1 and 3.2. Architecture model tradeoffs read as sequencing constraints.",
+    "details": [
+      "400 to 600 words tying the 3.1 considerations list to delivery sequencing",
+      "Anchor on a toolchain migration into a secured on-prem environment, covering application, security posture, and access model",
+      "Treat security zones and device placement as decisions that set what can be delivered in parallel"
+    ],
+    "tags": [
+      "Publishing",
+      "Architecture",
+      "Zero Trust"
+    ]
+  },
+  {
+    "id": "domain-4",
+    "status": "planned",
+    "track": "Study",
+    "sortKey": "2026-10-12",
+    "end": "2026-10-18",
+    "title": "Week 4 — Security Operations",
+    "summary": "Domain 4, 28 percent of the exam and the largest domain. Objectives 4.1 through 4.9.",
+    "details": [
+      "4.1 secure baselines and hardening targets across servers, workstations, cloud infrastructure, ICS and SCADA, embedded systems, and IoT, plus wireless and mobile solutions and application security",
+      "4.2 asset management across acquisition, assignment, monitoring, and disposal including sanitization, destruction, certification, and data retention",
+      "4.3 vulnerability management: identification methods, CVSS and CVE, prioritization, response and remediation, validation, and reporting",
+      "4.4 alerting and monitoring: log aggregation, alert tuning, SCAP, SIEM, DLP, NetFlow, and SNMP traps",
+      "4.5 enterprise capabilities: firewall rules, IDS and IPS, web filtering, DNS filtering, DMARC, DKIM, SPF, NAC, EDR and XDR",
+      "4.6 identity and access management: provisioning, federation, SSO via LDAP, OAuth, and SAML, the access control models, multifactor factors and implementations, password concepts, and PAM",
+      "4.7 automation and orchestration use cases, benefits, and considerations",
+      "4.8 incident response from preparation through lessons learned, plus root cause analysis, threat hunting, and digital forensics",
+      "4.9 log data and investigation data sources"
+    ],
+    "tags": [
+      "SY0-701",
+      "SecOps",
+      "Hardening",
+      "Loki",
+      "Grafana"
+    ]
+  },
+  {
     "id": "practice-pbq",
     "status": "planned",
     "track": "Exam",
-    "sortKey": "2026-08-22",
-    "end": "2026-09-14",
+    "sortKey": "2026-10-12",
+    "end": "2026-10-18",
     "title": "Performance Based Question Drills",
     "summary": "Focused simulation work on the interactive question formats that open the real exam.",
     "details": [
@@ -196,17 +210,63 @@
     ]
   },
   {
+    "id": "publish-04",
+    "status": "planned",
+    "track": "Publish",
+    "sortKey": "2026-10-12",
+    "end": "2026-10-18",
+    "title": "Post 4 — ICAM Inside a Value Stream",
+    "summary": "Drawn from objective 4.6.",
+    "details": [
+      "400 to 600 words on running ICAM teams inside a value stream without losing PI predictability",
+      "Name policy enforcement point, policy decision point, and policy administration point in NIST 800-207 terms",
+      "Connect identity governance implementation work to the access control models in objective 4.6"
+    ],
+    "tags": [
+      "Publishing",
+      "ICAM",
+      "Identity Governance",
+      "RTE"
+    ]
+  },
+  {
+    "id": "domain-5",
+    "status": "planned",
+    "track": "Study",
+    "sortKey": "2026-10-19",
+    "end": "2026-10-25",
+    "title": "Week 5 — Security Program Management and Oversight",
+    "summary": "Domain 5, 20 percent of the exam. Objectives 5.1 through 5.6.",
+    "details": [
+      "5.1 governance: guidelines, policies, standards, procedures, external considerations, governance structures, and the owner, controller, processor, and custodian roles",
+      "5.2 risk management: risk identification and assessment types, qualitative versus quantitative analysis, SLE, ALE, and ARO, the risk register, risk appetite, the transfer, accept, avoid, and mitigate strategies, and business impact analysis",
+      "5.3 third party risk: vendor assessment, right-to-audit clauses, supply chain analysis, and the SLA, MOA, MOU, MSA, WO and SOW, NDA, and BPA agreement types",
+      "5.4 compliance: reporting, consequences of non-compliance, compliance monitoring, and privacy including data subject, controller versus processor, and right to be forgotten",
+      "5.5 audits and assessments: attestation, internal and external audits, and the penetration testing types and reconnaissance modes",
+      "5.6 security awareness practices including phishing campaigns and anomalous behavior recognition",
+      "Build a risk register with likelihood, impact, risk appetite, and treatment decisions",
+      "Drill the SLE, ARO, and ALE formulas until the arithmetic is automatic"
+    ],
+    "tags": [
+      "SY0-701",
+      "GRC",
+      "Risk Management",
+      "Compliance",
+      "Weak Domain"
+    ]
+  },
+  {
     "id": "practice-full-1",
     "status": "planned",
     "track": "Exam",
-    "sortKey": "2026-09-24",
-    "end": "2026-10-18",
+    "sortKey": "2026-10-19",
+    "end": "2026-10-25",
     "title": "Full Length Practice Exam Series",
-    "summary": "Three full length timed exams under real testing conditions to confirm readiness and pacing.",
+    "summary": "Four full length timed exams under real testing conditions to confirm readiness and pacing.",
     "details": [
-      "Run each exam at 90 minutes with 90 questions and no reference material",
-      "Maintain a scoring log to confirm an upward trend across all three attempts",
-      "Require 85 percent or better on the final attempt before scheduling the real exam",
+      "Run each exam at 90 minutes with 90 questions and no reference material, on Monday, Wednesday, Friday, and Saturday",
+      "Maintain a scoring log to confirm an upward trend across attempts",
+      "Require 85 percent or better on two consecutive attempts before sitting the real exam",
       "Simulate testing center conditions with a cleared desk and no interruptions",
       "Record average time per question to identify pacing risk"
     ],
@@ -218,39 +278,38 @@
     ]
   },
   {
-    "id": "exam-schedule",
+    "id": "publish-05",
     "status": "planned",
-    "track": "Exam",
-    "sortKey": "2026-10-26",
-    "end": "2026-11-08",
-    "title": "Schedule SY0-701 Exam",
-    "summary": "Voucher purchase and seat reservation at a local Pearson VUE testing center.",
+    "track": "Publish",
+    "sortKey": "2026-10-19",
+    "end": "2026-10-25",
+    "title": "Post 5 — Audit Cadence Versus PI Cadence",
+    "summary": "Drawn from domain 5. Where governance and audit timelines collide with program increment planning.",
     "details": [
-      "Purchase the CompTIA exam voucher and apply any available bundle discount",
-      "Reserve a morning seat at a San Antonio Pearson VUE testing center",
-      "Confirm identification requirements and testing center policies",
-      "Block the two days prior for final review only"
+      "400 to 600 words on risk registers, risk owners, and key risk indicators as program artifacts rather than security artifacts",
+      "Cover what a right-to-audit clause and a vendor questionnaire actually cost a delivery schedule",
+      "Written so the mechanism is the point and the specific compliance regime is only the example"
     ],
     "tags": [
-      "SY0-701",
-      "Scheduling",
-      "Pearson VUE",
-      "Logistics"
+      "Publishing",
+      "Governance",
+      "Risk Register",
+      "PI Planning"
     ]
   },
   {
     "id": "exam-attempt",
     "status": "planned",
     "track": "Exam",
-    "sortKey": "2026-12-08",
-    "end": "2026-12-22",
+    "sortKey": "2026-10-26",
+    "end": "2026-11-01",
     "title": "CompTIA Security+ SY0-701 Exam",
-    "summary": "The certification attempt itself, with a passing threshold of 750 on a scale of 100 to 900.",
+    "summary": "The certification attempt itself. Maximum of 90 questions, 90 minutes, multiple-choice and performance-based.",
     "details": [
       "Arrive 30 minutes early with two forms of identification",
       "Clear performance based questions first, then flag and return as time allows",
       "Reserve the final 10 minutes for flagged question review",
-      "Record the score report and add the certification to resume and LinkedIn on pass",
+      "Re-apply to postings previously skipped for lacking the certification",
       "Log the three year continuing education renewal date"
     ],
     "tags": [
@@ -258,6 +317,26 @@
       "Certification",
       "Exam Day",
       "Milestone"
+    ]
+  },
+  {
+    "id": "publish-06",
+    "status": "planned",
+    "track": "Publish",
+    "sortKey": "2026-10-26",
+    "end": "2026-11-01",
+    "title": "Post 6 — What an RTE Takes From Security+",
+    "summary": "Closing post of the cycle, written after the exam result.",
+    "details": [
+      "400 to 600 words on what the certification gives a program role that it does not give an engineer",
+      "Link the five prior posts so the series reads as one body of work",
+      "Frame the credential as a contractual gate cleared, not as the claim itself"
+    ],
+    "tags": [
+      "Publishing",
+      "Certification",
+      "RTE",
+      "Positioning"
     ]
   }
 ]
