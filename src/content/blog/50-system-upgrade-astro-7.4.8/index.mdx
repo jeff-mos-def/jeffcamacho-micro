@@ -1,0 +1,112 @@
+---
+title: "System Upgrade: Astro 7.4.8"
+description: "Astro core, the MDX and React integrations, and supporting packages updated, with a new Node.js minimum."
+date: "2026-11-09"
+tags: ["Astro", "Upgrades", "Node.js", "MDX", "React"]
+draft: false
+---
+
+This site's Astro stack was updated on November 9, 2026, using `npx @astrojs/upgrade`. Two integrations moved up a major version, [`@astrojs/mdx`](https://github.com/withastro/astro/blob/main/packages/integrations/mdx/CHANGELOG.md) and [`@astrojs/react`](https://github.com/withastro/astro/blob/main/packages/integrations/react/CHANGELOG.md). Everything else received minor or patch releases. The new Astro release also raises the minimum Node.js version.
+
+## What changed
+
+| Package | From | To | Release type |
+| :--- | :--- | :--- | :--- |
+| [`astro`](https://github.com/withastro/astro/blob/main/packages/astro/CHANGELOG.md) | 7.2.0 | 7.4.8 | Minor |
+| [`@astrojs/mdx`](https://github.com/withastro/astro/blob/main/packages/integrations/mdx/CHANGELOG.md) | 7.0.5 | 8.1.3 | Major |
+| [`@astrojs/react`](https://github.com/withastro/astro/blob/main/packages/integrations/react/CHANGELOG.md) | 6.0.2 | 7.1.5 | Major |
+| [`@astrojs/markdown-remark`](https://github.com/withastro/astro/blob/main/packages/markdown/remark/CHANGELOG.md) | 7.3.1 | 7.3.6 | Patch |
+| [`@astrojs/sitemap`](https://github.com/withastro/astro/blob/main/packages/integrations/sitemap/CHANGELOG.md) | 3.7.3 | 3.7.4 | Patch |
+| [`@astrojs/check`](https://github.com/withastro/astro/blob/main/packages/language-tools/astro-check/CHANGELOG.md) | 0.9.10 | 0.9.12 | Patch |
+| `@astrojs/rss` | 4.0.19 | 4.0.19 | Unchanged |
+
+## Node.js 22.23.4 minimum
+
+[Astro 7.4.0](https://github.com/withastro/astro/blob/main/packages/astro/CHANGELOG.md#740) raised the minimum supported Node.js version to 22.22.0. [Astro 7.4.2](https://github.com/withastro/astro/blob/main/packages/astro/CHANGELOG.md#742) raised it again to 22.23.4, the [Node.js 22 LTS release from October 21, 2026](https://nodejs.org/blog/release/v22.23.4), which carries the fixes from the [October 2026 Node.js security releases](https://nodejs.org/en/blog/vulnerability/october-2026-security-releases). [Astro's Node.js support policy](https://docs.astro.build/en/upgrade-astro/#nodejs-support-and-upgrade-policies) lets the core team raise the minimum Maintenance LTS version in a patch release when a disclosed Node.js security flaw affects Astro, which is why this bump shipped as a patch. The same minimum applies to [`@astrojs/mdx` 8.1.1](https://github.com/withastro/astro/blob/main/packages/integrations/mdx/CHANGELOG.md#811) and [`@astrojs/react` 7.1.1](https://github.com/withastro/astro/blob/main/packages/integrations/react/CHANGELOG.md#711).
+
+## @astrojs/mdx 8 (major)
+
+- **MDX processing moved to the Markdown processor.** `@astrojs/mdx` is still required for MDX support, but it now hands `.mdx` files to the configured Markdown processor. Projects without an explicitly installed processor need no changes. Projects using `unified()` need `@astrojs/markdown-remark` 7.3.0 or later, and projects using `satteri()` need `@astrojs/markdown-satteri` 0.4.0 or later ([8.0.0](https://github.com/withastro/astro/blob/main/packages/integrations/mdx/CHANGELOG.md#800)).
+- **Deprecated plugin options now warn.** The `remarkPlugins`, `rehypePlugins`, `recmaPlugins`, and `remarkRehype` options still apply under `unified()`. When a processor does not run them, MDX now logs a warning instead of dropping them silently ([8.0.0](https://github.com/withastro/astro/blob/main/packages/integrations/mdx/CHANGELOG.md#800)).
+- **`extendMarkdownConfig: false` uses a clean processor.** In that case `.mdx` files now use a clean default processor instead of `markdown.processor` ([8.0.0](https://github.com/withastro/astro/blob/main/packages/integrations/mdx/CHANGELOG.md#800)).
+- **Patch releases** fixed an incompatibility with Astro versions that bundle an older `@astrojs/markdown-satteri` and improved the error message that points to updating `astro` ([8.0.2](https://github.com/withastro/astro/blob/main/packages/integrations/mdx/CHANGELOG.md#802)), and added YAML timestamp and merge key support ([8.0.3](https://github.com/withastro/astro/blob/main/packages/integrations/mdx/CHANGELOG.md#803)).
+
+## @astrojs/react 7 (major)
+
+- **Oxc replaces Babel.** The integration now uses `@vitejs/plugin-react` v6, with Oxc handling JSX and Fast Refresh. The `babel` option on `react()` is removed. Custom Babel transforms move to `@rolldown/plugin-babel` under `vite.plugins` ([7.0.0](https://github.com/withastro/astro/blob/main/packages/integrations/react/CHANGELOG.md#700)).
+- **Opt-in React Compiler.** `react({ compiler: true })` enables the Oxc-based React Compiler, which memoizes client components and hooks. It requires `oxc-transform-react`. Server rendering is not compiled ([7.0.0](https://github.com/withastro/astro/blob/main/packages/integrations/react/CHANGELOG.md#700)).
+- **Patch releases** fixed duplicate `React.useId()` values when `experimentalDisableStreaming` is enabled ([7.1.2](https://github.com/withastro/astro/blob/main/packages/integrations/react/CHANGELOG.md#712)), preserved component-rendered stylesheet, preload, and modulepreload links in React island output ([7.1.3](https://github.com/withastro/astro/blob/main/packages/integrations/react/CHANGELOG.md#713)), and widened the `oxc-transform-react` peer dependency range ([7.1.5](https://github.com/withastro/astro/blob/main/packages/integrations/react/CHANGELOG.md#715)).
+
+## astro 7.2.0 to 7.4.8
+
+**[7.3.0](https://github.com/withastro/astro/blob/main/packages/astro/CHANGELOG.md#730)**
+
+- `astro preview --ignore-lock` allows several preview servers to run at once on different ports.
+- Custom image services and cache providers receive Astro's runtime logger.
+- Builds are faster for sites with many pages coming from many different modules.
+- i18n fallback routes keep the correct path when the locale code also starts a later path segment.
+
+**[7.3.3](https://github.com/withastro/astro/blob/main/packages/astro/CHANGELOG.md#733)**
+
+- `svgo` updated to 4.0.2 to resolve a security advisory.
+
+**[7.4.0](https://github.com/withastro/astro/blob/main/packages/astro/CHANGELOG.md#740)**
+
+- `astro build --timings` prints a summary after the build to show what slows it down, such as integrations, Markdown processor plugins, image processing, or syntax highlighting.
+- Experimental parallel prerendering (`experimental.parallelPrerender`) renders static pages across multiple CPU cores.
+- Experimental custom redirect page (`experimental.redirectPage`) lets `src/pages/3xx.astro` replace the generated redirect page in static builds.
+- `image.service` accepts separate `build` and `runtime` services.
+- Font providers gain an optional `getFontProperties()` callback, which Astro uses to warn about font values a provider cannot serve.
+- `astro/fetch` and `astro/hono` gain a `notFound()` handler for custom server entrypoints.
+- Minimum Node.js raised to 22.22.0.
+
+**[7.4.2](https://github.com/withastro/astro/blob/main/packages/astro/CHANGELOG.md#742)**
+
+- Minimum Node.js raised to 22.23.4.
+
+**[7.4.5](https://github.com/withastro/astro/blob/main/packages/astro/CHANGELOG.md#745)**
+
+- String tag names in dynamic `.astro` tags, JSX, and MDX render more strictly. A string that does not start with a valid element name now throws an error instead of producing invalid HTML.
+
+The remaining releases in this range are patch releases.
+
+## @astrojs/markdown-remark 7.3.6
+
+- YAML frontmatter parsing supports timestamps and merge keys ([7.3.2](https://github.com/withastro/astro/blob/main/packages/markdown/remark/CHANGELOG.md#732)).
+- Code blocks in languages ending in a symbol, such as `c#`, `c++`, and `f#`, highlight with the correct language ([7.3.2](https://github.com/withastro/astro/blob/main/packages/markdown/remark/CHANGELOG.md#732)).
+- Markdown processing and syntax highlighting report measurements to `astro build --timings` ([7.3.3](https://github.com/withastro/astro/blob/main/packages/markdown/remark/CHANGELOG.md#733)).
+- Prism code blocks in languages Prism does not support, such as `vue` or `svelte`, display as plain text, and the language name is escaped in the generated `class` and `data-language` attributes ([7.3.5](https://github.com/withastro/astro/blob/main/packages/markdown/remark/CHANGELOG.md#735)).
+
+## @astrojs/sitemap 3.7.4
+
+- The homepage URL keeps its trailing slash (`https://example.com/`) when `trailingSlash` is `"never"` or `build.format` is `"file"` ([3.7.4](https://github.com/withastro/astro/blob/main/packages/integrations/sitemap/CHANGELOG.md#374)).
+
+## @astrojs/check 0.9.12
+
+- The `astro-check` binary respects flags such as `--help`, `--root`, `--watch`, and `--tsconfig` again ([0.9.12](https://github.com/withastro/astro/blob/main/packages/language-tools/astro-check/CHANGELOG.md#0912)).
+- `astro check --watch` keeps running when the project path contains `node_modules` or `.git` ([0.9.11](https://github.com/withastro/astro/blob/main/packages/language-tools/astro-check/CHANGELOG.md#0911)).
+- The `--preserveWatchOutput` help text matches the flag's behavior ([0.9.11](https://github.com/withastro/astro/blob/main/packages/language-tools/astro-check/CHANGELOG.md#0911)).
+
+## Playwright 1.65
+ 
+`playwright` and `playwright-core` moved from 1.63.0 to 1.65.0 with `npm update`. Running `npx playwright install` afterward downloaded the browser versions that Playwright 1.65 uses.
+ 
+| Browser | Playwright 1.63 | Playwright 1.65 |
+| :--- | :--- | :--- |
+| Chromium | 153.0.8010.12 | 158.0.8127.18 |
+| Firefox | 155.0 | 159.0 |
+| WebKit | 26.6 | 27.2 |
+ 
+- **[1.64](https://github.com/microsoft/playwright/blob/main/docs/src/release-notes-js.md#version-164)** added `page.webmcp` for testing tools a page registers through the experimental WebMCP API, custom video frame rates with VP9 encoding, `Locator.within()`, a `--shuffle` option, and a `default` option for test projects. Its breaking changes: device descriptors now pass through their `screen` setting, JSX in test files follows `tsconfig.json`, `--update-snapshots=missing` now passes the run, and elements inside hidden iframes count as hidden.
+- **[1.65](https://github.com/microsoft/playwright/blob/main/docs/src/release-notes-js.md#version-165)** runs the test runner under Bun with `--bun`, adds a `failures` reporter and an `onlyFailures` option, and adds an `-exclusive-` test lock. Its breaking changes include TypeScript class fields following `useDefineForClassFields`, actions waiting for elements to stop being inert, cookie matching that follows RFC 6265, and proxy credentials no longer being sent to websites. Playwright no longer tests on Node.js 20.
+
+## Changelogs and notes
+
+- [astro CHANGELOG](https://github.com/withastro/astro/blob/main/packages/astro/CHANGELOG.md)
+- [@astrojs/mdx CHANGELOG](https://github.com/withastro/astro/blob/main/packages/integrations/mdx/CHANGELOG.md)
+- [@astrojs/react CHANGELOG](https://github.com/withastro/astro/blob/main/packages/integrations/react/CHANGELOG.md)
+- [@astrojs/markdown-remark CHANGELOG](https://github.com/withastro/astro/blob/main/packages/markdown/remark/CHANGELOG.md)
+- [@astrojs/sitemap CHANGELOG](https://github.com/withastro/astro/blob/main/packages/integrations/sitemap/CHANGELOG.md)
+- [@astrojs/check CHANGELOG](https://github.com/withastro/astro/blob/main/packages/language-tools/astro-check/CHANGELOG.md)
+- [Node.js 22.23.4 (LTS) release notes](https://nodejs.org/blog/release/v22.23.4)
+- [Playwright release notes](https://github.com/microsoft/playwright/blob/main/docs/src/release-notes-js.md)
