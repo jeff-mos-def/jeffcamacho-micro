@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 680 700" role="img" aria-labelledby="wb-title wb-desc" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" fill="currentColor">
+  <title id="wb-title">Work backward from the goal. Build forward from the first step.</title>
+  <desc id="wb-desc">A far goal, set by the visionary: the team can release to production any day it chooses. Below the handoff line, the realist works backward from it to three near goals. Near goal 3: feature flags separate deploying code from releasing it. Near goal 2: deployment runs through one automated pipeline. Near goal 1, start here: automated tests cover the critical paths. Arrows run upward from now through each near goal to the far goal: build forward, each step unlocks the next.</desc>
+  <style>svg{color:#1a1a1a}@media (prefers-color-scheme: dark){svg{color:#e8e8e8}}</style>
+  <defs>
+    <marker id="wb-up" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="currentColor"/></marker>
+    <marker id="wb-down" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="currentColor"/></marker>
+  </defs>
+    <text x="40" y="36" font-size="12" font-weight="700" letter-spacing="1.4" fill-opacity="0.6">ONE GOAL, WORKED BACKWARD</text>
+  <text x="40" y="74" font-size="26" font-weight="700">Work backward from the goal.</text>
+  <text x="40" y="106" font-size="26" font-weight="700">Build forward from the first step.</text>
+  <line x1="40" y1="130" x2="640" y2="130" stroke="currentColor" stroke-opacity="0.25" stroke-width="1"/>
+  <rect x="40" y="156" width="390" height="88" rx="10" fill="currentColor" fill-opacity="0.09" stroke="currentColor" stroke-width="2.5"/>
+  <text x="60" y="181" font-size="11.5" font-weight="700" letter-spacing="1.1" fill-opacity="0.62">FAR GOAL · THE DIRECTION</text>
+  <text x="60" y="207" font-size="18" font-weight="650">The team can release to production</text>
+  <text x="60" y="231" font-size="18" font-weight="650">any day it chooses.</text>
+  <line x1="436" y1="200" x2="460" y2="200" stroke="currentColor" stroke-opacity="0.45" stroke-width="1"/>
+  <text x="470" y="186" font-size="11.5" font-weight="700" letter-spacing="1.1" fill-opacity="0.62">THE VISIONARY</text>
+  <text x="470" y="208" font-size="15.5">Names where the</text>
+  <text x="470" y="228" font-size="15.5">work is going.</text>
+  <line x1="40" y1="276" x2="640" y2="276" stroke="currentColor" stroke-width="1.5" stroke-dasharray="6 5" stroke-opacity="0.6"/>
+  <text x="640" y="268" text-anchor="end" font-size="13" font-style="italic" fill-opacity="0.75">the handoff</text>
+  <rect x="40" y="308" width="390" height="84" rx="10" fill="currentColor" fill-opacity="0.04" stroke="currentColor" stroke-width="1.25"/>
+  <text x="60" y="333" font-size="11.5" font-weight="700" letter-spacing="1.1" fill-opacity="0.62">NEAR GOAL 3</text>
+  <text x="60" y="359" font-size="17" font-weight="450">Feature flags separate deploying</text>
+  <text x="60" y="383" font-size="17" font-weight="450">code from releasing it.</text>
+  <rect x="40" y="422" width="390" height="84" rx="10" fill="currentColor" fill-opacity="0.04" stroke="currentColor" stroke-width="1.25"/>
+  <text x="60" y="447" font-size="11.5" font-weight="700" letter-spacing="1.1" fill-opacity="0.62">NEAR GOAL 2</text>
+  <text x="60" y="473" font-size="17" font-weight="450">Deployment runs through one</text>
+  <text x="60" y="497" font-size="17" font-weight="450">automated pipeline.</text>
+  <rect x="40" y="536" width="390" height="84" rx="10" fill="currentColor" fill-opacity="0.12" stroke="currentColor" stroke-width="2.5"/>
+  <text x="60" y="561" font-size="11.5" font-weight="700" letter-spacing="1.1" fill-opacity="0.62">NEAR GOAL 1 · START HERE</text>
+  <text x="60" y="587" font-size="17" font-weight="650">Automated tests cover the</text>
+  <text x="60" y="611" font-size="17" font-weight="650">critical paths.</text>
+  <line x1="235.0" y1="302" x2="235.0" y2="250" stroke="currentColor" stroke-width="2" marker-end="url(#wb-up)"/>
+  <line x1="235.0" y1="416" x2="235.0" y2="398" stroke="currentColor" stroke-width="2" marker-end="url(#wb-up)"/>
+  <line x1="235.0" y1="530" x2="235.0" y2="512" stroke="currentColor" stroke-width="2" marker-end="url(#wb-up)"/>
+  <line x1="235.0" y1="648" x2="235.0" y2="626" stroke="currentColor" stroke-width="2" marker-end="url(#wb-up)"/>
+  <line x1="456" y1="304" x2="456" y2="612" stroke="currentColor" stroke-width="2" marker-end="url(#wb-down)"/>
+  <text x="470" y="330" font-size="11.5" font-weight="700" letter-spacing="1.1" fill-opacity="0.62">THE REALIST</text>
+  <text x="470" y="352" font-size="15.5">Works backward from</text>
+  <text x="470" y="372" font-size="15.5">the goal, asking what</text>
+  <text x="470" y="392" font-size="15.5">has to be true first,</text>
+  <text x="470" y="412" font-size="15.5">until the answer is</text>
+  <text x="470" y="432" font-size="15.5">achievable now.</text>
+  <circle cx="235.0" cy="658" r="6" fill="currentColor"/>
+  <text x="251.0" y="663" font-size="15.5" font-weight="700">Now</text>
+  <text x="295.0" y="663" font-size="15.5" fill-opacity="0.8">Build forward. Each step unlocks the next.</text>
+</svg>
