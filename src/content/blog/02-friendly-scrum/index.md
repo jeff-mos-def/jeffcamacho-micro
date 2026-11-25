@@ -2,7 +2,7 @@
 title: "Friendly Scrum: Because Agile Is Human Too"
 description: "Bringing emotional intelligence to the Scrum Master role."
 date: "2024-11-19"
-tags: ["agile", "scrum"]
+tags: ["agile", "career"]
 #linkedProject: "/projects/liauto"
 #projectBoard: "https://github.com/users/jeff-mos-def/projects/9"
 draft: false

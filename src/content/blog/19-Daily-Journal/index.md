@@ -2,7 +2,7 @@
 title: "Journal: 2025-06-19"
 description: "A reflection on today's energy, focus, and thoughts."
 date: "2025-06-19"
-tags: ["journal", "reflection", "daily"]
+tags: ["personal"]
 draft: false
 ---
   

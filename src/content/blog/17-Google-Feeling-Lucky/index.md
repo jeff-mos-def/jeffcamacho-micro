@@ -2,7 +2,7 @@
 title: "Google: I'm Feeling Lucky... Who Do You Trust?"
 description: "The fastest answer isn’t always the most useful."
 date: "2025-05-12"
-tags: ["tech", "trust", "communication"]
+tags: ["personal"]
 draft: false
 ---
 

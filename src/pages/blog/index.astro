@@ -2,6 +2,9 @@
 import { getCollection } from "astro:content";
 import Layout from "@layouts/Layout.astro";
 import Container from "@components/Container.astro";
+import PostRow from "@components/PostRow.astro";
+import { BLOG } from "@consts";
+import { tagLabel, tagOrder, TAGS } from "@lib/tags";
 
 // 1. Fetch all blog posts and sort them newest to oldest
 const posts = (await getCollection("blog"))
@@ -33,44 +36,56 @@ for (const post of posts) {
     tagCounts.set(tag, (tagCounts.get(tag) ?? 0) + 1);
   }
 }
+// Taxonomy order, so the filter list matches the Topics list elsewhere on the site
 const sortedTags = Array.from(tagCounts.entries()).sort(
-  ([tagA, countA], [tagB, countB]) =>
-    countB - countA ||
-    tagA.localeCompare(tagB, undefined, { sensitivity: "base" })
+  ([tagA], [tagB]) => tagOrder(tagA) - tagOrder(tagB)
 );
 const VISIBLE_TAG_LIMIT = 10;
 const hiddenTagCount = Math.max(0, sortedTags.length - VISIBLE_TAG_LIMIT);
 ---
 
-<Layout title="Blog" description="Jeff Camacho's Blog">
+<Layout title={BLOG.TITLE} description={BLOG.DESCRIPTION}>
   <Container>
-    <div class="space-y-10">
-      <div class="animate font-semibold text-black dark:text-white text-2xl">
-        Blog
-      </div>
-      
-      <div class="min-[1024px]:grid min-[1024px]:grid-cols-[11rem_minmax(0,1fr)] min-[1024px]:gap-8 min-[1340px]:block min-[1340px]:relative min-[1340px]:w-full">
-        
-        <aside class="animate hidden min-[1024px]:block min-[1340px]:absolute min-[1340px]:top-0 min-[1340px]:bottom-0 min-[1340px]:-left-60 min-[1340px]:w-48">
-          <nav class="min-[1024px]:sticky min-[1024px]:top-24 h-fit space-y-2 pr-4">
-            <h2 class="text-xs font-bold uppercase tracking-wider text-neutral-500 dark:text-neutral-500 mb-4">
-              Archive Navigation
-            </h2>
+    <div class="space-y-12">
+      <header class="animate space-y-3">
+        <h1 class="display text-5xl sm:text-6xl">Blog</h1>
+        <p class="meta text-base">{posts.length} posts. {BLOG.DESCRIPTION}</p>
+      </header>
+
+      <!-- Below the sidebar breakpoint, topics are a row of links instead of a filter -->
+      <nav class="animate min-[1200px]:hidden" aria-label="Topics">
+        <ul class="flex flex-wrap gap-1.5">
+          {TAGS.filter((t) => tagCounts.has(t.slug)).map((t) => (
+            <li>
+              <a href={`/tags/${t.slug}`} class="chip">
+                {t.label}
+                <span class="ml-1.5 tabular-nums opacity-70">{tagCounts.get(t.slug)}</span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </nav>
+
+      <div class="relative">
+
+        <aside class="animate absolute bottom-0 top-0 -left-60 hidden w-48 min-[1200px]:block">
+          <nav class="sticky top-24 h-fit pr-4" aria-label="Archive">
+            <h2 class="side-label">Archive</h2>
             <ul class="space-y-4">
               {sortedYears.map(([year, months]) => (
-                <li class="space-y-1">
-                  <a 
-                    href={`#arch-${year}`} 
-                    class="font-semibold text-sm text-neutral-800 dark:text-neutral-200 hover:text-blue-500 dark:hover:text-blue-400 transition-colors block"
+                <li class="space-y-1.5">
+                  <a
+                    href={`#arch-${year}`}
+                    class="block text-sm font-semibold text-ink transition-colors hover:text-accent-ink"
                   >
                     {year}
                   </a>
-                  <ul class="pl-3 space-y-1.5 border-l border-neutral-200 dark:border-neutral-800">
+                  <ul class="space-y-1 border-l border-line pl-3">
                     {Object.keys(months).map((month) => (
                       <li>
-                        <a 
-                          href={`#arch-${year}-${month.toLowerCase()}`} 
-                          class="text-xs text-neutral-500 dark:text-neutral-400 hover:text-blue-500 dark:hover:text-blue-400 transition-colors block"
+                        <a
+                          href={`#arch-${year}-${month.toLowerCase()}`}
+                          class="block text-[0.8rem] text-muted transition-colors hover:text-accent-ink"
                         >
                           {month}
                         </a>
@@ -83,35 +98,33 @@ const hiddenTagCount = Math.max(0, sortedTags.length - VISIBLE_TAG_LIMIT);
           </nav>
         </aside>
 
-        <aside class="animate hidden min-[1340px]:block min-[1340px]:absolute min-[1340px]:top-0 min-[1340px]:bottom-0 min-[1340px]:-right-60 min-[1340px]:w-48">
-          <nav class="min-[1340px]:sticky min-[1340px]:top-24 h-fit min-[1340px]:max-h-[calc(100vh-8rem)] flex flex-col space-y-2 pl-4">
-            <h2 class="text-xs font-bold uppercase tracking-wider text-neutral-500 dark:text-neutral-500 mb-4">
-              Tags
-            </h2>
+        <aside class="animate absolute bottom-0 top-0 -right-[15.5rem] hidden w-52 min-[1200px]:block">
+          <nav class="sticky top-24 flex h-fit max-h-[calc(100vh-8rem)] flex-col pl-4" aria-label="Filter by topic">
+            <h2 class="side-label">Filter by topic</h2>
             <div
               data-tag-scroll
               data-visible-limit={VISIBLE_TAG_LIMIT}
-              class="max-h-[60vh] overflow-y-auto overscroll-contain pr-1 tag-scroll"
+              class="thin-scroll max-h-[65vh] overflow-y-auto overscroll-contain pr-1"
             >
-            <ul class="space-y-2">
+            <ul class="space-y-1">
               {sortedTags.map(([tag, count], i) => (
                 <li
                   class={i >= VISIBLE_TAG_LIMIT ? "hidden" : undefined}
                   data-tag-overflow={i >= VISIBLE_TAG_LIMIT ? "true" : undefined}
                 >
-                  <label class="flex items-center justify-between gap-2 px-3 py-2 rounded border border-neutral-200 dark:border-neutral-800 hover:bg-neutral-50 dark:hover:bg-neutral-900 transition-colors cursor-pointer">
-                    <span class="flex items-center gap-2 min-w-0">
+                  <label class="tag-option">
+                    <span class="flex min-w-0 items-center gap-2">
                       <input
                         type="checkbox"
                         value={tag}
                         data-tag-filter
-                        class="size-3.5 flex-shrink-0 accent-blue-500"
+                        class="size-3.5 flex-shrink-0 accent-[var(--c-accent)]"
                       />
-                      <span class="text-xs text-neutral-700 dark:text-neutral-300 truncate">
-                        {tag}
+                      <span class="text-[0.8rem] leading-snug">
+                        {tagLabel(tag)}
                       </span>
                     </span>
-                    <span class="text-xs tabular-nums text-neutral-500 dark:text-neutral-500 flex-shrink-0">
+                    <span class="flex-shrink-0 text-xs tabular-nums text-muted">
                       {count}
                     </span>
                   </label>
@@ -124,7 +137,7 @@ const hiddenTagCount = Math.max(0, sortedTags.length - VISIBLE_TAG_LIMIT);
                 type="button"
                 data-tag-toggle
                 data-hidden-count={hiddenTagCount}
-                class="mt-3 text-xs font-medium text-neutral-500 dark:text-neutral-400 hover:text-blue-500 dark:hover:text-blue-400 transition-colors"
+                class="mt-3 text-left text-xs font-medium text-muted transition-colors hover:text-accent-ink"
               >
                 {`Show ${hiddenTagCount} more`}
               </button>
@@ -132,106 +145,73 @@ const hiddenTagCount = Math.max(0, sortedTags.length - VISIBLE_TAG_LIMIT);
             <button
               type="button"
               data-tag-clear
-              class="mt-4 hidden text-xs text-neutral-500 dark:text-neutral-400 hover:text-blue-500 dark:hover:text-blue-400 transition-colors"
+              class="mt-4 hidden text-left text-xs text-muted underline underline-offset-2 transition-colors hover:text-accent-ink"
             >
               Clear filters
             </button>
             <p
               data-tag-empty
-              class="mt-4 hidden text-xs text-neutral-500 dark:text-neutral-400"
+              class="mt-4 hidden text-xs text-muted"
             >
-              No posts match all selected tags.
+              No posts match all selected topics. Clear a filter to see more.
             </p>
           </nav>
         </aside>
 
-        <div class="space-y-16 min-w-0">
+        <div class="min-w-0 space-y-14" style="--date-col: 4rem">
           {sortedYears.map(([year, months]) => (
-            <div class="animate space-y-10 scroll-mt-24" id={`arch-${year}`} data-year-group>
-              <h2 class="text-3xl font-bold text-black dark:text-white mt-6 border-b-2 border-neutral-200 dark:border-neutral-800 pb-2">
+            <section class="animate scroll-mt-24" id={`arch-${year}`} data-year-group>
+              <h2 class="section-title flex items-baseline justify-between border-b-2 border-ink pb-2 text-3xl">
                 {year}
+                <span class="meta text-sm font-normal">
+                  {Object.values(months).flat().length} posts
+                </span>
               </h2>
-              
+
               {Object.entries(months).map(([month, monthPosts]) => (
-                <div class="space-y-6 scroll-mt-24" id={`arch-${year}-${month.toLowerCase()}`} data-month-group>
-                  <h3 class="text-sm font-bold uppercase tracking-wider text-neutral-500 dark:text-neutral-400 border-b border-neutral-200 dark:border-neutral-800 pb-1">
+                <div class="scroll-mt-24 pt-6" id={`arch-${year}-${month.toLowerCase()}`} data-month-group>
+                  <h3 class="text-sm font-semibold text-muted">
                     {month}
                   </h3>
-                  
-                  <ul class="flex flex-col gap-6">
+
+                  <ul class="divide-y divide-line">
                     {monthPosts.map((post) => (
-                      <li class="space-y-3" data-post-tags={(post.data.tags ?? []).join("|")}>
-                        <a 
-                          href={`/blog/${post.id}`} 
-                          class="group flex flex-nowrap justify-between items-center p-5 rounded-lg border border-neutral-200 dark:border-neutral-800 hover:bg-neutral-50 dark:hover:bg-neutral-900 transition-colors duration-200"
-                        >
-                          <div class="flex flex-col gap-1 pr-4">
-                            <div class="font-semibold text-lg text-black dark:text-white group-hover:text-blue-500 dark:group-hover:text-blue-400 transition-colors">
-                              {post.data.title}
-                            </div>
-                            {post.data.description && (
-                              <div class="text-sm text-neutral-600 dark:text-neutral-400 line-clamp-2">
-                                {post.data.description}
-                              </div>
-                            )}
-                          </div>
-                          <svg 
-                            xmlns="http://www.w3.org/2000/svg" 
-                            viewBox="0 0 24 24" 
-                            class="size-4 stroke-2 fill-none stroke-current text-neutral-400 group-hover:text-black dark:group-hover:text-white transition-colors flex-shrink-0"
-                          >
-                            <polyline points="9 18 15 12 9 6" />
-                          </svg>
-                        </a>
-                        
-                        {post.data.tags && post.data.tags.length > 0 && (
-                          <ul class="flex flex-wrap gap-2">
-                            {post.data.tags.map((tag: string) => (
-                              <li>
-                                <a 
-                                  href={`/tags/${tag}`} 
-                                  class="px-2 py-1 text-xs font-medium rounded bg-neutral-200 dark:bg-neutral-800 text-black dark:text-white hover:bg-neutral-300 dark:hover:bg-neutral-700 transition-colors"
-                                >
-                                  #{tag}
-                                </a>
-                              </li>
-                            ))}
-                          </ul>
-                        )}
+                      <li data-post-tags={(post.data.tags ?? []).join("|")}>
+                        <PostRow post={post} showYear={false} />
                       </li>
                     ))}
                   </ul>
                 </div>
               ))}
-            </div>
+            </section>
           ))}
         </div>
-        
+
       </div>
     </div>
   </Container>
 </Layout>
 
 <style>
-  .tag-scroll {
-    scrollbar-width: thin;
-    scrollbar-color: rgb(212 212 212) transparent;
+  .tag-option {
+    display: flex;
+    cursor: pointer;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    padding: 0.4rem 0.6rem;
+    border-radius: 0.4rem;
+    color: var(--c-text);
+    transition: background-color 150ms ease;
   }
-  :global(.dark) .tag-scroll {
-    scrollbar-color: rgb(64 64 64) transparent;
+
+  .tag-option:hover {
+    background: color-mix(in srgb, var(--c-line) 45%, transparent);
   }
-  .tag-scroll::-webkit-scrollbar {
-    width: 6px;
-  }
-  .tag-scroll::-webkit-scrollbar-track {
-    background: transparent;
-  }
-  .tag-scroll::-webkit-scrollbar-thumb {
-    background-color: rgb(212 212 212);
-    border-radius: 9999px;
-  }
-  :global(.dark) .tag-scroll::-webkit-scrollbar-thumb {
-    background-color: rgb(64 64 64);
+
+  .tag-option:has(input:checked) {
+    color: var(--c-ink);
+    background: var(--c-accent-wash);
   }
 </style>
 

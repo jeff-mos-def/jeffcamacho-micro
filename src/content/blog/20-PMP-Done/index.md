@@ -2,7 +2,7 @@
 title: "PMP... DONE!"
 description: "A certification 20 years in the making."
 date: "2025-11-28"
-tags: ["PMP", "certification", "achievement"]
+tags: ["pmp"]
 draft: false
 ---
   

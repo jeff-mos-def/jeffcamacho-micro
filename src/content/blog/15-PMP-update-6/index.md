@@ -2,7 +2,7 @@
 title: PMP Certification Project Update, Part 0110
 description: "IT'S BEEN A PMP MINUTE"
 date: "2025-04-05"
-tags: ["pmp", "certification"]
+tags: ["pmp"]
 linkedProject: "/projects/pmp"
 #projectBoard: "https://github.com/users/jeff-mos-def/projects/9"
 draft: false

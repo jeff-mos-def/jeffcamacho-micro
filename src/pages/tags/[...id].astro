@@ -1,38 +1,46 @@
 ---
 import Layout from "@layouts/Layout.astro";
 import Container from "@components/Container.astro";
+import BackToPrevious from "@components/BackToPrevious.astro";
+import PostRow from "@components/PostRow.astro";
 import { getCollection } from "astro:content";
-import ArrowCard from "@components/ArrowCard.astro";
+import { TAGS } from "@lib/tags";
 
 export async function getStaticPaths() {
-  const blogPosts = (await getCollection("blog")).filter((post) => !post.data.draft); // ✅ Defined inside function
+  const blogPosts = (await getCollection("blog"))
+    .filter((post) => !post.data.draft)
+    .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
 
-  const allTags = blogPosts.flatMap((post) => post.data.tags || []);
-  const uniqueTags = Array.from(new Set(allTags));
-
-  return uniqueTags.map((tag) => ({
-    params: { id: tag },
+  return TAGS.map((tag) => ({
+    params: { id: tag.slug },
     props: {
       tag,
-      posts: blogPosts.filter((post) => post.data.tags?.includes(tag)),
+      posts: blogPosts.filter((post) => post.data.tags?.includes(tag.slug)),
     },
-  }));
+  })).filter(({ props }) => props.posts.length > 0);
 }
 
 const { tag, posts } = Astro.props;
 ---
 
-<Layout title={`Posts tagged with "${tag}"`} description={`A collection of posts tagged with ${tag}.`}>
+<Layout title={tag.label} description={tag.description}>
   <Container>
-    <h1 class="text-3xl font-semibold">Posts tagged with <span class="text-blue-500">#{tag}</span></h1>
-    <div class="mt-6 space-y-4">
-      {posts.length > 0 ? (
-        posts.map((post) => (
-          <ArrowCard entry={post} />
-        ))
-      ) : (
-        <p>No posts found with this tag.</p>
-      )}
+    <div class="animate">
+      <BackToPrevious href="/tags">All topics</BackToPrevious>
     </div>
+    <header class="animate mb-10 mt-8 space-y-3">
+      <h1 class="display text-4xl sm:text-5xl">{tag.label}</h1>
+      <p class="font-serif text-lg leading-relaxed text-muted">{tag.description}</p>
+      <p class="meta">{posts.length} {posts.length === 1 ? "post" : "posts"}</p>
+    </header>
+    <ul class="animate divide-y divide-line border-t border-line">
+      {
+        posts.map((post) => (
+          <li>
+            <PostRow post={post} />
+          </li>
+        ))
+      }
+    </ul>
   </Container>
 </Layout>

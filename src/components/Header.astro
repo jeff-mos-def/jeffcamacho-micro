@@ -1,48 +1,117 @@
 ---
 import Container from "@components/Container.astro";
-import Link from "@components/Link.astro";
 import { SITE } from "@consts";
+
+const NAV = [
+  { href: "/blog", label: "Blog" },
+  { href: "/projects", label: "Projects" },
+  { href: "/work", label: "Work" },
+  { href: "/education", label: "Education" },
+];
 ---
 
-<header transition:persist>
-  <Container>
-    <div class="flex flex-wrap justify-between gap-y-2">
-      <Link href="/" underline={false}>
-        <div class="font-semibold pt-[10px]">
-          {SITE.TITLE}&nbsp;
-        </div>
-      </Link>
-      <nav class="flex items-center gap-1 text-sm">
-        <Link href="/work">work</Link>
-        <span>{`/`}</span>
-        <Link href="/education">education</Link>
-        <span>{`/`}</span>
-        <Link href="/blog">blog</Link>
-        <span>{`/`}</span>
-        <Link href="/projects">projects</Link>
-        <span>{`/`}</span>
+<header class="site-header" transition:persist>
+  <Container size="wide">
+    <div class="flex flex-wrap items-center justify-between gap-x-6 gap-y-3 py-4 sm:py-5">
+      <a href="/" class="group flex items-center gap-2.5 text-ink" aria-label={`${SITE.TITLE}, home`}>
+        <span
+          class="size-3 rounded-full border-[3px] border-accent bg-paper transition-colors group-hover:bg-accent"
+          aria-hidden="true"
+        ></span>
+        <span class="wordmark text-[1.05rem]">{SITE.TITLE}</span>
+      </a>
+
+      <nav class="flex items-center gap-1 text-[0.95rem]" aria-label="Main">
+        {
+          NAV.map((item) => (
+            <a href={item.href} data-nav-link class="nav-link">
+              {item.label}
+            </a>
+          ))
+        }
         <button
           id="magnifying-glass"
-          aria-label="Search"
-          class="flex items-center rounded border border-black/15 bg-neutral-100 px-2 py-1 text-xs transition-colors duration-300 ease-in-out hover:bg-black/5 hover:text-black focus-visible:bg-black/5 focus-visible:text-black dark:border-white/20 dark:bg-neutral-900 dark:hover:bg-white/5 dark:hover:text-white dark:focus-visible:bg-white/5 dark:focus-visible:text-white"
+          aria-label="Search the site"
+          class="ml-2 flex items-center gap-2 rounded-full border border-line bg-surface py-1.5 pl-3 pr-2 text-sm text-muted transition-colors hover:border-line-strong hover:text-ink"
         >
-          <svg
-            height="16"
-            stroke-linejoin="round"
-            viewBox="0 0 16 16"
-            width="16"
-            style="color: currentcolor;"
-          >
+          <svg height="14" width="14" viewBox="0 0 16 16" aria-hidden="true">
             <path
               fill-rule="evenodd"
               clip-rule="evenodd"
               d="M3.5 7C3.5 5.067 5.067 3.5 7 3.5C8.933 3.5 10.5 5.067 10.5 7C10.5 7.88461 10.1718 8.69256 9.63058 9.30876L9.30876 9.63058C8.69256 10.1718 7.88461 10.5 7 10.5C5.067 10.5 3.5 8.933 3.5 7ZM9.96544 11.0261C9.13578 11.6382 8.11014 12 7 12C4.23858 12 2 9.76142 2 7C2 4.23858 4.23858 2 7 2C9.76142 2 12 4.23858 12 7C12 8.11014 11.6382 9.13578 11.0261 9.96544L14.0303 12.9697L14.5607 13.5L13.5 14.5607L12.9697 14.0303L9.96544 11.0261Z"
-              fill="currentColor"
-            ></path>
+              fill="currentColor"></path>
           </svg>
-          &nbsp;Search
+          <span class="hidden sm:inline">Search</span>
+          <kbd class="hidden rounded border border-line px-1.5 font-sans text-[0.7rem] leading-5 text-muted sm:inline">/</kbd>
         </button>
       </nav>
     </div>
   </Container>
 </header>
+
+<style>
+  .wordmark {
+    font-variation-settings: "wdth" 118;
+    font-weight: 760;
+    letter-spacing: -0.015em;
+  }
+
+  .nav-link {
+    position: relative;
+    padding: 0.35rem 0.6rem;
+    border-radius: 9999px;
+    color: var(--c-text);
+    transition: color 150ms ease, background-color 150ms ease;
+  }
+
+  .nav-link:hover {
+    color: var(--c-ink);
+    background: color-mix(in srgb, var(--c-line) 55%, transparent);
+  }
+
+  .nav-link[aria-current="page"] {
+    color: var(--c-ink);
+    font-weight: 600;
+  }
+
+  .nav-link[aria-current="page"]::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    bottom: -0.2rem;
+    width: 0.3rem;
+    height: 0.3rem;
+    border-radius: 9999px;
+    background: var(--c-accent);
+    transform: translateX(-50%);
+  }
+
+  @media (max-width: 420px) {
+    .nav-link {
+      padding: 0.35rem 0.45rem;
+    }
+  }
+</style>
+
+<script>
+  // The header persists across client-side navigations, so the active
+  // section is recomputed on every page load instead of at build time.
+  function markActiveNav() {
+    const path = window.location.pathname;
+    document.querySelectorAll<HTMLAnchorElement>("[data-nav-link]").forEach((link) => {
+      const href = link.getAttribute("href") || "";
+      const active =
+        path === href ||
+        path.startsWith(href + "/") ||
+        (href === "/blog" && path.startsWith("/tags"));
+      if (active) {
+        link.setAttribute("aria-current", "page");
+      } else {
+        link.removeAttribute("aria-current");
+      }
+    });
+  }
+
+  markActiveNav();
+  document.addEventListener("astro:page-load", markActiveNav);
+</script>

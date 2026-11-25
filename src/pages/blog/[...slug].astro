@@ -8,6 +8,7 @@ import BackToPrevious from "@components/BackToPrevious.astro";
 import PostNavigation from "@components/PostNavigation.astro";
 import Giscus from "@components/Giscus.astro";
 import Lightbox from "@components/Lightbox.astro";
+import TagChips from "@components/TagChips.astro";
 
 export async function getStaticPaths() {
   const posts = (await getCollection("blog"))
@@ -93,110 +94,98 @@ const toc = buildToc(headings);
 
 <Layout title={post.data.title} description={post.data.description}>
   <Container>
-    <div class="animate" id="top">
-      <BackToPrevious href="/blog">Back to blog</BackToPrevious>
-    </div>
-    <div class="my-10 space-y-1">
-      <div class="animate flex items-center gap-1.5">
-        <div class="font-base text-sm">
-          <FormattedDate date={post.data.date} />
-        </div>
-        &bull;
-        <div class="font-base text-sm">
-          {readingTime(post.body ?? "")}
-        </div>
+    <div data-pagefind-body>
+      <div class="animate" id="top" data-pagefind-ignore>
+        <BackToPrevious href="/blog">Back to blog</BackToPrevious>
       </div>
-      <h1 class="animate text-3xl font-semibold text-black dark:text-white">
-        {post.data.title}
-      </h1>
-      {post.data.tags && post.data.tags.length > 0 && (
-        <div class="mt-4 flex flex-wrap gap-2">
-          {post.data.tags.map((tag) => (
-            <a href={`/tags/${tag}`} class="px-2 py-1 text-xs font-medium rounded bg-neutral-200 dark:bg-neutral-800 text-black dark:text-white hover:bg-neutral-300 dark:hover:bg-neutral-700 transition-colors">
-              #{tag}
+
+      <header class="mb-12 mt-8 space-y-5">
+        <p class="animate meta" data-pagefind-ignore>
+          <FormattedDate date={post.data.date} />
+          <span aria-hidden="true" class="mx-1.5">/</span>
+          {readingTime(post.body ?? "")}
+        </p>
+        <h1 class="animate display text-[2rem] leading-[1.1] sm:text-[2.4rem]">
+          {post.data.title}
+        </h1>
+        {post.data.description && (
+          <p class="animate font-serif text-xl leading-relaxed text-muted">
+            {post.data.description}
+          </p>
+        )}
+        <div class="animate flex flex-wrap items-center gap-x-5 gap-y-3" data-pagefind-ignore>
+          <TagChips tags={post.data.tags} />
+          {linkedProject && (
+            <a href={linkedProject.slug} class="link text-sm">
+              Related project: {linkedProject.title}
             </a>
-          ))}
+          )}
+          {projectBoardLink && (
+            <a href={projectBoardLink} class="link text-sm" target="_blank" rel="noopener noreferrer">
+              GitHub project board
+            </a>
+          )}
         </div>
-      )}
-      {linkedProject && (
-        <div class="animate mt-4">
-          <span class="font-semibold">Related Project:</span>{" "}
-          <a href={linkedProject.slug} class="text-blue-500 hover:underline">
-            {linkedProject.title}
-          </a>
-        </div>
-      )}
-      {projectBoardLink && (
-        <div class="animate mt-4">
-          <span class="font-semibold">Project Board:</span>{" "}
-          <a href={projectBoardLink} class="text-blue-500 hover:underline" target="_blank" rel="noopener noreferrer">
-            GitHub Project Board
-          </a>
-        </div>
-      )}
+      </header>
+
+      <div class="relative">
+
+        {toc.length > 0 && (
+          <aside class="animate absolute bottom-0 top-0 -left-60 hidden w-48 min-[1200px]:block" data-pagefind-ignore>
+            <nav class="sticky top-24 flex h-fit max-h-[calc(100vh-8rem)] flex-col pr-4" aria-label="Contents">
+              <h2 class="side-label">Contents</h2>
+              <div class="thin-scroll overflow-y-auto overscroll-contain pr-1">
+                <ul class="space-y-2.5 border-l border-line">
+                  <li>
+                    <a
+                      href="#top"
+                      data-toc-link
+                      class="toc-link text-muted"
+                    >
+                      Top
+                    </a>
+                  </li>
+                  {toc.map((heading) => (
+                    <li class="space-y-1.5">
+                      <a
+                        href={`#${heading.slug}`}
+                        data-toc-link
+                        class="toc-link text-text"
+                      >
+                        {heading.text}
+                      </a>
+                      {heading.subheadings.length > 0 && (
+                        <ul class="space-y-1.5">
+                          {heading.subheadings.map((sub) => (
+                            <li>
+                              <a
+                                href={`#${sub.slug}`}
+                                data-toc-link
+                                class="toc-link toc-sub text-muted"
+                              >
+                                {sub.text}
+                              </a>
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </nav>
+          </aside>
+        )}
+
+        <article class="animate blog-content reading">
+          <Content />
+        </article>
+      </div>
     </div>
 
-    <div class="min-[1024px]:grid min-[1024px]:grid-cols-[11rem_minmax(0,1fr)] min-[1024px]:gap-8 min-[1340px]:block min-[1340px]:relative min-[1340px]:w-full">
-
-      {toc.length > 0 && (
-        <aside class="animate hidden min-[1024px]:block min-[1340px]:absolute min-[1340px]:top-0 min-[1340px]:bottom-0 min-[1340px]:-left-60 min-[1340px]:w-48" data-pagefind-ignore>
-          <nav class="min-[1024px]:sticky min-[1024px]:top-24 h-fit min-[1024px]:max-h-[calc(100vh-8rem)] flex flex-col space-y-2 pr-4">
-            <h2 class="text-xs font-bold uppercase tracking-wider text-neutral-500 dark:text-neutral-500 mb-4">
-              Contents
-            </h2>
-            <div class="overflow-y-auto overscroll-contain pr-1 toc-scroll">
-              <ul class="space-y-3">
-                <li>
-                  <a
-                    href="#top"
-                    data-toc-link
-                    class="block text-sm text-neutral-500 dark:text-neutral-400 hover:text-blue-500 dark:hover:text-blue-400 transition-colors"
-                  >
-                    Top
-                  </a>
-                </li>
-                {toc.map((heading) => (
-                  <li class="space-y-1.5">
-                    <a
-                      href={`#${heading.slug}`}
-                      data-toc-link
-                      class="block text-sm text-neutral-700 dark:text-neutral-300 hover:text-blue-500 dark:hover:text-blue-400 transition-colors"
-                    >
-                      {heading.text}
-                    </a>
-                    {heading.subheadings.length > 0 && (
-                      <ul class="pl-3 space-y-1.5 border-l border-neutral-200 dark:border-neutral-800">
-                        {heading.subheadings.map((sub) => (
-                          <li>
-                            <a
-                              href={`#${sub.slug}`}
-                              data-toc-link
-                              class="block text-xs text-neutral-500 dark:text-neutral-400 hover:text-blue-500 dark:hover:text-blue-400 transition-colors"
-                            >
-                              {sub.text}
-                            </a>
-                          </li>
-                        ))}
-                      </ul>
-                    )}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </nav>
-        </aside>
-      )}
-
-      <article class="animate blog-content">
-        <Content />
-        <div class="mt-24">
-          <PostNavigation prevPost={prevPost} nextPost={nextPost} />
-        </div>
-        <div class="mt-24">
-          <Giscus />
-        </div>
-      </article>
-
+    <div class="mt-20 space-y-20" data-pagefind-ignore>
+      <PostNavigation prevPost={prevPost} nextPost={nextPost} />
+      <Giscus />
     </div>
     <Lightbox />
   </Container>
@@ -209,30 +198,27 @@ const toc = buildToc(headings);
     scroll-margin-top: 6rem;
   }
 
-  .toc-scroll {
-    scrollbar-width: thin;
-    scrollbar-color: rgb(212 212 212) transparent;
-  }
-  :global(.dark) .toc-scroll {
-    scrollbar-color: rgb(64 64 64) transparent;
-  }
-  .toc-scroll::-webkit-scrollbar {
-    width: 6px;
-  }
-  .toc-scroll::-webkit-scrollbar-track {
-    background: transparent;
-  }
-  .toc-scroll::-webkit-scrollbar-thumb {
-    background-color: rgb(212 212 212);
-    border-radius: 9999px;
-  }
-  :global(.dark) .toc-scroll::-webkit-scrollbar-thumb {
-    background-color: rgb(64 64 64);
+  .toc-link {
+    display: block;
+    margin-left: -1px;
+    padding-left: 0.85rem;
+    border-left: 2px solid transparent;
+    font-size: 0.85rem;
+    line-height: 1.35;
+    transition: color 150ms ease, border-color 150ms ease;
   }
 
-  .toc-active {
-    color: rgb(59 130 246);
-    font-weight: 600;
+  .toc-sub {
+    padding-left: 1.6rem;
+    font-size: 0.8rem;
+  }
+
+  .toc-link:hover {
+    color: var(--c-ink);
+  }
+
+  .toc-link:global(.toc-active) {
+    border-left-color: var(--c-accent);
   }
 </style>
 
