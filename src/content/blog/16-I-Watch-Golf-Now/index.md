@@ -2,7 +2,7 @@
 title: I Guess I Watch Golf Now
 description: "And I realized something..."
 date: "2025-04-13"
-tags: ["life", "fullfillment"]
+tags: ["personal"]
 #linkedProject: "/projects/pmp"
 #projectBoard: "https://github.com/users/jeff-mos-def/projects/9"
 draft: false

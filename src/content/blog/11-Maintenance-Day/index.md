@@ -2,6 +2,7 @@
 title: "Maintenance Day"
 description: "Updates for Core and Integrations - January 2025"
 date: "2025-01-20"
+tags: ["site-updates"]
 #linkedProject: 
 #repoURL: "https://github.com/jeff-mos-def/jeffcamacho-micro"
 draft: false

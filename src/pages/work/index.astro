@@ -26,39 +26,43 @@ const entrepreneurialItems = sortedEntries.filter((entry) => entry.data.type ===
 const volunteerItems = sortedEntries.filter((entry) => entry.data.type === "volunteer");
 
 const sections = [
-  { title: "Work Experience", id: "work-experience", count: workItems.length },
-  { title: "Entrepreneurial Experience", id: "entrepreneurial-experience", count: entrepreneurialItems.length },
-  { title: "Volunteer Experience", id: "volunteer-experience", count: volunteerItems.length },
-].filter((section) => section.count > 0);
+  { title: "Work Experience", id: "work-experience", items: workItems },
+  { title: "Entrepreneurial Experience", id: "entrepreneurial-experience", items: entrepreneurialItems },
+  { title: "Volunteer Experience", id: "volunteer-experience", items: volunteerItems },
+].filter((section) => section.items.length > 0);
 
 function formatDate(date: Date | string | number): string {
   const parsedDate = new Date(date);
   return parsedDate.toLocaleDateString("en-US", {
     month: "short",
     year: "numeric",
+    timeZone: "UTC",
   });
 }
 ---
 
 <Layout title={WORK.TITLE} description={WORK.DESCRIPTION}>
   <Container>
-    <div class="min-[1024px]:grid min-[1024px]:grid-cols-[11rem_minmax(0,1fr)] min-[1024px]:gap-8 min-[1340px]:block min-[1340px]:relative min-[1340px]:w-full">
+    <header class="animate mb-12 space-y-3">
+      <h1 class="display text-5xl sm:text-6xl">Work</h1>
+      <p class="meta text-base">{WORK.DESCRIPTION}.</p>
+    </header>
 
-      <aside class="animate hidden min-[1024px]:block min-[1340px]:absolute min-[1340px]:top-0 min-[1340px]:bottom-0 min-[1340px]:-left-60 min-[1340px]:w-48" data-pagefind-ignore>
-        <nav class="min-[1024px]:sticky min-[1024px]:top-24 h-fit space-y-2 pr-4">
-          <h2 class="text-xs font-bold uppercase tracking-wider text-neutral-500 dark:text-neutral-500 mb-4">
-            Sections
-          </h2>
-          <ul class="space-y-1.5 pl-3 border-l border-neutral-200 dark:border-neutral-800">
+    <div class="relative">
+
+      <aside class="animate absolute bottom-0 top-0 -left-60 hidden w-48 min-[1200px]:block" data-pagefind-ignore>
+        <nav class="sticky top-24 h-fit pr-4" aria-label="Sections">
+          <h2 class="side-label">Sections</h2>
+          <ul class="space-y-1.5 border-l border-line pl-3">
             {sections.map((section) => (
               <li>
                 <a
                   href={`#${section.id}`}
-                  class="flex items-start justify-between gap-2 text-sm text-neutral-700 dark:text-neutral-300 hover:text-blue-500 dark:hover:text-blue-400 transition-colors"
+                  class="flex items-start justify-between gap-2 text-sm text-text transition-colors hover:text-accent-ink"
                 >
                   <span>{section.title}</span>
-                  <span class="text-xs tabular-nums text-neutral-500 dark:text-neutral-500 pt-0.5">
-                    {section.count}
+                  <span class="pt-0.5 text-xs tabular-nums text-muted">
+                    {section.items.length}
                   </span>
                 </a>
               </li>
@@ -67,80 +71,87 @@ function formatDate(date: Date | string | number): string {
         </nav>
       </aside>
 
-      <aside data-pagefind-ignore>
-        {/* Work Experience Section */}
-        <div id="work-experience" class="space-y-6 scroll-mt-24">
-          <h2 class="animate text-lg font-semibold text-zinc-800 dark:text-zinc-200 underline underline-offset-4">
-            Work Experience
-          </h2>
-          <ul class="animate not-prose flex flex-col gap-8">
-            {workItems.map((entry) => (
-              <li class="space-y-2">
-                <div class="text-sm text-zinc-500 dark:text-zinc-400">
-                  {formatDate(entry.data.dateStart)} -{" "}
-                  {entry.data.dateEnd === "Current" ? "Current" : formatDate(entry.data.dateEnd)}
-                </div>
-                <div class="text-lg text-zinc-800 dark:text-zinc-100">{entry.data.company}</div>
-                <div class="text-zinc-500 dark:text-zinc-400">{entry.data.role}</div>
-                <div class="prose dark:prose-invert">
-                  <entry.Content />
-                </div>
-              </li>
-            ))}
-          </ul>
-        </div>
-        <br /><br />
-        {/* Divider */}
-        <hr class="border-t border-zinc-200 dark:border-zinc-700" />
-        <br /><br />
-        {/* Entrepreneurial Experience Section */}
-        <div id="entrepreneurial-experience" class="space-y-6 scroll-mt-24">
-          <h2 class="animate text-lg font-semibold text-zinc-800 dark:text-zinc-200 underline underline-offset-4">
-            Entrepreneurial Experience
-          </h2>
-          <ul class="animate not-prose flex flex-col gap-8">
-            {entrepreneurialItems.map((entry) => (
-              <li class="space-y-2">
-                <div class="text-sm text-zinc-500 dark:text-zinc-400">
-                  {formatDate(entry.data.dateStart)} -{" "}
-                  {entry.data.dateEnd === "Current" ? "Current" : formatDate(entry.data.dateEnd)}
-                </div>
-                <div class="text-lg text-zinc-800 dark:text-zinc-100">{entry.data.company}</div>
-                <div class="text-zinc-500 dark:text-zinc-400">{entry.data.role}</div>
-                <div class="prose dark:prose-invert">
-                  <entry.Content />
-                </div>
-              </li>
-            ))}
-          </ul>
-        </div>
-        <br /><br />
-        {/* Divider */}
-        <hr class="border-t border-zinc-200 dark:border-zinc-700" />
-        <br /><br />
-        {/* Volunteer Experience Section */}
-        <div id="volunteer-experience" class="space-y-6 scroll-mt-24">
-          <h2 class="animate text-lg font-semibold text-zinc-800 dark:text-zinc-200 underline underline-offset-4">
-            Volunteer Experience
-          </h2>
-          <ul class="animate not-prose flex flex-col gap-8">
-            {volunteerItems.map((entry) => (
-              <li class="space-y-2">
-                <div class="text-sm text-zinc-500 dark:text-zinc-400">
-                  {formatDate(entry.data.dateStart)} -{" "}
-                  {entry.data.dateEnd === "Current" ? "Current" : formatDate(entry.data.dateEnd)}
-                </div>
-                <div class="text-lg text-zinc-800 dark:text-zinc-100">{entry.data.company}</div>
-                <div class="text-zinc-500 dark:text-zinc-400">{entry.data.role}</div>
-                <div class="prose dark:prose-invert">
-                  <entry.Content />
-                </div>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </aside>
+      <div class="space-y-16" data-pagefind-ignore>
+        {sections.map((section) => (
+          <section id={section.id} class="animate scroll-mt-24">
+            <h2 class="section-title mb-8 flex items-baseline justify-between border-b-2 border-ink pb-2 text-2xl">
+              {section.title}
+              <span class="meta text-sm font-normal">{section.items.length}</span>
+            </h2>
+            <ol class="timeline">
+              {section.items.map((entry) => (
+                <li id={entry.id} class="timeline-entry scroll-mt-28" data-current={entry.data.dateEnd === "Current" ? "true" : undefined}>
+                  <span class="timeline-dot" aria-hidden="true" />
+                  <p class="meta text-xs">
+                    {formatDate(entry.data.dateStart)} to{" "}
+                    {entry.data.dateEnd === "Current" ? "Current" : formatDate(entry.data.dateEnd)}
+                  </p>
+                  <h3 class="entry-company">{entry.data.company}</h3>
+                  <p class="text-[0.95rem] text-muted">{entry.data.role}</p>
+                  <div class="prose mt-3 max-w-none font-serif text-[1.02rem] leading-relaxed">
+                    <entry.Content />
+                  </div>
+                </li>
+              ))}
+            </ol>
+          </section>
+        ))}
+      </div>
 
     </div>
   </Container>
 </Layout>
+
+<style>
+  .timeline {
+    position: relative;
+    display: grid;
+    gap: 2.25rem;
+    padding-left: 2rem;
+  }
+
+  .timeline::before {
+    content: "";
+    position: absolute;
+    left: 0.4375rem;
+    top: 0.5rem;
+    bottom: 0.5rem;
+    width: 3px;
+    margin-left: -1.5px;
+    border-radius: 3px;
+    background: var(--c-line-strong);
+  }
+
+  .timeline-entry {
+    position: relative;
+  }
+
+  .timeline-dot {
+    position: absolute;
+    left: -2rem;
+    top: 0.2rem;
+    width: 0.875rem;
+    height: 0.875rem;
+    border-radius: 9999px;
+    border: 3px solid var(--c-accent);
+    background: var(--c-paper);
+  }
+
+  .timeline-entry[data-current] .timeline-dot {
+    background: var(--c-accent);
+    box-shadow: 0 0 0 4px var(--c-accent-wash);
+  }
+
+  .timeline-entry:target .entry-company {
+    color: var(--c-accent-ink);
+  }
+
+  .entry-company {
+    margin-top: 0.15rem;
+    color: var(--c-ink);
+    font-size: 1.2rem;
+    line-height: 1.3;
+    font-weight: 650;
+    font-variation-settings: "wdth" 106;
+  }
+</style>

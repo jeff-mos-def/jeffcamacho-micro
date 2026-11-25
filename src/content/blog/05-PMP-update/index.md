@@ -2,7 +2,7 @@
 title: "PMP Certification Project Update"
 description: "Reflections on Leadership and Principles"
 date: "2024-12-10"
-tags: ["pmp", "certification"]
+tags: ["pmp"]
 linkedProject: "/projects/pmp"
 #projectBoard: "https://github.com/users/jeff-mos-def/projects/9"
 draft: false

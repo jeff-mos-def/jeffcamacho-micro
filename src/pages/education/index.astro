@@ -34,31 +34,34 @@ const certificationItems = renderedEntries.filter((e) => e.data.type === 'certif
 const certificateItems = renderedEntries.filter((e) => e.data.type === 'certificate');
 
 const sections = [
-  { title: "Education", id: "education", count: educationItems.length },
-  { title: "Certifications", id: "certifications", count: certificationItems.length },
-  { title: "Certificates", id: "certificates", count: certificateItems.length },
-].filter((section) => section.count > 0);
+  { title: "Education", id: "education", items: educationItems },
+  { title: "Certifications", id: "certifications", items: certificationItems },
+  { title: "Certificates", id: "certificates", items: certificateItems },
+].filter((section) => section.items.length > 0);
 ---
 
 <Layout title={EDUCATION.TITLE} description={EDUCATION.DESCRIPTION}>
   <Container>
-    <div class="min-[1024px]:grid min-[1024px]:grid-cols-[11rem_minmax(0,1fr)] min-[1024px]:gap-8 min-[1340px]:block min-[1340px]:relative min-[1340px]:w-full">
+    <header class="animate mb-12 space-y-3">
+      <h1 class="display text-5xl sm:text-6xl">Education</h1>
+      <p class="meta text-base">{EDUCATION.DESCRIPTION}.</p>
+    </header>
 
-      <aside class="animate hidden min-[1024px]:block min-[1340px]:absolute min-[1340px]:top-0 min-[1340px]:bottom-0 min-[1340px]:-left-60 min-[1340px]:w-48" data-pagefind-ignore>
-        <nav class="min-[1024px]:sticky min-[1024px]:top-24 h-fit space-y-2 pr-4">
-          <h2 class="text-xs font-bold uppercase tracking-wider text-neutral-500 dark:text-neutral-500 mb-4">
-            Sections
-          </h2>
-          <ul class="space-y-1.5 pl-3 border-l border-neutral-200 dark:border-neutral-800">
+    <div class="relative">
+
+      <aside class="animate absolute bottom-0 top-0 -left-60 hidden w-48 min-[1200px]:block" data-pagefind-ignore>
+        <nav class="sticky top-24 h-fit pr-4" aria-label="Sections">
+          <h2 class="side-label">Sections</h2>
+          <ul class="space-y-1.5 border-l border-line pl-3">
             {sections.map((section) => (
               <li>
                 <a
                   href={`#${section.id}`}
-                  class="flex items-center justify-between gap-2 text-sm text-neutral-700 dark:text-neutral-300 hover:text-blue-500 dark:hover:text-blue-400 transition-colors"
+                  class="flex items-center justify-between gap-2 text-sm text-text transition-colors hover:text-accent-ink"
                 >
                   <span class="truncate">{section.title}</span>
-                  <span class="text-xs tabular-nums text-neutral-500 dark:text-neutral-500">
-                    {section.count}
+                  <span class="text-xs tabular-nums text-muted">
+                    {section.items.length}
                   </span>
                 </a>
               </li>
@@ -67,78 +70,65 @@ const sections = [
         </nav>
       </aside>
 
-      <aside data-pagefind-ignore>
-        {/* Education Section */}
-        <div id="education" class="space-y-6 scroll-mt-24">
-          <h2 class="animate text-lg font-semibold text-zinc-800 dark:text-zinc-200 underline underline-offset-4">
-            Education
-          </h2>
-          <ul class="animate not-prose flex flex-col gap-8">
-            {educationItems.map(entry => (
-              <li class="space-y-2">
-                {entry.data.dateStart && (
-                  <div class="text-sm text-zinc-500 dark:text-zinc-400">
-                    {entry.data.dateStart} - {entry.data.dateEnd}
+      <div class="space-y-16" data-pagefind-ignore>
+        {sections.map((section) => (
+          <section id={section.id} class="animate scroll-mt-24">
+            <h2 class="section-title flex items-baseline justify-between border-b-2 border-ink pb-2 text-2xl">
+              {section.title}
+              <span class="meta text-sm font-normal">{section.items.length}</span>
+            </h2>
+            <ul class="divide-y divide-line">
+              {section.items.map((entry) => (
+                <li class="grid gap-x-6 gap-y-1 py-6 sm:grid-cols-[6.5rem_minmax(0,1fr)]">
+                  <p class="meta pt-0.5 text-xs sm:text-right">
+                    {entry.data.type === "education" && entry.data.dateStart
+                      ? `${entry.data.dateStart} to ${entry.data.dateEnd}`
+                      : ""}
+                  </p>
+                  <div class="min-w-0">
+                    <div class="flex flex-wrap items-center gap-x-2.5 gap-y-1">
+                      <h3 class="entry-title">
+                        {entry.data.type === "education" ? `${entry.data.degree} in ${entry.data.field}` : entry.data.degree}
+                      </h3>
+                      {entry.data.expired && <span class="expired-badge">Expired</span>}
+                    </div>
+                    <p class="text-[0.95rem] text-muted">{entry.data.institution}</p>
+                    {entry.data.gpa && (
+                      <p class="text-[0.95rem] text-muted">GPA: {entry.data.gpa.toFixed(2)}</p>
+                    )}
+                    <div class="prose mt-3 max-w-none font-serif text-[1.02rem] leading-relaxed">
+                      <entry.Content />
+                    </div>
                   </div>
-                )}
-                <div class="text-lg text-zinc-800 dark:text-zinc-100">{entry.data.institution}</div>
-                <div class="text-zinc-500 dark:text-zinc-400">
-                  {entry.data.degree} in {entry.data.field}
-                </div>
-                {entry.data.gpa && (
-                  <div class="text-zinc-500 dark:text-zinc-400">GPA: {entry.data.gpa.toFixed(2)}</div>
-                )}
-                <div class="prose dark:prose-invert">
-                  <entry.Content />
-                </div>
-              </li>
-            ))}
-          </ul>
-        </div>
-        <br/><br/>
-        {/* Divider */}
-        <hr class="border-t border-zinc-200 dark:border-zinc-700" />
-        <br/><br/>
-        {/* Certifications Section */}
-        <div id="certifications" class="space-y-6 scroll-mt-24">
-          <h2 class="animate text-lg font-semibold text-zinc-800 dark:text-zinc-200 underline underline-offset-4">
-            Certifications
-          </h2>
-          <ul class="animate not-prose flex flex-col gap-8">
-            {certificationItems.map(entry => (
-              <li class="space-y-2">
-                <div class="text-lg text-zinc-800 dark:text-zinc-100">{entry.data.institution}</div>
-                <div class="text-zinc-500 dark:text-zinc-400">{entry.data.degree}</div>
-                <div class="prose dark:prose-invert">
-                  <entry.Content />
-                </div>
-              </li>
-            ))}
-          </ul>
-        </div>
-        <br/><br/>
-        {/* Divider */}
-        <hr class="border-t border-zinc-200 dark:border-zinc-700" />
-        <br/><br/>
-        {/* Certificates Section */}
-        <div id="certificates" class="space-y-6 scroll-mt-24">
-          <h2 class="animate text-lg font-semibold text-zinc-800 dark:text-zinc-200 underline underline-offset-4">
-            Certificates
-          </h2>
-          <ul class="animate not-prose flex flex-col gap-8">
-            {certificateItems.map(entry => (
-              <li class="space-y-2">
-                <div class="text-lg text-zinc-800 dark:text-zinc-100">{entry.data.institution}</div>
-                <div class="text-zinc-500 dark:text-zinc-400">{entry.data.degree}</div>
-                <div class="prose dark:prose-invert">
-                  <entry.Content />
-                </div>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </aside>
+                </li>
+              ))}
+            </ul>
+          </section>
+        ))}
+      </div>
 
     </div>
   </Container>
 </Layout>
+
+<style>
+  .expired-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.05rem 0.55rem;
+    border: 1px solid var(--c-line-strong);
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    line-height: 1.25rem;
+    color: var(--c-muted);
+  }
+
+  .entry-title {
+    color: var(--c-ink);
+    font-size: 1.15rem;
+    line-height: 1.3;
+    font-weight: 650;
+    font-variation-settings: "wdth" 106;
+  }
+</style>

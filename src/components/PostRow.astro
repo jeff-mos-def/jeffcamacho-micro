@@ -1,0 +1,48 @@
+---
+import type { CollectionEntry } from "astro:content";
+import TagChips from "@components/TagChips.astro";
+
+type Props = {
+  post: CollectionEntry<"blog">;
+  showTags?: boolean;
+  /** Drop the year from the date when the list is already grouped by year. */
+  showYear?: boolean;
+};
+
+const { post, showTags = true, showYear = true } = Astro.props;
+
+const date = post.data.date;
+const short = date.toLocaleDateString("en-US", {
+  month: "short",
+  day: "numeric",
+  timeZone: "UTC",
+});
+const year = date.toLocaleDateString("en-US", { year: "numeric", timeZone: "UTC" });
+---
+
+<div class="post-row grid gap-x-6 gap-y-1 py-5 sm:grid-cols-[var(--date-col,6.5rem)_minmax(0,1fr)]">
+  <time datetime={date.toISOString()} class="meta pt-0.5 sm:text-right">
+    {showYear ? `${short}, ${year}` : short}
+  </time>
+  <div class="min-w-0 space-y-1.5">
+    <a href={`/blog/${post.id}`} class="post-title block text-ink">
+      {post.data.title}
+    </a>
+    {post.data.description && <p class="text-[0.95rem] leading-relaxed text-text">{post.data.description}</p>}
+    {showTags && <TagChips tags={post.data.tags} class="pt-1.5" />}
+  </div>
+</div>
+
+<style>
+  .post-title {
+    font-size: 1.125rem;
+    line-height: 1.35;
+    font-weight: 650;
+    font-variation-settings: "wdth" 104;
+    transition: color 150ms ease;
+  }
+
+  .post-title:hover {
+    color: var(--c-accent-ink);
+  }
+</style>

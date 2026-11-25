@@ -7,26 +7,19 @@ interface Props {
 
 const { status } = Astro.props;
 
-const getStatusColor = (status: Status): string => {
-  switch (status) {
-    case 'To Do':
-      return 'bg-yellow-100 text-gray-800 dark:bg-yellow-900 dark:text-gray-200';
-    case 'Doing':
-      return 'bg-blue-100 text-gray-800 dark:bg-blue-900 dark:text-gray-200';
-    case 'Done':
-      return 'bg-green-100 text-gray-800 dark:bg-green-900 dark:text-gray-200';
-    case 'OBE':
-      return 'bg-purple-100 text-gray-800 dark:bg-purple-900 dark:text-gray-200';
-    case 'Backlog':
-      return 'bg-yellow-400 text-gray-800 dark:bg-yellow-600 dark:text-gray-200'; // Updated to have yellow background
-    default:
-      return 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-300';
-  }
+// Each status gets a marker shape and color so it reads without relying on color alone.
+const styles: Record<Status, { dot: string; ring: boolean }> = {
+  'Doing': { dot: 'bg-accent', ring: false },
+  'To Do': { dot: 'bg-amber-500', ring: false },
+  'Backlog': { dot: 'bg-transparent border-amber-500', ring: true },
+  'Done': { dot: 'bg-emerald-600 dark:bg-emerald-400', ring: false },
+  'OBE': { dot: 'bg-transparent border-muted', ring: true },
 };
 
-const statusColorClass = getStatusColor(status);
+const style = styles[status] ?? { dot: 'bg-muted', ring: false };
 ---
 
-<span class={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${statusColorClass}`}>
+<span class="inline-flex shrink-0 items-center gap-1.5 rounded-full border border-line px-2 py-0.5 text-xs font-medium text-text">
+  <span class:list={["size-2 rounded-full", style.dot, style.ring && "border-2"]} aria-hidden="true"></span>
   {status}
 </span>

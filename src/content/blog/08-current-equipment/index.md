@@ -2,6 +2,7 @@
 title: "Current Setup."
 description: "My collection of tools, spanning analog and digital domains."
 date: "2024-12-23"
+tags: ["builds"]
 #linkedProject: "/projects/agilews"
 #projectBoard: "https://github.com/users/jeff-mos-def/projects/9"
 draft: false

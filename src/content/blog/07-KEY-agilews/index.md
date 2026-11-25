@@ -2,7 +2,7 @@
 title: "Agile Workshop Wrap-Up"
 description: "Outcomes and impact of the monthly workshop."
 date: "2024-12-18"
-tags: ["veterans", "volunteering"]
+tags: ["community", "agile"]
 linkedProject: "/projects/agilews"
 #projectBoard: "https://github.com/users/jeff-mos-def/projects/9"
 draft: false

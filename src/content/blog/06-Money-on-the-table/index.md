@@ -2,6 +2,7 @@
 title: "Leaving Money on the Table"
 description: "Selling yourself short and what that means."
 date: "2024-12-13"
+tags: ["personal", "career"]
 draft: false
 ---
 

@@ -1,6 +1,7 @@
 import { defineCollection } from "astro:content";
 import { z } from "astro/zod";
 import { glob } from "astro/loaders";
+import { TAG_SLUGS } from "./lib/tags";
 
 const work = defineCollection({
   loader: glob({ pattern: "**/[^_]*.{md,mdx}", base: "./src/content/work" }),
@@ -24,6 +25,8 @@ const education = defineCollection({
     type: z.enum(['education', 'certification', 'certificate']),
     gpa: z.number().optional(),
     priority: z.number().optional(),
+    // Expired certifications stay on the Education page but are left off the home page
+    expired: z.boolean().optional(),
   }),
 });
 
@@ -36,7 +39,7 @@ const blog = defineCollection({
     draft: z.boolean().optional(),
     linkedProject: z.string().optional(),
     projectBoard: z.string().optional(),
-    tags: z.array(z.string()).optional(),
+    tags: z.array(z.enum(TAG_SLUGS)).optional(),
   }),
 });
 

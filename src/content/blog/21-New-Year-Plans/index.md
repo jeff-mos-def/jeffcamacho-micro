@@ -2,7 +2,7 @@
 title: "New Year, new me?"
 description: "Goals and thoughts for 2026."
 date: "2026-01-26"
-tags: ["goals", "career", "volunteering"]
+tags: ["personal", "community"]
 draft: false
 ---
   

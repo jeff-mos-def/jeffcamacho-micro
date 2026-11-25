@@ -2,7 +2,7 @@
 title: "Not Everything Is a Sprint: Matching Delivery to Work"
 description: "Why Scrum fails certain work types and what to use instead."
 date: "2026-04-10"
-tags: ["delivery", "Kanban", "operations", "flow", "agile"]
+tags: ["agile", "systems"]
 draft: false
 ---
 

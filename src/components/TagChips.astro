@@ -1,0 +1,26 @@
+---
+import { tagLabel, tagOrder } from "@lib/tags";
+import { cn } from "@lib/utils";
+
+type Props = {
+  tags?: string[];
+  class?: string;
+};
+
+const { tags = [], class: className } = Astro.props;
+const sorted = [...tags].sort((a, b) => tagOrder(a) - tagOrder(b));
+---
+
+{
+  sorted.length > 0 && (
+    <ul class={cn("not-prose flex flex-wrap gap-1.5", className)} aria-label="Topics">
+      {sorted.map((tag) => (
+        <li>
+          <a href={`/tags/${tag}`} class="chip">
+            {tagLabel(tag)}
+          </a>
+        </li>
+      ))}
+    </ul>
+  )
+}

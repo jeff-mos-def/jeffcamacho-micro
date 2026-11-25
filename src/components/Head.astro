@@ -2,24 +2,11 @@
 import "../styles/global.css";
 import { ClientRouter } from "astro:transitions";
 
-import "@fontsource/geist-sans/100.css";
-import "@fontsource/geist-sans/200.css";
-import "@fontsource/geist-sans/300.css";
-import "@fontsource/geist-sans/400.css";
-import "@fontsource/geist-sans/500.css";
-import "@fontsource/geist-sans/600.css";
-import "@fontsource/geist-sans/700.css";
-import "@fontsource/geist-sans/800.css";
-import "@fontsource/geist-sans/900.css";
-import "@fontsource/geist-mono/100.css";
-import "@fontsource/geist-mono/200.css";
-import "@fontsource/geist-mono/300.css";
+import "@fontsource-variable/archivo/wdth.css";
+import "@fontsource-variable/source-serif-4/opsz.css";
+import "@fontsource-variable/source-serif-4/opsz-italic.css";
 import "@fontsource/geist-mono/400.css";
-import "@fontsource/geist-mono/500.css";
 import "@fontsource/geist-mono/600.css";
-import "@fontsource/geist-mono/700.css";
-import "@fontsource/geist-mono/800.css";
-import "@fontsource/geist-mono/900.css";
 
 interface Props {
   title: string;
@@ -114,41 +101,31 @@ const { title, description, image = "/img/JDC-blogpost.jpg" } = Astro.props;
   }
 
   function updateThemeButtons() {
-    const theme = localStorage.getItem("theme");
-    const lightThemeButton = document.getElementById("light-theme-button");
-    const darkThemeButton = document.getElementById("dark-theme-button");
-    const systemThemeButton = document.getElementById("system-theme-button");
+    const theme = localStorage.getItem("theme") || "system";
+    const buttons = {
+      light: document.getElementById("light-theme-button"),
+      dark: document.getElementById("dark-theme-button"),
+      system: document.getElementById("system-theme-button"),
+    };
 
-    function removeActiveButtonTheme(button) {
-      button?.classList.remove("bg-black/5");
-      button?.classList.remove("dark:bg-white/5");
-    }
-
-    function addActiveButtonTheme(button) {
-      button?.classList.add("bg-black/5");
-      button?.classList.add("dark:bg-white/5");
-    }
-
-    removeActiveButtonTheme(lightThemeButton);
-    removeActiveButtonTheme(darkThemeButton);
-    removeActiveButtonTheme(systemThemeButton);
-
-    if (theme === "light") {
-      addActiveButtonTheme(lightThemeButton);
-    } else if (theme === "dark") {
-      addActiveButtonTheme(darkThemeButton);
-    } else {
-      addActiveButtonTheme(systemThemeButton);
-    }
+    Object.entries(buttons).forEach(([name, button]) => {
+      button?.setAttribute("aria-pressed", String(name === theme));
+    });
   }
 
   function animate() {
     const animateElements = document.querySelectorAll(".animate");
 
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
     animateElements.forEach((element, index) => {
+      if (reduce) {
+        element.classList.add("show");
+        return;
+      }
       setTimeout(() => {
         element.classList.add("show");
-      }, index * 100);
+      }, Math.min(index, 5) * 60);
     });
   }
 
@@ -209,7 +186,7 @@ const { title, description, image = "/img/JDC-blogpost.jpg" } = Astro.props;
   }
 
   function addCopyCodeButtons() {
-    let copyButtonLabel = "📋";
+    let copyButtonLabel = "Copy";
     let codeBlocks = Array.from(document.querySelectorAll("pre"));
 
     async function copyCode(codeBlock, copyButton) {
@@ -218,7 +195,7 @@ const { title, description, image = "/img/JDC-blogpost.jpg" } = Astro.props;
       const textToCopy = codeText.replace(buttonText, "");
 
       await navigator.clipboard.writeText(textToCopy);
-      copyButton.innerText = "✅";
+      copyButton.innerText = "Copied";
 
       setTimeout(() => {
         copyButton.innerText = copyButtonLabel;
@@ -232,6 +209,7 @@ const { title, description, image = "/img/JDC-blogpost.jpg" } = Astro.props;
       const copyButton = document.createElement("button");
       copyButton.innerText = copyButtonLabel;
       copyButton.classList = "copy-code";
+      copyButton.setAttribute("aria-label", "Copy code");
 
       codeBlock.setAttribute("tabindex", "0");
       codeBlock.appendChild(copyButton);

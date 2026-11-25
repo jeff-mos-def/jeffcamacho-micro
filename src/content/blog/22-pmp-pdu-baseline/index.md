@@ -2,7 +2,7 @@
 title: "60 PDUs, 3 Years, Page 1"
 description: "I need to write. And I need PDUs. So...."
 date: "2026-03-05"
-tags: ["PMP", "career", "PDUs"]
+tags: ["pmp"]
 draft: false
 ---
 

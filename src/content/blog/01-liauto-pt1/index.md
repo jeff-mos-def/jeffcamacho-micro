@@ -2,6 +2,7 @@
 title: "LinkedIn Automation, Pt. 1"
 description: "Being social on social media... automatically."
 date: "2024-11-17"
+tags: ["builds"]
 linkedProject: "/projects/liauto"
 #projectBoard: "https://github.com/users/jeff-mos-def/projects/9"
 draft: false

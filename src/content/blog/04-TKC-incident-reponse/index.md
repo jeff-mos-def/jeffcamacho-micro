@@ -2,7 +2,7 @@
 title: "Empowering Veterans Through Cybersecurity Training"
 description: "Empowering veterans through leadership and incident response drills."
 date: "2024-12-03"
-tags: ["veterans", "volunteering"]
+tags: ["community"]
 draft: false
 ---
 

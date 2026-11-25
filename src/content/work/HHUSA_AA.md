@@ -2,7 +2,7 @@
 company: "Hire Heroes USA"
 role: "Alumni Advisory Board Member"
 dateStart: 2024-05-02
-dateEnd: Current
+dateEnd: 2026-08-01
 type: volunteer
 ---
 

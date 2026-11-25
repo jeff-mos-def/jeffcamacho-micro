@@ -1,125 +1,331 @@
 ---
 import Layout from "@layouts/Layout.astro";
 import Container from "@components/Container.astro";
+import CareerLine from "@components/CareerLine.astro";
+import PostRow from "@components/PostRow.astro";
+import StatusBadge from "@components/StatusBadge.astro";
 import { SITE, HOME, SOCIALS } from "@consts";
-import ArrowCard from "@components/ArrowCard.astro";
-import Link from "@components/Link.astro";
+import { TAGS } from "@lib/tags";
 import { getCollection } from "astro:content";
 import type { CollectionEntry } from "astro:content";
 
-const blog = (await getCollection("blog"))
+const allPosts = (await getCollection("blog"))
   .filter((post) => !post.data.draft)
-  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
-  .slice(0, SITE.NUM_POSTS_ON_HOMEPAGE);
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
 
-const projects: CollectionEntry<"projects">[] = (
-  await getCollection("projects")
-)
+const blog = allPosts.slice(0, SITE.NUM_POSTS_ON_HOMEPAGE);
+
+const topics = TAGS.map((tag) => ({
+  ...tag,
+  count: allPosts.filter((post) => post.data.tags?.includes(tag.slug)).length,
+})).filter((tag) => tag.count > 0);
+
+const projects: CollectionEntry<"projects">[] = (await getCollection("projects"))
   .filter((project) => !project.data.draft)
   .sort((a, b) => b.data.startDate.valueOf() - a.data.startDate.valueOf())
   .slice(0, SITE.NUM_PROJECTS_ON_HOMEPAGE);
+
+const education = await getCollection("education");
+const degrees = education
+  .filter((e) => e.data.type === "education")
+  .sort((a, b) => (b.data.dateStart ?? 0) - (a.data.dateStart ?? 0));
+const certifications = education
+  .filter((e) => e.data.type === "certification" && !e.data.expired)
+  .sort((a, b) => (a.data.priority ?? 999) - (b.data.priority ?? 999));
+
+const monthYear = (d: Date) =>
+  d.toLocaleDateString("en-US", { month: "short", year: "numeric", timeZone: "UTC" });
+
+const calendar = SOCIALS.find((s) => s.NAME === "Calendar");
+const linkedin = SOCIALS.find((s) => s.NAME === "LinkedIn");
 ---
 
 <Layout title={HOME.TITLE} description={HOME.DESCRIPTION}>
-  <Container>
-    <aside data-pagefind-ignore>
-      <h1 class="font-semibold text-black dark:text-white">
-        Hello there. 
-      </h1>
-      <div class="space-y-16">
-        
-        <section>
-        <article class="space-y-4">
-            <span>
-                <p>
-                  I'm a Program Manager based in San Antonio, Texas, focused on helping teams and organizations work better, ship faster, and actually enjoy the process. My path here ran through the Army, which gave me a foundation in leading people and navigating complexity that I carry into everything I do.
-                </p>
-                <p>
-                  This site is a mix of my professional work, technical writing, and whatever else I'm currently thinking about.
-                </p>
-                <p>
-                  If you want the polished version, my <a href="https://www.linkedin.com/in/jeff-camacho/" target="_blank" rel="noopener noreferrer">LinkedIn Profile</a> is the place. 
-                </p>
-            </span>
-            <span class="animate">
-                <p>
-                  If something else caught your eye and you just want to talk, feel free to <a href="mailto:jeff@jeffcamacho.com">get in touch</a>.
-                </p>
-            </span>
-        </article>
-        </section>
-
-        <section class="animate space-y-6">
-          <div class="flex flex-wrap items-center justify-between gap-y-2">
-            <h2 class="font-semibold text-black dark:text-white">
-              Latest posts
-            </h2>
-            <Link href="/blog"> See all posts </Link>
-          </div>
-          <ul class="not-prose flex flex-col gap-4">
-            {
-              blog.map((post) => (
-                <li>
-                  <ArrowCard entry={post} />
-                </li>
-              ))
-            }
-          </ul>
-        </section>
-
-        <section class="animate space-y-6">
-          <div class="flex flex-wrap items-center justify-between gap-y-2">
-            <h2 class="font-semibold text-black dark:text-white">
-              Recent projects
-            </h2>
-            <Link href="/projects"> See all projects </Link>
-          </div>
-          <ul class="not-prose flex flex-col gap-4">
-            {
-              projects.map((project) => (
-                <li>
-                  <ArrowCard entry={project} />
-                </li>
-              ))
-            }
-          </ul>
-        </section>
-
-        <section class="animate space-y-4">
-          <h2 class="font-semibold text-black dark:text-white">
-            Let's Connect
-          </h2>
-          <article>
+  <div data-pagefind-ignore>
+    <!-- Hero: who, and the line that got here -->
+    <Container size="wide">
+      <section class="grid gap-14 pb-20 pt-4 lg:grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)] lg:gap-20 lg:pt-10">
+        <div class="space-y-8">
+          <h1 class="display hero-name">
+            Jeff<br />Camacho
+          </h1>
+          <div class="max-w-[34rem] space-y-4 font-serif text-[1.15rem] leading-[1.7]">
+            <p class="text-[1.3rem] leading-[1.6] text-ink">
+              I'm a Program Manager based in San Antonio, Texas, focused on helping teams and organizations work better, ship faster, and actually enjoy the process. My path here ran through the Army, which gave me a foundation in leading people and navigating complexity that I carry into everything I do.
+            </p>
             <p>
+              This site is a mix of my professional work, technical writing, and whatever else I'm currently thinking about.
+            </p>
+          </div>
+          <div class="flex flex-wrap items-center gap-3 pt-1">
+            <a href="/blog" class="btn btn-primary">Read the blog</a>
+            {linkedin && (
+              <a href={linkedin.HREF} target="_blank" rel="noopener noreferrer" class="btn">
+                LinkedIn profile
+              </a>
+            )}
+            <a href={`mailto:${SITE.EMAIL}`} class="btn">Get in touch</a>
+          </div>
+        </div>
+
+        <div class="lg:pt-4">
+          <CareerLine />
+        </div>
+      </section>
+    </Container>
+
+    <!-- Writing -->
+    <Container size="wide">
+      <section class="animate border-t border-line py-16">
+        <div class="grid gap-12 lg:grid-cols-[minmax(0,1fr)_17rem] lg:gap-20">
+          <div>
+            <div class="mb-2 flex items-baseline justify-between gap-4">
+              <h2 class="section-title text-2xl">Latest writing</h2>
+              <a href="/blog" class="link text-sm">All {allPosts.length} posts</a>
+            </div>
+            <ul class="divide-y divide-line">
+              {
+                blog.map((post) => (
+                  <li>
+                    <PostRow post={post} />
+                  </li>
+                ))
+              }
+            </ul>
+          </div>
+
+          <aside aria-labelledby="topics-heading">
+            <div class="mb-4 flex items-baseline justify-between gap-4">
+              <h2 id="topics-heading" class="section-title text-lg">Topics</h2>
+              <a href="/tags" class="link text-sm">Browse</a>
+            </div>
+            <ul class="space-y-1">
+              {
+                topics.map((topic) => (
+                  <li>
+                    <a href={`/tags/${topic.slug}`} class="topic-link" title={topic.description}>
+                      <span>{topic.label}</span>
+                      <span class="meta text-xs">{topic.count}</span>
+                    </a>
+                  </li>
+                ))
+              }
+            </ul>
+          </aside>
+        </div>
+      </section>
+    </Container>
+
+    <!-- Projects -->
+    <Container size="wide">
+      <section class="animate border-t border-line py-16">
+        <div class="mb-8 flex items-baseline justify-between gap-4">
+          <h2 class="section-title text-2xl">Recent projects</h2>
+          <a href="/projects" class="link text-sm">All projects</a>
+        </div>
+        <ul class="grid gap-4 md:grid-cols-3">
+          {
+            projects.map((project) => (
+              <li>
+                <a href={`/projects/${project.id}`} class="project-card group">
+                  <StatusBadge status={project.data.status} />
+                  <span class="project-title">{project.data.title}</span>
+                  <span class="text-[0.95rem] leading-relaxed text-text">{project.data.description}</span>
+                  <span class="meta mt-auto pt-3 text-xs">
+                    {monthYear(project.data.startDate)}
+                    {project.data.endDate && project.data.endDate !== "TBD"
+                      ? ` to ${monthYear(project.data.endDate)}`
+                      : " to TBD"}
+                  </span>
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </section>
+    </Container>
+
+    <!-- Credentials -->
+    <Container size="wide">
+      <section class="animate border-t border-line py-16">
+        <div class="grid gap-10 lg:grid-cols-[17rem_minmax(0,1fr)] lg:gap-20">
+          <div class="space-y-3">
+            <h2 class="section-title text-2xl">Credentials</h2>
+            <a href="/education" class="link text-sm">Education and certifications</a>
+          </div>
+          <div class="grid gap-10 sm:grid-cols-2">
+            <div>
+              <h3 class="mb-3 text-sm font-semibold text-ink">Certifications</h3>
+              <ul class="space-y-3">
+                {
+                  certifications.map((c) => (
+                    <li class="leading-snug">
+                      <span class="block text-ink">{c.data.degree}</span>
+                      <span class="meta text-xs">{c.data.institution}</span>
+                    </li>
+                  ))
+                }
+              </ul>
+            </div>
+            <div>
+              <h3 class="mb-3 text-sm font-semibold text-ink">Degrees</h3>
+              <ul class="space-y-3">
+                {
+                  degrees.map((d) => (
+                    <li class="leading-snug">
+                      <span class="block text-ink">
+                        {d.data.degree} in {d.data.field}
+                      </span>
+                      <span class="meta text-xs">{d.data.institution}</span>
+                    </li>
+                  ))
+                }
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+    </Container>
+
+    <!-- Connect -->
+    <Container size="wide">
+      <section class="animate border-t border-line pt-16">
+        <div class="grid gap-8 lg:grid-cols-[17rem_minmax(0,1fr)] lg:gap-20">
+          <h2 class="section-title text-2xl">Let's Connect</h2>
+          <div class="max-w-[38rem] space-y-6">
+            <p class="font-serif text-[1.15rem] leading-[1.7]">
               If you want to get in touch with me about something, jump on my calendar, or just to say hi, reach out on social media or send me an email.
             </p>
-          </article>
-          <ul class="not-prose flex flex-wrap gap-2">
-            {
-              SOCIALS.map((SOCIAL) => (
-                <li class="flex gap-x-2 text-nowrap">
-                  <Link
-                    href={SOCIAL.HREF}
-                    external
-                    aria-label={`${SITE.TITLE} on ${SOCIAL.NAME}`}
-                  >
-                    {SOCIAL.NAME}
-                  </Link>
-                  {"/"}
-                </li>
-              ))
-            }
-            <li class="line-clamp-1">
-              <Link
-                href={`mailto:${SITE.EMAIL}`}
-                aria-label={`Email ${SITE.TITLE}`}
-              >
-                Email
-              </Link>
-            </li>
-          </ul>
-        </section>
-      </div>
-    </aside>
-  </Container>
+            <a href={`mailto:${SITE.EMAIL}`} class="display email-link block w-fit">
+              {SITE.EMAIL}
+            </a>
+            <ul class="flex flex-wrap gap-x-5 gap-y-2">
+              {
+                SOCIALS.map((social) => (
+                  <li>
+                    <a
+                      class="link"
+                      href={social.HREF}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label={`${SITE.TITLE} on ${social.NAME}`}
+                    >
+                      {social === calendar ? "Book time on my calendar" : social.NAME}
+                    </a>
+                  </li>
+                ))
+              }
+            </ul>
+          </div>
+        </div>
+      </section>
+    </Container>
+  </div>
 </Layout>
+
+<style>
+  .hero-name {
+    font-size: clamp(3.4rem, 13vw, 6.5rem);
+    line-height: 0.92;
+    font-variation-settings: "wdth" 122;
+    font-weight: 820;
+    letter-spacing: -0.035em;
+  }
+
+  /* Two columns from lg up: size the name to its column so it never reaches the career line. */
+  @media (min-width: 1024px) {
+    .hero-name {
+      font-size: min(6.6vw, 6.75rem);
+    }
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    border-radius: 9999px;
+    border: 1px solid var(--c-line-strong);
+    padding: 0.55rem 1.1rem;
+    font-size: 0.95rem;
+    font-weight: 550;
+    color: var(--c-ink);
+    transition: background-color 150ms ease, border-color 150ms ease, color 150ms ease;
+  }
+
+  .btn:hover {
+    border-color: var(--c-ink);
+  }
+
+  .btn-primary {
+    border-color: var(--c-accent);
+    background: var(--c-accent);
+    color: #fff;
+  }
+
+  :global(.dark) .btn-primary {
+    color: #0e141d;
+  }
+
+  .btn-primary:hover {
+    border-color: var(--c-accent-ink);
+    background: var(--c-accent-ink);
+  }
+
+  .topic-link {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.4rem 0.6rem;
+    margin: 0 -0.6rem;
+    border-radius: 0.4rem;
+    color: var(--c-text);
+    transition: background-color 150ms ease, color 150ms ease;
+  }
+
+  .topic-link:hover {
+    color: var(--c-ink);
+    background: color-mix(in srgb, var(--c-line) 45%, transparent);
+  }
+
+  .project-card {
+    display: flex;
+    height: 100%;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.6rem;
+    padding: 1.25rem;
+    border: 1px solid var(--c-line);
+    border-radius: 0.75rem;
+    background: var(--c-surface);
+    transition: border-color 150ms ease;
+  }
+
+  .project-card:hover {
+    border-color: var(--c-line-strong);
+  }
+
+  .project-title {
+    color: var(--c-ink);
+    font-size: 1.1rem;
+    line-height: 1.3;
+    font-weight: 650;
+    font-variation-settings: "wdth" 104;
+  }
+
+  .project-card:hover .project-title {
+    color: var(--c-accent-ink);
+  }
+
+  .email-link {
+    font-size: clamp(1.5rem, 4vw, 2.4rem);
+    text-decoration: underline;
+    text-decoration-thickness: 3px;
+    text-underline-offset: 0.2em;
+    text-decoration-color: var(--c-accent);
+    transition: color 150ms ease;
+  }
+
+  .email-link:hover {
+    color: var(--c-accent-ink);
+  }
+</style>

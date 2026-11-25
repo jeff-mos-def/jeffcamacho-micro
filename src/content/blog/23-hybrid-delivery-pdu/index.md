@@ -2,7 +2,7 @@
 title: "Hybrid Delivery: Mixing Agile and Waterfall"
 description: "How to blend Agile and Waterfall deliberately."
 date: "2026-03-07"
-tags: ["PMP", "career", "PDUs", "Hybrid Delivery", "Project Management"]
+tags: ["project-management", "agile"]
 draft: false
 ---
 
